@@ -96,6 +96,9 @@ export default function Navbar() {
           <button onClick={() => scrollToSection('pricing')} className="text-slate-300 hover:text-white font-medium text-sm transition-colors cursor-pointer">
             Planes
           </button>
+          <button onClick={() => scrollToSection('contacto')} className="text-slate-300 hover:text-white font-medium text-sm transition-colors cursor-pointer">
+            Contacto
+          </button>
         </div>
 
         {/* CTA Button */}
@@ -133,6 +136,9 @@ export default function Navbar() {
           </button>
           <button onClick={() => scrollToSection('pricing')} className="text-left text-slate-300 hover:text-white font-medium text-base py-2 transition-colors">
             Planes & Precios
+          </button>
+          <button onClick={() => scrollToSection('contacto')} className="text-left text-slate-300 hover:text-white font-medium text-base py-2 transition-colors">
+            Contacto & Ubicación
           </button>
           <button 
             onClick={() => scrollToSection('pricing')}

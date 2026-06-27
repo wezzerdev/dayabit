@@ -5,6 +5,7 @@ import FeatureGrid from './components/FeatureGrid';
 import HowItWorks from './components/HowItWorks';
 import InteractiveDemo from './components/InteractiveDemo';
 import PricingCards from './components/PricingCards';
+import ContactLocation from './components/ContactLocation';
 import Footer from './components/Footer';
 import WhatsAppWidget from './components/WhatsAppWidget';
 
@@ -41,6 +42,9 @@ function App() {
 
         {/* Three Plan Pricing Cards */}
         <PricingCards onSelectPlan={handleSelectPlan} />
+
+        {/* Contact and Location Section */}
+        <ContactLocation />
       </main>
 
       {/* Footer copyright and social navigation */}
