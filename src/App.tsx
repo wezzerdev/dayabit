@@ -1,13 +1,21 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import FeatureGrid from './components/FeatureGrid';
 import HowItWorks from './components/HowItWorks';
-import InteractiveDemo from './components/InteractiveDemo';
-import PricingCards from './components/PricingCards';
-import ContactLocation from './components/ContactLocation';
 import Footer from './components/Footer';
-import WhatsAppWidget from './components/WhatsAppWidget';
+
+// Lazy loaded components for lightning-fast initial page loads
+const InteractiveDemo = lazy(() => import('./components/InteractiveDemo'));
+const PricingCards = lazy(() => import('./components/PricingCards'));
+const ContactLocation = lazy(() => import('./components/ContactLocation'));
+const WhatsAppWidget = lazy(() => import('./components/WhatsAppWidget'));
+
+const SectionLoader = () => (
+  <div className="w-full py-20 flex items-center justify-center">
+    <div className="w-6 h-6 rounded-full border-2 border-violet-500/20 border-t-violet-400 animate-spin" />
+  </div>
+);
 
 interface TriggerPlan {
   planId: string;
@@ -38,20 +46,28 @@ function App() {
         <HowItWorks />
 
         {/* Live Catalog & Checkout Simulator */}
-        <InteractiveDemo />
+        <Suspense fallback={<SectionLoader />}>
+          <InteractiveDemo />
+        </Suspense>
 
         {/* Three Plan Pricing Cards */}
-        <PricingCards onSelectPlan={handleSelectPlan} />
+        <Suspense fallback={<SectionLoader />}>
+          <PricingCards onSelectPlan={handleSelectPlan} />
+        </Suspense>
 
         {/* Contact and Location Section */}
-        <ContactLocation />
+        <Suspense fallback={<SectionLoader />}>
+          <ContactLocation />
+        </Suspense>
       </main>
 
       {/* Footer copyright and social navigation */}
       <Footer />
 
       {/* Professional floating WhatsApp chat widget */}
-      <WhatsAppWidget triggerPlan={triggerPlan} />
+      <Suspense fallback={null}>
+        <WhatsAppWidget triggerPlan={triggerPlan} />
+      </Suspense>
     </div>
   );
 }

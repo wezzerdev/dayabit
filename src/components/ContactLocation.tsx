@@ -1,6 +1,27 @@
+import { useState, useEffect, useRef } from 'react';
 import { MapPin, Phone, Mail, Clock, Compass } from 'lucide-react';
 
 export default function ContactLocation() {
+  const [showMap, setShowMap] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShowMap(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '250px' } // Load 250px before entering viewport
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
   return (
     <section id="contacto" className="py-24 bg-[#070913] relative overflow-hidden">
       {/* Background Glows */}
@@ -88,27 +109,36 @@ export default function ContactLocation() {
           </div>
 
           {/* Right Column: Premium Styled Iframe Map */}
-          <div className="lg:col-span-7 w-full h-[400px] lg:h-[450px] relative rounded-3xl overflow-hidden glass-card border border-white/[0.08] p-2 shadow-2xl">
+          <div ref={containerRef} className="lg:col-span-7 w-full h-[400px] lg:h-[450px] relative rounded-3xl overflow-hidden glass-card border border-white/[0.08] p-2 shadow-2xl">
             <div className="absolute top-4 left-4 z-20 px-3.5 py-1.5 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/[0.06] text-white text-[11px] font-semibold flex items-center gap-1.5 shadow-lg select-none">
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
               Demo de integración: Mapa en Vivo
             </div>
             
             {/* The Google Maps Iframe, styled using CSS filters to match dark mode */}
-            <div className="w-full h-full rounded-[20px] overflow-hidden relative">
-              <iframe
-                title="Mapa de Ubicación de Dayabit"
-                src="https://maps.google.com/maps?q=Av%20San%20Juan%20Bautista%20Manzana%20012%2C%20Lomas%20de%20Cuautitl%C3%A1n%2C%2054720%20Cuautitl%C3%A1n%20Izcalli%2C%20M%C3%A9x.&t=&z=16&ie=UTF8&iwloc=&output=embed"
-                width="100%"
-                height="100%"
-                style={{
-                  border: 0,
-                  filter: 'invert(90%) hue-rotate(180deg) grayscale(15%) contrast(95%) brightness(90%)',
-                }}
-                allowFullScreen={false}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
+            <div className="w-full h-full rounded-[20px] overflow-hidden relative bg-[#090c16] flex items-center justify-center">
+              {showMap ? (
+                <iframe
+                  title="Mapa de Ubicación de Dayabit"
+                  src="https://maps.google.com/maps?q=Av%20San%20Juan%20Bautista%20Manzana%20012%2C%20Lomas%20de%20Cuautitl%C3%A1n%2C%2054720%20Cuautitl%C3%A1n%20Izcalli%2C%20M%C3%A9x.&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                  width="100%"
+                  height="100%"
+                  style={{
+                    border: 0,
+                    filter: 'invert(90%) hue-rotate(180deg) grayscale(15%) contrast(95%) brightness(90%)',
+                  }}
+                  allowFullScreen={false}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              ) : (
+                <div className="text-center space-y-3 p-6">
+                  <div className="w-12 h-12 rounded-full bg-cyan-500/10 text-cyan-400 flex items-center justify-center mx-auto animate-pulse">
+                    <MapPin className="w-6 h-6" />
+                  </div>
+                  <p className="text-xs text-slate-400 font-medium">Cargando mapa interactivo...</p>
+                </div>
+              )}
             </div>
           </div>
 
