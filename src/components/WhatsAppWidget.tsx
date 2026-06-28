@@ -366,33 +366,36 @@ export default function WhatsAppWidget({ triggerPlan }: { triggerPlan: TriggerPl
   const buildSummaryText = (data: typeof leadData) => {
     let ticket = "💼 *SOLICITUD DE COTIZACIÓN - DAYABIT*\n";
     ticket += "=================================\n\n";
-    ticket += `*Servicio de interés:* ${data.service}\n`;
     
-    if (data.service === "Página Web") {
-      ticket += `*Tipo de negocio:* ${data.businessType}\n`;
-    } else if (data.service === "Catálogo Digital") {
-      ticket += `*Volumen de catálogo:* ${data.products}\n`;
+    ticket += "📋 *Detalles del Proyecto:*\n";
+    ticket += `• Servicio: ${data.service}`;
+    
+    if (data.service === "Página Web" && data.businessType) {
+      ticket += ` (${data.businessType})`;
+    } else if (data.service === "Catálogo Digital" && data.products) {
+      ticket += ` (${data.products})`;
     }
+    ticket += "\n";
     
     if (data.branding) {
-      ticket += `*Identidad de marca:* ${data.branding}\n`;
+      ticket += `• Identidad de marca: ${data.branding}\n`;
     }
 
     if (data.customNote) {
-      ticket += `*Consulta personalizada:* ${data.customNote}\n`;
+      ticket += `• Notas especiales: ${data.customNote}\n`;
     }
     
+    ticket += "\n👤 *Datos de Contacto:*\n";
     if (data.phone) {
-      ticket += `*Teléfono:* ${data.phone}\n`;
+      ticket += `• Teléfono: ${data.phone}\n`;
     }
-    
     if (data.email) {
-      ticket += `*Correo:* ${data.email}\n`;
+      ticket += `• Correo: ${data.email}\n`;
     }
     
     ticket += "\n=================================\n";
-    ticket += "💡 _Nuestros costos incluyen impuestos._\n";
-    ticket += "⚖️ _Acepto los Términos y Condiciones: https://dayabit.com_\n";
+    ticket += "💡 Nuestros costos ya incluyen impuestos facturables.\n";
+    ticket += "⚖️ Puedes consultar nuestros Términos y Condiciones en el pie de página de dayabit.com\n\n";
     ticket += "💬 ¿Cuándo podríamos programar una breve llamada de 15 minutos?";
     return ticket;
   };

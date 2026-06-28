@@ -86,18 +86,19 @@ export default function InteractiveDemo() {
       return "El carrito está vacío. Agrega productos de la izquierda para ver la magia.";
     }
     
-    let msg = "🛒 *NUEVO PEDIDO DESDE LA WEB*\n";
-    msg += "---------------------------------\n\n";
+    let msg = "🛒 *DETALLES DEL PEDIDO - DAYABIT*\n";
+    msg += "=================================\n\n";
     
-    cart.forEach((item, index) => {
-      msg += `${index + 1}. *${item.product.name}*\n`;
-      msg += `   Cantidad: ${item.quantity} x $${item.product.price} MXN\n`;
-      msg += `   Subtotal: $${item.quantity * item.product.price} MXN\n\n`;
+    msg += "📋 *Productos en el Carrito:*\n";
+    cart.forEach((item) => {
+      msg += `• ${item.quantity} x *${item.product.name}* ($${item.product.price} MXN c/u)\n`;
     });
     
-    msg += "---------------------------------\n";
-    msg += `💰 *TOTAL A PAGAR: $${total} MXN*\n`;
-    msg += "⚖️ _Acepto los Términos y Condiciones: https://dayabit.com_\n\n";
+    msg += `\n💰 *TOTAL A PAGAR: $${total} MXN*\n\n`;
+    
+    msg += "=================================\n";
+    msg += "💡 Nuestros costos ya incluyen impuestos facturables.\n";
+    msg += "⚖️ Puedes consultar nuestros Términos y Condiciones en el pie de página de dayabit.com\n\n";
     msg += "💬 ¿Me podrían confirmar el costo de envío y el tiempo de entrega?";
     return msg;
   };
