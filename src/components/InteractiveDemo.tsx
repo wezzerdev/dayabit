@@ -96,7 +96,8 @@ export default function InteractiveDemo() {
     });
     
     msg += "---------------------------------\n";
-    msg += `💰 *TOTAL A PAGAR: $${total} MXN*\n\n`;
+    msg += `💰 *TOTAL A PAGAR: $${total} MXN*\n`;
+    msg += "⚖️ _Acepto Términos (hosting/dominio por cuenta del cliente)._\n\n";
     msg += "💬 ¿Me podrían confirmar el costo de envío y el tiempo de entrega?";
     return msg;
   };

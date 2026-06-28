@@ -340,6 +340,7 @@ export default function WhatsAppWidget({ triggerPlan }: { triggerPlan: TriggerPl
     
     ticket += "\n=================================\n";
     ticket += "💡 _Nuestros costos incluyen impuestos._\n";
+    ticket += "⚖️ _Acepto Términos (hosting/dominio por cuenta del cliente)._\n";
     ticket += "💬 ¿Cuándo podríamos programar una breve llamada de 15 minutos?";
     return ticket;
   };

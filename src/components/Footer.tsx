@@ -1,6 +1,8 @@
-import { Heart } from 'lucide-react';
+import { useState } from 'react';
+import { Heart, X, Scale, ShieldCheck, FileText, CheckCircle2 } from 'lucide-react';
 
 export default function Footer() {
+  const [activeModal, setActiveModal] = useState<'terms' | 'privacy' | 'billing' | null>(null);
   const currentYear = new Date().getFullYear();
 
   const scrollToTop = () => {
@@ -125,12 +127,174 @@ export default function Footer() {
       </div>
 
       {/* Copyright Bar */}
-      <div className="max-w-7xl mx-auto px-6 pt-12 mt-12 border-t border-white/[0.04] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-        <p>© {currentYear} Dayabit Innovation. Todos los derechos reservados.</p>
+      <div className="max-w-7xl mx-auto px-6 pt-12 mt-12 border-t border-white/[0.04] flex flex-col lg:flex-row items-center justify-between gap-6 text-xs text-slate-500">
+        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-center sm:text-left">
+          <p>© {currentYear} Dayabit. Todos los derechos reservados.</p>
+          <div className="flex flex-wrap justify-center sm:justify-start gap-4 text-slate-400">
+            <button onClick={() => setActiveModal('terms')} className="hover:text-white transition-colors cursor-pointer font-medium">Términos y Condiciones</button>
+            <button onClick={() => setActiveModal('privacy')} className="hover:text-white transition-colors cursor-pointer font-medium font-sans">Aviso de Privacidad</button>
+            <button onClick={() => setActiveModal('billing')} className="hover:text-white transition-colors cursor-pointer font-medium">Facturación SAT CFDI 4.0</button>
+          </div>
+        </div>
         <p className="flex items-center gap-1">
-          Diseñado con <Heart className="w-3.5 h-3.5 fill-red-500/20 text-red-500" /> por el equipo de Dayabit.
+          Diseñado con <Heart className="w-3.5 h-3.5 fill-red-500/20 text-red-500 animate-pulse" /> por el equipo de Dayabit.
         </p>
       </div>
+
+      {/* Legal Modals System */}
+      {activeModal && (
+        <div className="fixed inset-0 z-[100] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="w-full max-w-2xl bg-[#090c16]/98 border border-white/[0.08] rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95 duration-200">
+            
+            {/* Header */}
+            <div className="flex items-center gap-3 pb-4 mb-5 border-b border-white/[0.06]">
+              <div className="p-2 rounded-xl bg-violet-500/10 text-violet-400">
+                {activeModal === 'terms' && <Scale className="w-5 h-5" />}
+                {activeModal === 'privacy' && <ShieldCheck className="w-5 h-5" />}
+                {activeModal === 'billing' && <FileText className="w-5 h-5" />}
+              </div>
+              <h3 className="text-white font-display font-extrabold text-lg sm:text-xl">
+                {activeModal === 'terms' && 'Términos y Condiciones de Uso'}
+                {activeModal === 'privacy' && 'Aviso de Privacidad Simplificado'}
+                {activeModal === 'billing' && 'Políticas de Facturación SAT CFDI 4.0'}
+              </h3>
+              
+              <button 
+                onClick={() => setActiveModal(null)} 
+                className="absolute top-4 right-4 p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                aria-label="Cerrar modal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Scrollable Content */}
+            <div className="overflow-y-auto pr-2 space-y-5 text-slate-300 text-xs sm:text-sm leading-relaxed text-left flex-1 max-h-[60vh] scrollbar-thin">
+              {activeModal === 'terms' && (
+                <>
+                  <p>
+                    Bienvenido a Dayabit. Al navegar por nuestro portal web, elegir un plan o solicitar una cotización, el cliente acepta expresamente y de forma incondicional los presentes <strong>Términos y Condiciones de Servicio</strong>. Es responsabilidad absoluta del cliente leer y comprender este documento antes de realizar una adquisición.
+                  </p>
+                  <div className="space-y-4 pt-2">
+                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
+                      <h4 className="text-white font-bold text-sm mb-1.5 flex items-center gap-1.5 font-display">
+                        <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+                        1. Gastos de Hosting y Dominio
+                      </h4>
+                      <p className="text-slate-400 text-xs sm:text-sm">
+                        Todos los gastos anuales de renovación del Hosting (alojamiento en servidor) y del Dominio (ej. <em>tunegocio.com</em>) corren <strong>únicamente y exclusivamente por cuenta del cliente</strong>. Dayabit actúa estrictamente como desarrollador, programador e integrador inicial del software. La falta de pago oportuno de estos servicios de alojamiento o dominios resultará en la baja automática de su sitio web por parte del proveedor respectivo, liberando a Dayabit de cualquier responsabilidad de operación o de resguardo de archivos.
+                      </p>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
+                      <h4 className="text-white font-bold text-sm mb-1.5 flex items-center gap-1.5 font-display">
+                        <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+                        2. Límite de Responsabilidad Técnica y Uptime
+                      </h4>
+                      <p className="text-slate-400 text-xs sm:text-sm">
+                        Dayabit entrega proyectos optimizados con altos estándares de calidad. No obstante, no nos hacemos responsables de pérdidas financieras, daños comerciales, caídas del sistema, cortes de red, actualizaciones de terceros que causen desconfiguraciones del código, o problemas técnicos directos en los servidores contratados por el cliente. Tampoco asumimos responsabilidad por fallas o interrupciones en la API de WhatsApp, la cual depende de Meta Platforms, Inc.
+                      </p>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
+                      <h4 className="text-white font-bold text-sm mb-1.5 flex items-center gap-1.5 font-display">
+                        <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+                        3. Exclusión de Reclamaciones Históricas
+                      </h4>
+                      <p className="text-slate-400 text-xs sm:text-sm">
+                        Al entregar el proyecto conforme al plan contratado, se asume la entera conformidad del cliente. Dayabit <strong>no aceptará reclamaciones, demandas o solicitudes de compensación en plazos históricos posteriores (de 1, 2 o más años)</strong> alegando que no fueron informados de las tarifas de hosting, dominios o de la estructura operativa de su sitio. Es obligación del cliente informarse debidamente de lo que está adquiriendo.
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-slate-500 italic mt-4">
+                    Dayabit se reserva el derecho de actualizar estos términos en cualquier momento, los cuales se encontrarán siempre vigentes en este portal oficial.
+                  </p>
+                </>
+              )}
+
+              {activeModal === 'privacy' && (
+                <>
+                  <p>
+                    En cumplimiento con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP) de México, Dayabit hace de su conocimiento este Aviso de Privacidad para garantizar que su información personal sea tratada con la mayor confidencialidad y apego legal.
+                  </p>
+                  <div className="space-y-4 pt-2">
+                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
+                      <h4 className="text-white font-bold text-sm mb-1.5 font-display">Datos Recabados</h4>
+                      <p className="text-slate-400 text-xs sm:text-sm">
+                        Los únicos datos que procesamos en esta landing page son aquellos ingresados en el simulador interactivo de pedidos o en el chatbot de cotizaciones: nombre del negocio, volumen de productos, requerimientos de logotipo y elección de plan.
+                      </p>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
+                      <h4 className="text-white font-bold text-sm mb-1.5 font-display">Finalidad del Tratamiento</h4>
+                      <p className="text-slate-400 text-xs sm:text-sm">
+                        Estos datos son compilados localmente en un formato de ticket estructurado con el único fin de enviarse mediante redirección al número de soporte de WhatsApp de Dayabit (`+52 56 2578 5033`), facilitando el análisis preliminar de su cotización de forma profesional y transparente.
+                      </p>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
+                      <h4 className="text-white font-bold text-sm mb-1.5 font-display">Protección y Compartición de Datos</h4>
+                      <p className="text-slate-400 text-xs sm:text-sm">
+                        Dayabit <strong>no recopila estos datos en bases de datos del servidor ni los comparte, vende o transfiere a terceras personas</strong> bajo ningún concepto comercial o publicitario.
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-slate-500">
+                    Cualquier duda o solicitud para ejercer sus derechos ARCO de acceso, rectificación, cancelación u oposición de datos de contacto puede ser canalizada vía correo a <a href="mailto:hola@dayabit.com" className="text-cyan-400 hover:underline">hola@dayabit.com</a>.
+                  </p>
+                </>
+              )}
+
+              {activeModal === 'billing' && (
+                <>
+                  <p>
+                    Para la formalidad jurídica y fiscal de las operaciones de nuestros clientes comerciales, pequeñas y medianas empresas o profesionistas independientes en México, Dayabit opera con un modelo de facturación formal de alta confianza.
+                  </p>
+                  <div className="space-y-4 pt-2">
+                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
+                      <h4 className="text-white font-bold text-sm mb-1.5 flex items-center gap-1.5 font-display">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                        Facturación Fiscal SAT CFDI 4.0
+                      </h4>
+                      <p className="text-slate-400 text-xs sm:text-sm">
+                        Todos nuestros servicios y precios publicados en este portal <strong>ya incluyen los impuestos fiscales correspondientes (IVA)</strong>. Tras realizar la contratación y validación de tu cotización, generamos formalmente tu comprobante fiscal digital por internet utilizando la versión vigente del SAT: <strong>CFDI 4.0</strong>.
+                      </p>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
+                      <h4 className="text-white font-bold text-sm mb-1.5 flex items-center gap-1.5 font-display">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                        Requisitos de Emisión
+                      </h4>
+                      <p className="text-slate-400 text-xs sm:text-sm">
+                        Para poder expedir la factura de manera correcta, nuestro equipo le solicitará la Constancia de Situación Fiscal (CSF) de su empresa, uso de CFDI (ej. Gastos en general), régimen fiscal y correo electrónico de destino para la entrega de los archivos XML y PDF.
+                      </p>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-[#090c16] border border-emerald-500/10 bg-gradient-to-r from-emerald-500/5 to-teal-500/5">
+                      <h4 className="text-white font-bold text-sm mb-1">Negocio 100% Respaldado</h4>
+                      <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
+                        Trabajar con Dayabit te brinda la seguridad de un servicio profesional formalmente registrado, de modo que cada centavo invertido en tu presencia digital es deducible de impuestos y cuenta con total validez legal y de soporte de ingeniería para la seguridad de tu empresa.
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Modal Action Button */}
+            <div className="mt-6 pt-4 border-t border-white/[0.06] flex justify-end">
+              <button 
+                onClick={() => setActiveModal(null)} 
+                className="px-5 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-semibold shadow-lg hover:shadow-violet-600/30 transition-all cursor-pointer"
+              >
+                Entendido, cerrar
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
     </footer>
   );
 }
