@@ -97,7 +97,7 @@ export default function InteractiveDemo() {
     
     msg += "---------------------------------\n";
     msg += `💰 *TOTAL A PAGAR: $${total} MXN*\n`;
-    msg += "⚖️ _Acepto Términos (hosting/dominio por cuenta del cliente)._\n\n";
+    msg += "⚖️ _Acepto los Términos y Condiciones: https://dayabit.com_\n\n";
     msg += "💬 ¿Me podrían confirmar el costo de envío y el tiempo de entrega?";
     return msg;
   };
