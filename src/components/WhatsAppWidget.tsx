@@ -34,7 +34,9 @@ export default function WhatsAppWidget({ triggerPlan }: { triggerPlan: TriggerPl
     businessType: '',
     products: '',
     branding: '',
-    customNote: ''
+    customNote: '',
+    phone: '',
+    email: ''
   });
 
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -88,7 +90,9 @@ export default function WhatsAppWidget({ triggerPlan }: { triggerPlan: TriggerPl
       businessType,
       products,
       branding: '',
-      customNote: ''
+      customNote: '',
+      phone: '',
+      email: ''
     };
     setLeadData(updatedLead);
 
@@ -116,8 +120,8 @@ export default function WhatsAppWidget({ triggerPlan }: { triggerPlan: TriggerPl
         }
       ]);
       setOptions([
-        { label: "👍 Sí, ya tengo logotipo y colores", value: "Sí tiene logotipo", nextStep: "summary" },
-        { label: "🎨 No, necesito apoyo de diseño", value: "Necesita diseño de identidad", nextStep: "summary" }
+        { label: "👍 Sí, ya tengo logotipo y colores", value: "Sí tiene logotipo", nextStep: "collect_phone" },
+        { label: "🎨 No, necesito apoyo de diseño", value: "Necesita diseño de identidad", nextStep: "collect_phone" }
       ]);
       setIsTyping(false);
     }, 1000);
@@ -131,7 +135,9 @@ export default function WhatsAppWidget({ triggerPlan }: { triggerPlan: TriggerPl
       businessType: '',
       products: '',
       branding: '',
-      customNote: ''
+      customNote: '',
+      phone: '',
+      email: ''
     });
     
     setIsTyping(true);
@@ -254,8 +260,8 @@ export default function WhatsAppWidget({ triggerPlan }: { triggerPlan: TriggerPl
         }
       ]);
       setOptions([
-        { label: "👍 Sí, ya tengo logotipo y colores", value: "Sí tiene logotipo", nextStep: "summary" },
-        { label: "🎨 No, necesito apoyo de diseño", value: "Necesita diseño de identidad", nextStep: "summary" }
+        { label: "👍 Sí, ya tengo logotipo y colores", value: "Sí tiene logotipo", nextStep: "collect_phone" },
+        { label: "🎨 No, necesito apoyo de diseño", value: "Necesita diseño de identidad", nextStep: "collect_phone" }
       ]);
     } else if (step === 'custom_note') {
       setMessages(prev => [
@@ -263,7 +269,27 @@ export default function WhatsAppWidget({ triggerPlan }: { triggerPlan: TriggerPl
         {
           id: botMsgId,
           sender: 'bot',
-          text: "Perfecto. 💬 Por favor, descríbeme tu duda o requerimiento especial en el campo de texto de abajo y presiona enviar para consolidar tu cotización:",
+          text: "Perfecto. 💬 Por favor, descríbeme tu duda o requerimiento especial en el campo de abajo:",
+          timestamp: new Date()
+        }
+      ]);
+    } else if (step === 'collect_phone') {
+      setMessages(prev => [
+        ...prev,
+        {
+          id: botMsgId,
+          sender: 'bot',
+          text: "¡Excelente! 📱 Para poder enviarte la cotización formal, los Términos y Condiciones y respaldar tu proyecto, por favor escribe tu **número de teléfono** de contacto:",
+          timestamp: new Date()
+        }
+      ]);
+    } else if (step === 'collect_email') {
+      setMessages(prev => [
+        ...prev,
+        {
+          id: botMsgId,
+          sender: 'bot',
+          text: "¡Muchas gracias! 📧 Por último, compártenos tu **correo electrónico** para enviarte la propuesta en PDF y tu información de facturación SAT CFDI 4.0:",
           timestamp: new Date()
         }
       ]);
@@ -284,39 +310,57 @@ export default function WhatsAppWidget({ triggerPlan }: { triggerPlan: TriggerPl
     e.preventDefault();
     if (!textInput.trim()) return;
 
+    const userText = textInput.trim();
+    setTextInput('');
+
     const userMsgId = `user-${Date.now()}`;
     const userMessage: ChatMessage = {
       id: userMsgId,
       sender: 'user',
-      text: textInput,
+      text: userText,
       timestamp: new Date()
     };
 
     setMessages(prev => [...prev, userMessage]);
-    const updatedLead = { ...leadData, customNote: textInput };
-    setLeadData(updatedLead);
-    setTextInput('');
+    
+    // Update state based on current step
+    const updatedLead = { ...leadData };
+    
+    if (currentStep === 'custom_note') {
+      updatedLead.customNote = userText;
+      setLeadData(updatedLead);
+      
+      setIsTyping(true);
+      setTimeout(() => {
+        setIsTyping(false);
+        processNextStep('collect_phone');
+      }, 1000);
+      
+    } else if (currentStep === 'collect_phone') {
+      updatedLead.phone = userText;
+      setLeadData(updatedLead);
+      
+      setIsTyping(true);
+      setTimeout(() => {
+        setIsTyping(false);
+        processNextStep('collect_email');
+      }, 1000);
+      
+    } else if (currentStep === 'collect_email') {
+      updatedLead.email = userText;
+      setLeadData(updatedLead);
+      
+      // Open WhatsApp immediately inside direct submit click handler to bypass popups
+      const ticketMessage = buildSummaryText(updatedLead);
+      const encodedText = encodeURIComponent(ticketMessage);
+      window.open(`https://wa.me/${phoneNumber}?text=${encodedText}`, '_blank');
 
-    // Open WhatsApp immediately in the submit handler to bypass popup blockers
-    const ticketMessage = buildSummaryText(updatedLead);
-    const encodedText = encodeURIComponent(ticketMessage);
-    window.open(`https://wa.me/${phoneNumber}?text=${encodedText}`, '_blank');
-
-    setIsTyping(true);
-    setTimeout(() => {
-      setIsTyping(false);
-      setCurrentStep('summary');
-      const botMsgId = `bot-${Date.now()}`;
-      setMessages(prev => [
-        ...prev,
-        {
-          id: botMsgId,
-          sender: 'bot',
-          text: "¡Perfecto! Tu consulta personalizada ha sido redactada. Presiona el botón de abajo si necesitas abrir WhatsApp nuevamente.",
-          timestamp: new Date()
-        }
-      ]);
-    }, 1000);
+      setIsTyping(true);
+      setTimeout(() => {
+        setIsTyping(false);
+        processNextStep('summary');
+      }, 1000);
+    }
   };
 
   const buildSummaryText = (data: typeof leadData) => {
@@ -336,6 +380,14 @@ export default function WhatsAppWidget({ triggerPlan }: { triggerPlan: TriggerPl
 
     if (data.customNote) {
       ticket += `*Consulta personalizada:* ${data.customNote}\n`;
+    }
+    
+    if (data.phone) {
+      ticket += `*Teléfono:* ${data.phone}\n`;
+    }
+    
+    if (data.email) {
+      ticket += `*Correo:* ${data.email}\n`;
     }
     
     ticket += "\n=================================\n";
@@ -480,12 +532,19 @@ export default function WhatsAppWidget({ triggerPlan }: { triggerPlan: TriggerPl
                 </div>
               )}
 
-              {/* Free Text Input (Only for custom note stage) */}
-              {currentStep === 'custom_note' && (
+              {/* Free Text Input (For custom note, phone, and email stages) */}
+              {(currentStep === 'custom_note' || currentStep === 'collect_phone' || currentStep === 'collect_email') && (
                 <form onSubmit={handleCustomTextSubmit} className="flex gap-2 w-full animate-in fade-in duration-200">
                   <input
-                    type="text"
-                    placeholder="Escribe tu duda aquí..."
+                    type={currentStep === 'collect_email' ? 'email' : currentStep === 'collect_phone' ? 'tel' : 'text'}
+                    placeholder={
+                      currentStep === 'collect_phone' 
+                        ? "Ej. 55 1234 5678" 
+                        : currentStep === 'collect_email' 
+                          ? "Ej. cliente@empresa.com" 
+                          : "Escribe tu duda aquí..."
+                    }
+                    required
                     value={textInput}
                     onChange={(e) => setTextInput(e.target.value)}
                     className="flex-1 bg-white/[0.03] text-white placeholder-slate-500 text-xs py-3 px-4 rounded-xl border border-white/[0.06] focus:outline-none focus:border-emerald-500/50 transition-colors"
