@@ -350,6 +350,11 @@ export default function WhatsAppWidget({ triggerPlan }: { triggerPlan: TriggerPl
       updatedLead.email = userText;
       setLeadData(updatedLead);
       
+      // Trigger Google Ads conversion tracking
+      if (typeof window !== 'undefined' && (window as any).gtag_report_conversion) {
+        (window as any).gtag_report_conversion();
+      }
+      
       // Open WhatsApp immediately inside direct submit click handler to bypass popups
       const ticketMessage = buildSummaryText(updatedLead);
       const encodedText = encodeURIComponent(ticketMessage);
@@ -573,6 +578,12 @@ export default function WhatsAppWidget({ triggerPlan }: { triggerPlan: TriggerPl
                     href={`https://wa.me/${phoneNumber}?text=${encodeURIComponent(buildSummaryText(leadData))}`}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => {
+                      // Trigger Google Ads conversion tracking
+                      if (typeof window !== 'undefined' && (window as any).gtag_report_conversion) {
+                        (window as any).gtag_report_conversion();
+                      }
+                    }}
                     className="w-full py-3.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-xs shadow-lg shadow-emerald-500/10 hover:shadow-emerald-500/35 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer text-center decoration-none"
                   >
                     <MessageCircle className="w-4 h-4 fill-current" />

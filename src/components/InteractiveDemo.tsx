@@ -337,6 +337,11 @@ export default function InteractiveDemo() {
                   onClick={(e) => {
                     if (cart.length === 0) {
                       e.preventDefault();
+                      return;
+                    }
+                    // Trigger Google Ads conversion tracking
+                    if (typeof window !== 'undefined' && (window as any).gtag_report_conversion) {
+                      (window as any).gtag_report_conversion();
                     }
                   }}
                   className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all ${

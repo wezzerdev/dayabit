@@ -14,6 +14,25 @@
 
       gtag('config', 'AW-18281987322');
     </script>
+
+    <!-- Event snippet for Compra conversion page -->
+    <script>
+    function gtag_report_conversion(url) {
+      var callback = function () {
+        if (typeof(url) != 'undefined') {
+          window.location = url;
+        }
+      };
+      gtag('event', 'conversion', {
+          'send_to': 'AW-18281987322/MjxWCIvTqcccEPr5w41E',
+          'value': 1.0,
+          'currency': 'MXN',
+          'transaction_id': '',
+          'event_callback': callback
+      });
+      return false;
+    }
+    </script>
     
     <!-- SEO & Google Ads Optimization -->
     <title>Dayabit | Páginas Web y Catálogos Digitales con WhatsApp</title>
