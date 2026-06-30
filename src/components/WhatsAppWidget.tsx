@@ -607,8 +607,9 @@ export default function WhatsAppWidget({ triggerPlan }: { triggerPlan: TriggerPl
         className="w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-400 text-white flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.4)] hover:shadow-[0_0_35px_rgba(16,185,129,0.6)] transition-all cursor-pointer group relative"
         aria-label="Iniciar Cotizador Interactivo"
       >
-        <div className="absolute inset-0 rounded-full bg-emerald-400/20 animate-ping opacity-75" />
-        <MessageCircle className="w-7 h-7 relative z-10 fill-white/10 group-hover:scale-110 transition-transform" />
+        <svg viewBox="0 0 24 24" className="w-7 h-7 relative z-10 fill-white group-hover:scale-110 transition-transform" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12.004 0C5.378 0 .004 5.374.004 12c0 2.112.551 4.168 1.597 5.982L.004 24l6.196-1.625A11.954 11.954 0 0012.004 24c6.626 0 12-5.374 12-12s-5.374-12-12-12zm6.659 17.027c-.246.695-1.433 1.272-1.97 1.341-.537.069-1.077.299-3.486-.653-3.111-1.233-5.074-4.42-5.23-4.628-.155-.208-1.272-1.696-1.272-3.236 0-1.54 1.002-2.298 1.31-2.607.307-.308.691-.416.921-.416.23 0 .461.003.653.012.204.009.479-.078.749.57.27.647.922 2.251 1.002 2.416.08.165.132.355.021.572-.11.217-.165.352-.329.544-.164.192-.345.427-.492.574-.165.165-.337.345-.145.674.192.329 1.135 1.868 2.433 3.023 1.67 1.488 3.078 1.95 3.518 2.13.44.18.697.151.958-.152.261-.302 1.114-1.298 1.41-1.742.297-.444.595-.37.994-.222.399.148 2.534 1.196 2.656 1.258.123.062.204.093.25.172.046.08.046.463-.2.158z" />
+        </svg>
       </motion.button>
 
     </div>
