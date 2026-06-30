@@ -101,8 +101,24 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* CTA Button */}
-        <div className="hidden md:block">
+        {/* Desktop Actions */}
+        <div className="hidden md:flex items-center gap-4">
+          <a
+            href="https://wa.me/525625785033?text=Hola%20Dayabit!%20Me%20gustar%C3%ADa%20cotizar%20un%20proyecto%20web."
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => {
+              if (typeof window !== 'undefined' && (window as any).gtag_report_conversion) {
+                (window as any).gtag_report_conversion();
+              }
+            }}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.03] hover:bg-emerald-500/10 border border-white/[0.06] hover:border-emerald-500/30 text-slate-300 hover:text-emerald-400 font-medium text-xs transition-all duration-300 cursor-pointer decoration-none"
+          >
+            <svg viewBox="0 0 24 24" className="w-4.5 h-4.5 fill-current text-emerald-400" xmlns="http://www.w3.org/2000/svg">
+              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.42 9.864-9.852.002-2.63-1.023-5.101-2.887-6.963C16.478 1.928 14.003.903 11.37.903c-5.44 0-9.866 4.42-9.87 9.852 0 1.712.464 3.385 1.341 4.866l-.99 3.615 3.708-.97c1.478.806 3.017 1.22 4.498 1.22zM18.06 14.85c-.328-.164-1.94-.957-2.24-1.067-.3-.11-.518-.164-.736.164-.219.328-.847 1.066-1.037 1.285-.19.219-.38.246-.708.082-.328-.164-1.385-.51-2.637-1.63-1.033-.921-1.614-2.054-1.816-2.4-.202-.328-.021-.507.143-.67.147-.146.328-.382.492-.574.164-.19.219-.328.328-.547.11-.219.055-.41-.028-.574-.082-.164-.736-1.777-1.01-2.434-.268-.644-.542-.557-.736-.567-.19-.01-.408-.012-.627-.012-.218 0-.573.082-.873.41-.3.328-1.147 1.12-1.147 2.733 0 1.614 1.174 3.172 1.338 3.391.164.22 2.307 3.522 5.59 4.942.78.337 1.39.539 1.86.688.784.249 1.498.214 2.062.13.629-.094 1.94-.793 2.214-1.529.273-.736.273-1.366.19-1.529-.08-.162-.3-.26-.628-.424z"/>
+            </svg>
+            <span>WhatsApp: 56 2578 5033</span>
+          </a>
           <button 
             onClick={() => scrollToSection('pricing')}
             className="relative px-6 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-medium text-sm shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:shadow-[0_0_25px_rgba(139,92,246,0.5)] transition-all duration-300 hover:-translate-y-0.5 cursor-pointer flex items-center gap-2 group"
@@ -140,6 +156,23 @@ export default function Navbar() {
           <button onClick={() => scrollToSection('contacto')} className="text-left text-slate-300 hover:text-white font-medium text-base py-2 transition-colors">
             Contacto & Ubicación
           </button>
+          <a
+            href="https://wa.me/525625785033?text=Hola%20Dayabit!%20Me%20gustar%C3%ADa%20cotizar%20un%20proyecto%20web."
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => {
+              setIsMobileMenuOpen(false);
+              if (typeof window !== 'undefined' && (window as any).gtag_report_conversion) {
+                (window as any).gtag_report_conversion();
+              }
+            }}
+            className="w-full py-3 rounded-xl border border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/10 text-emerald-400 font-bold flex items-center justify-center gap-2 cursor-pointer text-sm decoration-none"
+          >
+            <svg viewBox="0 0 24 24" className="w-4.5 h-4.5 fill-current text-emerald-400" xmlns="http://www.w3.org/2000/svg">
+              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.42 9.864-9.852.002-2.63-1.023-5.101-2.887-6.963C16.478 1.928 14.003.903 11.37.903c-5.44 0-9.866 4.42-9.87 9.852 0 1.712.464 3.385 1.341 4.866l-.99 3.615 3.708-.97c1.478.806 3.017 1.22 4.498 1.22zM18.06 14.85c-.328-.164-1.94-.957-2.24-1.067-.3-.11-.518-.164-.736.164-.219.328-.847 1.066-1.037 1.285-.19.219-.38.246-.708.082-.328-.164-1.385-.51-2.637-1.63-1.033-.921-1.614-2.054-1.816-2.4-.202-.328-.021-.507.143-.67.147-.146.328-.382.492-.574.164-.19.219-.328.328-.547.11-.219.055-.41-.028-.574-.082-.164-.736-1.777-1.01-2.434-.268-.644-.542-.557-.736-.567-.19-.01-.408-.012-.627-.012-.218 0-.573.082-.873.41-.3.328-1.147 1.12-1.147 2.733 0 1.614 1.174 3.172 1.338 3.391.164.22 2.307 3.522 5.59 4.942.78.337 1.39.539 1.86.688.784.249 1.498.214 2.062.13.629-.094 1.94-.793 2.214-1.529.273-.736.273-1.366.19-1.529-.08-.162-.3-.26-.628-.424z"/>
+            </svg>
+            Escríbenos por WhatsApp: 56 2578 5033
+          </a>
           <button 
             onClick={() => scrollToSection('pricing')}
             className="w-full text-center py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-semibold shadow-lg shadow-violet-500/10 hover:shadow-violet-500/20 transition-all duration-300"
