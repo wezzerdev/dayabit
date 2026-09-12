@@ -38,7 +38,7 @@ export default function Hero() {
             <img className="w-6 h-6 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" alt="Cliente Dayabit" />
           </div>
           <span className="text-xs font-bold text-slate-700 tracking-tight">
-            +500 Negocios en México vendiendo por WhatsApp
+            Empresas en México potenciando sus ganancias con Dayabit
           </span>
         </motion.div>
 
@@ -49,7 +49,7 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="text-4xl sm:text-5xl md:text-6xl lg:text-[62px] font-display font-black text-slate-900 leading-[1.12] tracking-tight max-w-4xl mx-auto"
         >
-          Gestiona y Multiplica tus Ventas con el Sistema más Ágil de México
+          La Landing Page que tu Empresa Necesita para Multiplicar sus Ganancias
         </motion.h1>
 
         {/* Subtitle */}
@@ -59,7 +59,7 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-base sm:text-lg md:text-xl text-slate-600 max-w-2xl mx-auto font-normal leading-relaxed mt-6"
         >
-          Catálogo web interactivo, tienda digital ultra rápida y pedidos directos a tu WhatsApp en una sola solución en la nube.
+          ¿Tu negocio aún no tiene una página web que realmente venda? Creamos tu <strong>Landing Page profesional</strong> con <strong>Catálogo Web y Pedidos a WhatsApp (WhatsApp Ordering System)</strong> para que recibas órdenes estructuradas sin comisiones.
         </motion.p>
 
         {/* CTA Button with Playful Arrow Price Tag */}

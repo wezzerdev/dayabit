@@ -5,6 +5,8 @@ import FeatureGrid from './components/FeatureGrid';
 import HowItWorks from './components/HowItWorks';
 import Footer from './components/Footer';
 
+import WhatsAppOrderingDemo from './components/WhatsAppOrderingDemo';
+
 // Lazy loaded components for lightning-fast initial page loads
 const InteractiveDemo = lazy(() => import('./components/InteractiveDemo'));
 const PricingCards = lazy(() => import('./components/PricingCards'));
@@ -84,6 +86,9 @@ function App() {
       <main className="flex-grow">
         {/* Entry Hero Section */}
         <Hero />
+
+        {/* Interactive WhatsApp Ordering System Showcase (Inspired by Pulpos) */}
+        <WhatsAppOrderingDemo />
 
         {/* Pillars / Core Features */}
         <FeatureGrid />

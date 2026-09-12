@@ -48,13 +48,13 @@ export default function FeatureGrid() {
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-18">
           <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 inline-block">
-            ¿Por qué Dayabit?
+            Potencia las Ganancias de tu Empresa
           </span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-black text-slate-900 leading-tight">
-            Todo lo que necesitas para vender en línea, sin la complejidad
+            Todo lo que tu Empresa Necesita para Vender por Internet
           </h2>
           <p className="text-slate-600 text-base sm:text-lg">
-            Combinamos diseño web de alta conversión con la herramienta de mensajería más utilizada en México: WhatsApp.
+            Si tu negocio no tiene una Landing Page profesional, estás perdiendo clientes todos los días. Unimos diseño corporativo de alta conversión con la herramienta más usada de México: WhatsApp.
           </p>
         </div>
 

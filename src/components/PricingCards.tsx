@@ -4,65 +4,65 @@ import { Check, Star, MessageSquare } from 'lucide-react';
 const plans = [
   {
     id: "esencial",
-    name: "Presencia Esencial",
-    badge: "Para iniciar",
-    tagline: "Tu tarjeta de presentación digital en tiempo récord",
-    focus: "Diseñado para profesionales independientes, consultores o negocios locales que necesitan su primer sitio web profesional.",
+    name: "Landing Page Esencial",
+    badge: "Presencia Inicial",
+    tagline: "La carta de presentación digital que tu empresa necesita",
+    focus: "Diseñado para empresas y profesionales que no tienen página web y necesitan presencia corporativa inmediata en Google y WhatsApp.",
     price: "$749",
     period: "MXN / año",
     features: [
-      "Landing Page premium adaptada a tu giro",
-      "Sección de Quiénes Somos y Servicios",
-      "Galería destacada de productos o fotos",
+      "Landing Page corporativa adaptada a tu empresa",
+      "Sección de Quiénes Somos, Servicios y Propuesta de Valor",
+      "Galería destacada de proyectos o productos",
       "Botón directo de contacto a WhatsApp",
       "Horarios de atención y mapa interactivo",
       "Optimización de velocidad (carga en menos de 1s)",
       "SEO estructurado para Google y Google Ads",
-      "Facturación con CFDI 4.0 disponible"
+      "Facturación con CFDI 4.0 incluida"
     ],
-    ctaText: "Elegir Plan Esencial",
+    ctaText: "Elegir Landing Page Esencial",
     highlighted: false
   },
   {
     id: "vitrina",
-    name: "Vitrina Interactiva",
-    badge: "MÁS POPULAR",
-    tagline: "El equilibrio perfecto entre diseño y ventas por WhatsApp",
-    focus: "Ideal para cafeterías, tiendas de ropa, cosméticos o negocios con catálogo activo que buscan pedidos directos sin comisiones.",
+    name: "Landing Page + Catálogo Web",
+    badge: "MÁS VENDIDO",
+    tagline: "El equilibrio perfecto entre presencia empresarial y ventas",
+    focus: "Para empresas y comercios que quieren mostrar su catálogo de productos y recibir pedidos directos a su WhatsApp sin pagar comisiones.",
     price: "$1,499",
     period: "MXN / año",
     features: [
-      "Todo lo incluido en el Plan Esencial",
-      "Catálogo digital interactivo por categorías",
-      "Capacidad para hasta 50 productos en vitrina",
+      "Todo lo incluido en la Landing Page Esencial",
+      "Catálogo Web interactivo estructurado por categorías",
+      "Capacidad para hasta 50 productos en vitrina digital",
       "Botón de pedido por WhatsApp en cada producto",
       "Mensaje de WhatsApp prearmado con código de producto",
-      "Panel autoadministrable sencillo (edita fotos y precios)",
-      "Diseño 100% optimizado para smartphones",
+      "Panel autoadministrable fácil (cambia precios y fotos)",
+      "Diseño 100% optimizado para celulares",
       "Soporte y asesoría técnica garantizada"
     ],
-    ctaText: "Elegir Vitrina Interactiva",
+    ctaText: "Elegir Landing Page + Catálogo",
     highlighted: true
   },
   {
     id: "pro",
-    name: "Catálogo Pro & Pedidos",
-    badge: "Comercio Completo",
-    tagline: "Tu canal de ventas automatizado sin comisiones externas",
-    focus: "Para mayoristas, distribuidoras o comercios con inventarios amplios que necesitan carrito de compras acumulable.",
+    name: "Landing Page + WhatsApp Ordering System",
+    badge: "Empresarial Completo",
+    tagline: "Tu canal de ventas y cotizaciones automatizado a WhatsApp",
+    focus: "Para empresas, distribuidoras o comercios con inventario amplio que necesitan carrito de compra con ticket automático.",
     price: "$2,899",
     period: "MXN / año",
     features: [
       "Todo lo incluido en los Planes anteriores",
+      "WhatsApp Ordering System completo con carrito",
       "Panel autoadministrable robusto (hasta 1,000 productos)",
       "Buscador predictivo y filtros avanzados por categorías",
-      "Carrito de compras interactivo para acumular productos",
       "Generación automática de ticket con desglose y total",
       "Envío de orden estructurada con un clic a WhatsApp",
       "Integración analítica con Google Ads & Meta Pixel",
       "Carga de imágenes WebP ultralivianas"
     ],
-    ctaText: "Elegir Catálogo Pro",
+    ctaText: "Elegir WhatsApp Ordering System",
     highlighted: false
   }
 ];
@@ -75,10 +75,10 @@ export default function PricingCards({ onSelectPlan }: { onSelectPlan: (planId: 
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-20">
           <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 inline-block">
-            Precios Claros y Transparentes
+            Inversión Clara para tu Empresa
           </span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-black text-slate-900 leading-tight">
-            Elige el Plan Ideal para tu Negocio
+            Elige la Landing Page Ideal para tu Negocio
           </h2>
           <p className="text-slate-600 text-base sm:text-lg">
             Sin tarifas ocultas ni comisiones por transacción. Todos nuestros costos <strong>ya incluyen impuestos</strong> y factura fiscal CFDI 4.0.
