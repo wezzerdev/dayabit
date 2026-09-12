@@ -1,38 +1,41 @@
 @import "tailwindcss";
 
-
 @theme {
   --font-sans: 'Outfit', sans-serif;
   --font-display: 'Sora', sans-serif;
   
-  --color-brand-bg: #070913;
-  --color-brand-card: rgba(13, 17, 30, 0.4);
-  --color-brand-border: rgba(255, 255, 255, 0.06);
-  --color-brand-violet: #8b5cf6;
+  --color-brand-bg: #ffffff;
+  --color-brand-surface: #f8fafc;
+  --color-brand-mint: #f0fdf9;
+  --color-brand-border: #e2e8f0;
+  --color-brand-dark: #0f172a;
+  --color-brand-slate: #334155;
+  --color-brand-turquoise: #00b37e;
+  --color-brand-turquoise-dark: #009366;
   --color-brand-cyan: #06b6d4;
   --color-brand-emerald: #10b981;
 }
 
-/* Custom premium scrollbar */
+/* Custom modern scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #070913;
+  background: #f1f5f9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #cbd5e1;
   border-radius: 9999px;
-  border: 2px solid #070913;
+  border: 2px solid #f1f5f9;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #94a3b8;
 }
 
 html {
   scroll-behavior: smooth;
-  background-color: #070913;
-  color: #f8fafc;
+  background-color: #ffffff;
+  color: #0f172a;
 }
 
 body {
@@ -40,6 +43,7 @@ body {
   overflow-x: hidden;
   margin: 0;
   padding: 0;
+  background-color: #ffffff;
 }
 
 /* Custom premium animations */
@@ -48,7 +52,7 @@ body {
     transform: translateY(0px) rotate(0deg);
   }
   50% {
-    transform: translateY(-10px) rotate(1deg);
+    transform: translateY(-8px) rotate(0.5deg);
   }
 }
 
@@ -57,18 +61,18 @@ body {
     transform: translateY(0px) scale(1);
   }
   50% {
-    transform: translateY(-20px) scale(1.05);
+    transform: translateY(-14px) scale(1.02);
   }
 }
 
 @keyframes pulse-glow {
   0%, 100% {
-    opacity: 0.15;
+    opacity: 0.12;
     transform: scale(1);
   }
   50% {
-    opacity: 0.3;
-    transform: scale(1.1);
+    opacity: 0.25;
+    transform: scale(1.08);
   }
 }
 
@@ -84,25 +88,25 @@ body {
   animation: pulse-glow 8s ease-in-out infinite;
 }
 
-/* Glassmorphism card utility */
+/* Glassmorphism clean light utility */
 .glass-card {
-  background: rgba(13, 17, 30, 0.4);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 .glass-nav {
-  background: rgba(7, 9, 19, 0.7);
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
 }
 
-/* Premium Border Gradient hover effect */
+/* Modern clean card hover */
 .border-gradient-glow {
   position: relative;
-  border-radius: 1rem;
+  border-radius: 1.25rem;
   transition: all 0.3s ease;
 }
 
@@ -110,9 +114,9 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 1rem;
+  border-radius: 1.25rem;
   padding: 1px;
-  background: linear-gradient(to bottom right, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+  background: linear-gradient(to bottom right, rgba(0, 179, 126, 0.2), rgba(6, 182, 212, 0.1));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -121,20 +125,21 @@ body {
 }
 
 .border-gradient-glow:hover::before {
-  background: linear-gradient(to bottom right, #8b5cf6, #06b6d4);
+  background: linear-gradient(to bottom right, #00b37e, #06b6d4);
 }
 
-/* Hero gradient highlights */
-.text-gradient-violet-cyan {
-  background: linear-gradient(135deg, #c084fc 0%, #8b5cf6 50%, #06b6d4 100%);
+/* Gradient text highlights */
+.text-gradient-turquoise {
+  background: linear-gradient(135deg, #00b37e 0%, #009366 50%, #0d9488 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-.text-gradient-cyan-emerald {
-  background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 50%, #10b981 100%);
+.text-gradient-turquoise-cyan {
+  background: linear-gradient(135deg, #00b37e 0%, #06b6d4 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+

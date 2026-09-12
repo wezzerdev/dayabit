@@ -493,7 +493,7 @@ export default function WhatsAppWidget({ triggerPlan }: { triggerPlan: TriggerPl
                   >
                     <div className={`max-w-[85%] rounded-2xl p-3.5 leading-relaxed text-left ${
                       msg.sender === 'user' 
-                        ? 'bg-violet-600 text-white rounded-tr-none shadow-md shadow-violet-600/10' 
+                        ? 'bg-[#00b37e] text-white rounded-tr-none shadow-md shadow-emerald-600/10' 
                         : 'bg-white/[0.04] border border-white/[0.04] text-slate-300 rounded-tl-none'
                     }`}>
                       {msg.text.split('\n').map((line, i) => (
@@ -531,10 +531,10 @@ export default function WhatsAppWidget({ triggerPlan }: { triggerPlan: TriggerPl
                     <button
                       key={index}
                       onClick={() => handleOptionClick(option)}
-                      className="w-full py-3 px-4 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.06] hover:border-violet-500/40 text-slate-200 hover:text-white font-medium text-left text-xs transition-all duration-200 cursor-pointer flex items-center justify-between group"
+                      className="w-full py-3 px-4 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.06] hover:border-emerald-500/40 text-slate-200 hover:text-white font-medium text-left text-xs transition-all duration-200 cursor-pointer flex items-center justify-between group"
                     >
                       <span>{option.label}</span>
-                      <span className="opacity-0 group-hover:opacity-100 transition-opacity text-violet-400 text-[10px]">Elegir →</span>
+                      <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[#00b37e] text-[10px]">Elegir →</span>
                     </button>
                   ))}
                 </div>
@@ -562,7 +562,7 @@ export default function WhatsAppWidget({ triggerPlan }: { triggerPlan: TriggerPl
                     disabled={!textInput.trim()}
                     className={`p-3 rounded-xl transition-all ${
                       textInput.trim() 
-                        ? 'bg-violet-600 text-white hover:scale-105 cursor-pointer shadow-lg' 
+                        ? 'bg-[#00b37e] text-white hover:scale-105 cursor-pointer shadow-lg' 
                         : 'bg-slate-800 text-slate-500 cursor-not-allowed'
                     }`}
                   >
@@ -584,7 +584,7 @@ export default function WhatsAppWidget({ triggerPlan }: { triggerPlan: TriggerPl
                         (window as any).gtag_report_conversion();
                       }
                     }}
-                    className="w-full py-3.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-xs shadow-lg shadow-emerald-500/10 hover:shadow-emerald-500/35 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer text-center decoration-none"
+                    className="w-full py-3.5 px-4 rounded-xl bg-[#00b37e] hover:bg-[#009e6f] text-white font-bold text-xs shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/35 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer text-center decoration-none"
                   >
                     <MessageCircle className="w-4 h-4 fill-current" />
                     Enviar cotización por WhatsApp
@@ -604,7 +604,7 @@ export default function WhatsAppWidget({ triggerPlan }: { triggerPlan: TriggerPl
         onClick={() => setIsOpen(!isOpen)}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-400 text-white flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.4)] hover:shadow-[0_0_35px_rgba(16,185,129,0.6)] transition-all cursor-pointer group relative"
+        className="w-14 h-14 rounded-full bg-[#00b37e] hover:bg-[#009e6f] text-white flex items-center justify-center shadow-[0_0_30px_rgba(0,179,126,0.4)] hover:shadow-[0_0_35px_rgba(0,179,126,0.6)] transition-all cursor-pointer group relative"
         aria-label="Iniciar Cotizador Interactivo"
       >
         <svg viewBox="0 0 24 24" className="w-7 h-7 relative z-10 fill-white group-hover:scale-110 transition-transform" xmlns="http://www.w3.org/2000/svg">

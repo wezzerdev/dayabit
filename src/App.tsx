@@ -76,7 +76,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-bg text-slate-100 flex flex-col justify-between selection:bg-violet-500/30 selection:text-white">
+    <div className="min-h-screen bg-white text-slate-900 flex flex-col justify-between selection:bg-emerald-500/20 selection:text-emerald-900">
       {/* Navigation Header */}
       <Navbar />
 

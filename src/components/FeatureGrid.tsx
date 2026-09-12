@@ -5,81 +5,79 @@ const features = [
   {
     icon: Zap,
     title: "Velocidad Ultra Rápida",
-    description: "Desarrollados con tecnología moderna que garantiza una carga instantánea. Menos de 1 segundo de espera significa que ningún cliente abandonará tu sitio.",
-    color: "text-amber-400 bg-amber-400/10"
-  },
-  {
-    icon: Search,
-    title: "Optimización SEO Local",
-    description: "Estructuramos tu sitio web con las mejores prácticas semánticas para que Google indexe tu negocio y aparezcas ante los clientes que te buscan en tu zona.",
-    color: "text-cyan-400 bg-cyan-400/10"
+    description: "Desarrollados con React y Vite de última generación. Menos de 1 segundo de carga para que tus compradores nunca abandonen la tienda.",
+    iconBg: "bg-amber-50 text-amber-600 border-amber-200/60"
   },
   {
     icon: ShieldCheck,
-    title: "Conexión Directa WhatsApp",
-    description: "Elimina la fricción de formularios complejos. Tus clientes ordenan o cotizan directo a tu WhatsApp, agilizando el proceso y aumentando un 30% tus cierres.",
-    color: "text-emerald-400 bg-emerald-400/10"
-  },
-  {
-    icon: Smartphone,
-    title: "Diseño Mobile-First",
-    description: "El 90% de tus clientes navegarán desde sus celulares. Diseñamos pensando en la experiencia táctil, fluida y ergonómica en pantallas móviles.",
-    color: "text-violet-400 bg-violet-400/10"
-  },
-  {
-    icon: Sliders,
-    title: "Autoadministrable Ligero",
-    description: "Añade nuevos productos, actualiza tus horarios, cambia imágenes o edita la descripción de tus servicios en segundos sin depender de un programador.",
-    color: "text-pink-400 bg-pink-400/10"
+    title: "Ventas Directas a WhatsApp",
+    description: "Tus clientes agregan productos a su carrito y envían el pedido desglosado directo a tu chat personal o empresarial sin fricciones.",
+    iconBg: "bg-emerald-50 text-emerald-600 border-emerald-200/60"
   },
   {
     icon: DollarSign,
-    title: "Cero Comisiones por Venta",
-    description: "A diferencia de las plataformas de e-commerce tradicionales, no te cobramos comisiones por tus transacciones. Todo lo que vendes es 100% ganancia tuya.",
-    color: "text-indigo-400 bg-indigo-400/10"
+    title: "0% Comisiones por Venta",
+    description: "A diferencia de Mercado Libre o Shopify, no te cobramos comisiones por tus pedidos. El 100% del dinero entra directamente a tu cuenta bancaria.",
+    iconBg: "bg-teal-50 text-teal-600 border-teal-200/60"
+  },
+  {
+    icon: Search,
+    title: "Optimización SEO y Google Ads",
+    description: "Configurado con etiquetas estructuradas para que Google posicione tu marca y tus campañas publicitarias conviertan clics en clientes reales.",
+    iconBg: "bg-cyan-50 text-cyan-600 border-cyan-200/60"
+  },
+  {
+    icon: Smartphone,
+    title: "Experiencia 100% Móvil",
+    description: "El 92% de las compras en México se inician desde un smartphone. Diseñamos con botones ergonómicos y navegación táctil intuitiva.",
+    iconBg: "bg-emerald-50 text-emerald-700 border-emerald-200/60"
+  },
+  {
+    icon: Sliders,
+    title: "Autoadministrable Sencillo",
+    description: "Sube productos, actualiza precios, cambia fotos o activa promociones especiales en 2 minutos sin depender de un programador.",
+    iconBg: "bg-indigo-50 text-indigo-600 border-indigo-200/60"
   }
 ];
 
 export default function FeatureGrid() {
   return (
-    <section id="features" className="py-24 bg-[#090C16] relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-brand-bg via-[#090C16] to-[#070913] pointer-events-none" />
-
+    <section id="features" className="py-24 bg-[#f8fafc] border-y border-slate-200/80 relative">
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-4 mb-20">
-          <span className="text-xs font-bold uppercase tracking-widest text-cyan-400 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20">
+        <div className="text-center max-w-3xl mx-auto space-y-4 mb-18">
+          <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 inline-block">
             ¿Por qué Dayabit?
           </span>
-          <h2 className="text-3xl md:text-5xl font-display font-extrabold text-white leading-tight">
-            Soluciones Modernas y Escalables para Pequeños Negocios
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-black text-slate-900 leading-tight">
+            Todo lo que necesitas para vender en línea, sin la complejidad
           </h2>
-          <p className="text-slate-400 text-base md:text-lg">
-            Combinamos diseño de vanguardia con automatización práctica. Creamos herramientas sencillas de usar que impulsan tus ventas de forma real.
+          <p className="text-slate-600 text-base sm:text-lg">
+            Combinamos diseño web de alta conversión con la herramienta de mensajería más utilizada en México: WhatsApp.
           </p>
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 25 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="glass-card p-6 sm:p-8 rounded-2xl border-gradient-glow hover:translate-y-[-4px] transition-all duration-300 flex flex-col items-start text-left group"
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.5, delay: index * 0.08 }}
+                className="bg-white p-7 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs hover:shadow-xl hover:border-emerald-300/80 hover:-translate-y-1 transition-all duration-300 flex flex-col items-start text-left group"
               >
-                <div className={`p-3.5 rounded-xl ${feature.color} mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                <div className={`p-3.5 rounded-2xl border ${feature.iconBg} mb-5 group-hover:scale-105 transition-transform duration-300`}>
                   <Icon className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-display font-bold text-white mb-3">
+                <h3 className="text-xl font-display font-bold text-slate-900 mb-2.5">
                   {feature.title}
                 </h3>
-                <p className="text-slate-400 text-sm leading-relaxed">
+                <p className="text-slate-600 text-sm leading-relaxed">
                   {feature.description}
                 </p>
               </motion.div>

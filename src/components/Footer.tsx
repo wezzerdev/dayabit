@@ -26,52 +26,31 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#05070d] border-t border-white/[0.04] py-16 relative">
+    <footer className="bg-[#0f172a] text-slate-300 border-t border-slate-800 py-16 relative">
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 text-left">
         
         {/* Brand & Description */}
         <div className="space-y-4 md:col-span-2">
-          <div className="flex items-center gap-0.5 cursor-pointer w-fit group" onClick={scrollToTop}>
+          <div className="flex items-center gap-1.5 cursor-pointer w-fit group" onClick={scrollToTop}>
             <div className="relative w-8 h-8 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
               <svg viewBox="0 0 32 32" className="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="16" cy="16" r="14" fill="url(#footer-logo-glow)" opacity="0.1" />
-                <rect x="7" y="6" width="4" height="20" rx="2" fill="url(#footer-logo-left-grad)" />
-                <path d="M9 6H19C24.52 6 29 10.48 29 16C29 21.52 24.52 26 19 26H9" stroke="url(#footer-logo-loop-grad)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-                <circle cx="17" cy="12" r="2.5" fill="url(#footer-logo-bit-grad)" />
-                <circle cx="21" cy="16" r="2.5" fill="url(#footer-logo-bit-grad)" />
-                <circle cx="17" cy="20" r="2.5" fill="url(#footer-logo-bit-grad)" />
-                <path d="M17 12L21 16L17 20" stroke="url(#footer-logo-bit-grad)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.5" />
-                <defs>
-                  <linearGradient id="footer-logo-glow" x1="2" y1="2" x2="30" y2="30" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#8b5cf6" />
-                    <stop offset="1" stopColor="#06b6d4" />
-                  </linearGradient>
-                  <linearGradient id="footer-logo-left-grad" x1="7" y1="6" x2="11" y2="26" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#8b5cf6" />
-                    <stop offset="1" stopColor="#6366f1" />
-                  </linearGradient>
-                  <linearGradient id="footer-logo-loop-grad" x1="9" y1="6" x2="29" y2="26" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#6366f1" />
-                    <stop offset="0.5" stopColor="#4f46e5" />
-                    <stop offset="1" stopColor="#06b6d4" />
-                  </linearGradient>
-                  <linearGradient id="footer-logo-bit-grad" x1="14.5" y1="12" x2="23.5" y2="20" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#06b6d4" />
-                    <stop offset="1" stopColor="#10b981" />
-                  </linearGradient>
-                </defs>
+                <circle cx="16" cy="16" r="14" fill="#00b37e" opacity="0.15" />
+                <rect x="7" y="6" width="4" height="20" rx="2" fill="#00b37e" />
+                <path d="M9 6H19C24.52 6 29 10.48 29 16C29 21.52 24.52 26 19 26H9" stroke="#00b37e" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                <circle cx="17" cy="12" r="2.5" fill="#00c288" />
+                <circle cx="21" cy="16" r="2.5" fill="#00c288" />
+                <circle cx="17" cy="20" r="2.5" fill="#00c288" />
               </svg>
             </div>
-            <span className="font-display font-extrabold text-xl text-white group-hover:opacity-90 flex items-center select-none translate-y-[-0.5px]">
-              ayabit
-              <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 text-cyan-400 mx-2 animate-pulse shrink-0">
-                <path d="M12 2L14.8 9.2L22 12L14.8 14.8L12 22L9.2 14.8L2 12L9.2 9.2L12 2Z" />
-              </svg>
-              <span className="text-[9px] font-bold tracking-widest text-cyan-300 uppercase px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-400/20">Estudio</span>
+            <span className="font-display font-black text-2xl text-white group-hover:text-emerald-400 transition-colors flex items-center select-none">
+              dayabit
+              <span className="ml-2 text-[10px] font-bold tracking-wider text-emerald-300 uppercase px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-500/30">
+                Estudio
+              </span>
             </span>
           </div>
           <p className="text-slate-400 text-sm max-w-sm leading-relaxed">
-            Diseñamos y programamos sitios web y catálogos interactivos enfocados en acelerar las ventas de pequeños y medianos comercios y profesionales independientes.
+            Plataforma de páginas web y catálogos digitales interactivos en la nube, optimizados para ventas directas a WhatsApp y facturación fiscal CFDI 4.0.
           </p>
         </div>
 
@@ -96,7 +75,7 @@ export default function Footer() {
             </li>
             <li>
               <button onClick={() => scrollToSection('pricing')} className="text-slate-400 hover:text-white transition-colors cursor-pointer">
-                Planes
+                Precios
               </button>
             </li>
           </ul>
@@ -104,56 +83,51 @@ export default function Footer() {
 
         {/* Contact & Socials */}
         <div className="space-y-4">
-          <h4 className="text-white font-bold text-sm uppercase tracking-wider">Síguenos</h4>
-          <div className="flex gap-4">
-            <a href="https://instagram.com" target="_blank" className="p-2 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] text-slate-400 hover:text-white border border-white/[0.05] transition-all cursor-pointer" aria-label="Instagram">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
-            </a>
-            <a href="https://facebook.com" target="_blank" className="p-2 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] text-slate-400 hover:text-white border border-white/[0.05] transition-all cursor-pointer" aria-label="Facebook">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-            </a>
-            <a href="https://twitter.com" target="_blank" className="p-2 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] text-slate-400 hover:text-white border border-white/[0.05] transition-all cursor-pointer" aria-label="Twitter / X">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
-            </a>
-            <a href="https://linkedin.com" target="_blank" className="p-2 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] text-slate-400 hover:text-white border border-white/[0.05] transition-all cursor-pointer" aria-label="LinkedIn">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
-            </a>
-          </div>
-          <p className="text-xs text-slate-500">
-            ¿Tienes dudas? Escríbenos a <a href="mailto:hola@dayabit.com" className="text-cyan-400 hover:underline">hola@dayabit.com</a>
+          <h4 className="text-white font-bold text-sm uppercase tracking-wider">Atención Directa</h4>
+          <p className="text-xs text-slate-400">
+            Cuautitlán Izcalli, Estado de México.<br />
+            Cobertura digital en todo el país.
           </p>
+          <div className="pt-2 space-y-1 text-xs">
+            <p className="text-slate-300">
+              WhatsApp: <a href="https://wa.me/525625785033" target="_blank" rel="noopener noreferrer" className="text-[#00b37e] hover:underline font-bold">+52 56 2578 5033</a>
+            </p>
+            <p className="text-slate-300">
+              Correo: <a href="mailto:hola@dayabit.com" className="text-slate-200 hover:underline">hola@dayabit.com</a>
+            </p>
+          </div>
         </div>
 
       </div>
 
       {/* Copyright Bar */}
-      <div className="max-w-7xl mx-auto px-6 pt-12 mt-12 border-t border-white/[0.04] flex flex-col lg:flex-row items-center justify-between gap-6 text-xs text-slate-500">
+      <div className="max-w-7xl mx-auto px-6 pt-12 mt-12 border-t border-slate-800/80 flex flex-col lg:flex-row items-center justify-between gap-6 text-xs text-slate-500">
         <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-center sm:text-left">
-          <p>© {currentYear} Dayabit. Todos los derechos reservados.</p>
+          <p>© {currentYear} Dayabit Cloud. Todos los derechos reservados.</p>
           <div className="flex flex-wrap justify-center sm:justify-start gap-4 text-slate-400">
             <button onClick={() => setActiveModal('terms')} className="hover:text-white transition-colors cursor-pointer font-medium">Términos y Condiciones</button>
-            <button onClick={() => setActiveModal('privacy')} className="hover:text-white transition-colors cursor-pointer font-medium font-sans">Aviso de Privacidad</button>
+            <button onClick={() => setActiveModal('privacy')} className="hover:text-white transition-colors cursor-pointer font-medium">Aviso de Privacidad</button>
             <button onClick={() => setActiveModal('billing')} className="hover:text-white transition-colors cursor-pointer font-medium">Facturación SAT CFDI 4.0</button>
           </div>
         </div>
         <p className="flex items-center gap-1">
-          Diseñado con <Heart className="w-3.5 h-3.5 fill-red-500/20 text-red-500 animate-pulse" /> por el equipo de Dayabit.
+          Hecho con <Heart className="w-3.5 h-3.5 fill-[#00b37e] text-[#00b37e]" /> por el equipo de Dayabit.
         </p>
       </div>
 
       {/* Legal Modals System */}
       {activeModal && (
-        <div className="fixed inset-0 z-[100] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="w-full max-w-2xl bg-[#090c16]/98 border border-white/[0.08] rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[100] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-2xl bg-white rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden flex flex-col max-h-[85vh] text-slate-800 animate-in fade-in zoom-in-95 duration-200">
             
             {/* Header */}
-            <div className="flex items-center gap-3 pb-4 mb-5 border-b border-white/[0.06]">
-              <div className="p-2 rounded-xl bg-violet-500/10 text-violet-400">
+            <div className="flex items-center gap-3 pb-4 mb-4 border-b border-slate-200">
+              <div className="p-2 rounded-xl bg-emerald-50 text-[#00b37e]">
                 {activeModal === 'terms' && <Scale className="w-5 h-5" />}
                 {activeModal === 'privacy' && <ShieldCheck className="w-5 h-5" />}
                 {activeModal === 'billing' && <FileText className="w-5 h-5" />}
               </div>
-              <h3 className="text-white font-display font-extrabold text-lg sm:text-xl">
+              <h3 className="text-slate-900 font-display font-extrabold text-lg sm:text-xl">
                 {activeModal === 'terms' && 'Términos y Condiciones de Uso'}
                 {activeModal === 'privacy' && 'Aviso de Privacidad Simplificado'}
                 {activeModal === 'billing' && 'Políticas de Facturación SAT CFDI 4.0'}
@@ -161,7 +135,7 @@ export default function Footer() {
               
               <button 
                 onClick={() => setActiveModal(null)} 
-                className="absolute top-4 right-4 p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                className="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
                 aria-label="Cerrar modal"
               >
                 <X className="w-5 h-5" />
@@ -169,112 +143,96 @@ export default function Footer() {
             </div>
 
             {/* Scrollable Content */}
-            <div className="overflow-y-auto pr-2 space-y-5 text-slate-300 text-xs sm:text-sm leading-relaxed text-left flex-1 max-h-[60vh] scrollbar-thin">
+            <div className="overflow-y-auto pr-2 space-y-4 text-slate-600 text-xs sm:text-sm leading-relaxed text-left flex-1 max-h-[60vh]">
               {activeModal === 'terms' && (
                 <>
                   <p>
-                    Bienvenido a Dayabit. Al navegar por nuestro portal web, elegir un plan o solicitar una cotización, el cliente acepta expresamente y de forma incondicional los presentes <strong>Términos y Condiciones de Servicio</strong>. Es responsabilidad absoluta del cliente leer y comprender este documento antes de realizar una adquisición.
+                    Bienvenido a Dayabit. Al navegar por nuestro portal web, elegir un plan o solicitar una cotización, el cliente acepta expresamente y de forma incondicional los presentes <strong>Términos y Condiciones de Servicio</strong>.
                   </p>
-                  <div className="space-y-4 pt-2">
-                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
-                      <h4 className="text-white font-bold text-sm mb-1.5 flex items-center gap-1.5 font-display">
-                        <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+                  <div className="space-y-3.5 pt-2">
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+                      <h4 className="text-slate-900 font-bold text-sm mb-1 flex items-center gap-1.5 font-display">
+                        <CheckCircle2 className="w-4 h-4 text-[#00b37e]" />
                         1. Gastos de Hosting y Dominio
                       </h4>
-                      <p className="text-slate-400 text-xs sm:text-sm">
-                        Todos los gastos anuales de renovación del Hosting (alojamiento en servidor) y del Dominio (ej. <em>tunegocio.com</em>) corren <strong>únicamente y exclusivamente por cuenta del cliente</strong>. Dayabit actúa estrictamente como desarrollador, programador e integrador inicial del software. La falta de pago oportuno de estos servicios de alojamiento o dominios resultará en la baja automática de su sitio web por parte del proveedor respectivo, liberando a Dayabit de cualquier responsabilidad de operación o de resguardo de archivos.
+                      <p className="text-slate-600 text-xs sm:text-sm">
+                        Todos los gastos anuales de renovación del Hosting y del Dominio (ej. <em>tunegocio.com</em>) corren <strong>únicamente y exclusivamente por cuenta del cliente</strong>. Dayabit actúa estrictamente como desarrollador, programador e integrador inicial del software.
                       </p>
                     </div>
 
-                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
-                      <h4 className="text-white font-bold text-sm mb-1.5 flex items-center gap-1.5 font-display">
-                        <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+                      <h4 className="text-slate-900 font-bold text-sm mb-1 flex items-center gap-1.5 font-display">
+                        <CheckCircle2 className="w-4 h-4 text-[#00b37e]" />
                         2. Límite de Responsabilidad Técnica y Uptime
                       </h4>
-                      <p className="text-slate-400 text-xs sm:text-sm">
-                        Dayabit entrega proyectos optimizados con altos estándares de calidad. No obstante, no nos hacemos responsables de pérdidas financieras, daños comerciales, caídas del sistema, cortes de red, actualizaciones de terceros que causen desconfiguraciones del código, o problemas técnicos directos en los servidores contratados por el cliente. Tampoco asumimos responsabilidad por fallas o interrupciones en la API de WhatsApp, la cual depende de Meta Platforms, Inc.
+                      <p className="text-slate-600 text-xs sm:text-sm">
+                        Dayabit entrega proyectos optimizados con altos estándares de calidad. No obstante, no nos hacemos responsables de pérdidas financieras o caídas en los servidores contratados por el cliente, ni por fallas o interrupciones en la API de WhatsApp, la cual depende de Meta Platforms, Inc.
                       </p>
                     </div>
 
-                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
-                      <h4 className="text-white font-bold text-sm mb-1.5 flex items-center gap-1.5 font-display">
-                        <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+                      <h4 className="text-slate-900 font-bold text-sm mb-1 flex items-center gap-1.5 font-display">
+                        <CheckCircle2 className="w-4 h-4 text-[#00b37e]" />
                         3. Exclusión de Reclamaciones Históricas
                       </h4>
-                      <p className="text-slate-400 text-xs sm:text-sm">
-                        Al entregar el proyecto conforme al plan contratado, se asume la entera conformidad del cliente. Dayabit <strong>no aceptará reclamaciones, demandas o solicitudes de compensación en plazos históricos posteriores (de 1, 2 o más años)</strong> alegando que no fueron informados de las tarifas de hosting, dominios o de la estructura operativa de su sitio. Es obligación del cliente informarse debidamente de lo que está adquiriendo.
+                      <p className="text-slate-600 text-xs sm:text-sm">
+                        Al entregar el proyecto conforme al plan contratado, se asume la entera conformidad del cliente. Dayabit no aceptará reclamaciones en plazos históricos posteriores (de 1, 2 o más años) alegando desinformación de las tarifas de hosting o dominios.
                       </p>
                     </div>
                   </div>
-                  <p className="text-xs text-slate-500 italic mt-4">
-                    Dayabit se reserva el derecho de actualizar estos términos en cualquier momento, los cuales se encontrarán siempre vigentes en este portal oficial.
-                  </p>
                 </>
               )}
 
               {activeModal === 'privacy' && (
                 <>
                   <p>
-                    En cumplimiento con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP) de México, Dayabit hace de su conocimiento este Aviso de Privacidad para garantizar que su información personal sea tratada con la mayor confidencialidad y apego legal.
+                    En cumplimiento con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP) de México, Dayabit garantiza que su información personal sea tratada con la mayor confidencialidad y apego legal.
                   </p>
-                  <div className="space-y-4 pt-2">
-                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
-                      <h4 className="text-white font-bold text-sm mb-1.5 font-display">Datos Recabados</h4>
-                      <p className="text-slate-400 text-xs sm:text-sm">
+                  <div className="space-y-3.5 pt-2">
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+                      <h4 className="text-slate-900 font-bold text-sm mb-1 font-display">Datos Recabados</h4>
+                      <p className="text-slate-600 text-xs sm:text-sm">
                         Los únicos datos que procesamos en esta landing page son aquellos ingresados en el simulador interactivo de pedidos o en el chatbot de cotizaciones: nombre del negocio, volumen de productos, requerimientos de logotipo y elección de plan.
                       </p>
                     </div>
 
-                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
-                      <h4 className="text-white font-bold text-sm mb-1.5 font-display">Finalidad del Tratamiento</h4>
-                      <p className="text-slate-400 text-xs sm:text-sm">
-                        Estos datos son compilados localmente en un formato de ticket estructurado con el único fin de enviarse mediante redirección al número de soporte de WhatsApp de Dayabit (`+52 56 2578 5033`), facilitando el análisis preliminar de su cotización de forma profesional y transparente.
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+                      <h4 className="text-slate-900 font-bold text-sm mb-1 font-display">Finalidad del Tratamiento</h4>
+                      <p className="text-slate-600 text-xs sm:text-sm">
+                        Estos datos son compilados en un formato de ticket estructurado con el único fin de enviarse mediante redirección al número de soporte de WhatsApp de Dayabit (`+52 56 2578 5033`).
                       </p>
                     </div>
 
-                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
-                      <h4 className="text-white font-bold text-sm mb-1.5 font-display">Protección y Compartición de Datos</h4>
-                      <p className="text-slate-400 text-xs sm:text-sm">
-                        Dayabit <strong>no recopila estos datos en bases de datos del servidor ni los comparte, vende o transfiere a terceras personas</strong> bajo ningún concepto comercial o publicitario.
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+                      <h4 className="text-slate-900 font-bold text-sm mb-1 font-display">No Venta de Datos</h4>
+                      <p className="text-slate-600 text-xs sm:text-sm">
+                        Dayabit <strong>no comercializa ni comparte sus datos con terceros</strong> bajo ningún concepto.
                       </p>
                     </div>
                   </div>
-                  <p className="text-xs text-slate-500">
-                    Cualquier duda o solicitud para ejercer sus derechos ARCO de acceso, rectificación, cancelación u oposición de datos de contacto puede ser canalizada vía correo a <a href="mailto:hola@dayabit.com" className="text-cyan-400 hover:underline">hola@dayabit.com</a>.
-                  </p>
                 </>
               )}
 
               {activeModal === 'billing' && (
                 <>
                   <p>
-                    Para la formalidad jurídica y fiscal de las operaciones de nuestros clientes comerciales, pequeñas y medianas empresas o profesionistas independientes en México, Dayabit opera con un modelo de facturación formal de alta confianza.
+                    Para la formalidad jurídica y fiscal de las operaciones de nuestros clientes comerciales, Dayabit opera con un modelo de facturación formal de alta confianza.
                   </p>
-                  <div className="space-y-4 pt-2">
-                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
-                      <h4 className="text-white font-bold text-sm mb-1.5 flex items-center gap-1.5 font-display">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <div className="space-y-3.5 pt-2">
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+                      <h4 className="text-slate-900 font-bold text-sm mb-1 flex items-center gap-1.5 font-display">
+                        <CheckCircle2 className="w-4 h-4 text-[#00b37e]" />
                         Facturación Fiscal SAT CFDI 4.0
                       </h4>
-                      <p className="text-slate-400 text-xs sm:text-sm">
-                        Todos nuestros servicios y precios publicados en este portal <strong>ya incluyen los impuestos fiscales correspondientes (IVA)</strong>. Tras realizar la contratación y validación de tu cotización, generamos formalmente tu comprobante fiscal digital por internet utilizando la versión vigente del SAT: <strong>CFDI 4.0</strong>.
+                      <p className="text-slate-600 text-xs sm:text-sm">
+                        Todos nuestros servicios y precios publicados <strong>ya incluyen impuestos fiscales (IVA)</strong>. Emitimos formalmente comprobantes fiscales digitales por internet utilizando la versión <strong>CFDI 4.0</strong>.
                       </p>
                     </div>
 
-                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
-                      <h4 className="text-white font-bold text-sm mb-1.5 flex items-center gap-1.5 font-display">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                        Requisitos de Emisión
-                      </h4>
-                      <p className="text-slate-400 text-xs sm:text-sm">
-                        Para poder expedir la factura de manera correcta, nuestro equipo le solicitará la Constancia de Situación Fiscal (CSF) de su empresa, uso de CFDI (ej. Gastos en general), régimen fiscal y correo electrónico de destino para la entrega de los archivos XML y PDF.
-                      </p>
-                    </div>
-
-                    <div className="p-4 rounded-2xl bg-[#090c16] border border-emerald-500/10 bg-gradient-to-r from-emerald-500/5 to-teal-500/5">
-                      <h4 className="text-white font-bold text-sm mb-1">Negocio 100% Respaldado</h4>
-                      <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
-                        Trabajar con Dayabit te brinda la seguridad de un servicio profesional formalmente registrado, de modo que cada centavo invertido en tu presencia digital es deducible de impuestos y cuenta con total validez legal y de soporte de ingeniería para la seguridad de tu empresa.
+                    <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200/80">
+                      <h4 className="text-emerald-950 font-bold text-sm mb-1">Negocio Formal y Seguro</h4>
+                      <p className="text-emerald-900 text-xs sm:text-sm leading-relaxed">
+                        Cada proyecto adquirido con Dayabit es 100% deducible de impuestos y cuenta con total respaldo fiscal y de ingeniería de software.
                       </p>
                     </div>
                   </div>
@@ -283,10 +241,10 @@ export default function Footer() {
             </div>
 
             {/* Modal Action Button */}
-            <div className="mt-6 pt-4 border-t border-white/[0.06] flex justify-end">
+            <div className="mt-5 pt-3 border-t border-slate-200 flex justify-end">
               <button 
                 onClick={() => setActiveModal(null)} 
-                className="px-5 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-semibold shadow-lg hover:shadow-violet-600/30 transition-all cursor-pointer"
+                className="px-6 py-2.5 rounded-full bg-[#00b37e] hover:bg-[#009e6f] text-white text-xs font-bold shadow-sm transition-all cursor-pointer"
               >
                 Entendido, cerrar
               </button>
