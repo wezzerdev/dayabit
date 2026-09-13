@@ -229,6 +229,7 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
 
   // Form states for brand customization
   const [businessName, setBusinessName] = useState(activeStore.businessName);
+  const [category, setCategory] = useState(activeStore.category || 'Alimentos y Bebidas');
   const [tagline, setTagline] = useState(activeStore.tagline);
   const [description, setDescription] = useState(activeStore.description);
   const [whatsapp, setWhatsapp] = useState(activeStore.whatsapp);
@@ -295,6 +296,7 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
       setActiveStore(s);
       TenantStorageService.setActiveTenantId(s.id);
       setBusinessName(s.businessName);
+      setCategory(s.category || 'Alimentos y Bebidas');
       setTagline(s.tagline);
       setDescription(s.description);
       setWhatsapp(s.whatsapp);
@@ -331,6 +333,38 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
     if (updated) {
       setActiveStore(updated);
       setAllStores(TenantStorageService.getAllStores());
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 2500);
+    }
+  };
+
+  const handleLoadNicheProducts = (niche: ProductNiche) => {
+    const updated = TenantStorageService.applyNicheProductsToStore(activeStore.id, niche);
+    if (updated) {
+      setActiveStore(updated);
+      setAllStores(TenantStorageService.getAllStores());
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 2500);
+    }
+  };
+
+  const handleApplyFullNiche = (niche: ProductNiche) => {
+    const updated = TenantStorageService.applyFullNicheToStore(activeStore.id, niche);
+    if (updated) {
+      setActiveStore(updated);
+      setAllStores(TenantStorageService.getAllStores());
+      setCategory(updated.category);
+      setTagline(updated.tagline);
+      setDescription(updated.description);
+      setBannerUrl(updated.bannerUrl || '');
+      setActiveTemplateId(resolveStoreTemplate(updated));
+      const t = resolveStoreTheme(updated);
+      setThemeMode(t.palette);
+      setPageBackground(t.pageBackground);
+      setCardBackground(t.cardBackground);
+      setTextColor(t.textColor);
+      setAccentColor(t.accentColor);
+      setBrandColor(t.accentColor);
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 2500);
     }
@@ -380,7 +414,8 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
       themeConfig,
       address,
       hours,
-      bannerUrl
+      bannerUrl,
+      category
     });
 
     if (updated) {
@@ -747,6 +782,58 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
               </button>
             </div>
 
+            {/* Quick Niche Catalog Loader */}
+            <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-emerald-50 via-teal-50 to-sky-50 border border-emerald-200/80 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-3.5">
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-display font-black text-sm text-slate-900">
+                    ¿Cambiaste el rubro de tu negocio? Carga un catálogo de muestra al instante
+                  </h4>
+                  <p className="text-xs text-slate-600">
+                    Reemplaza los artículos actuales por un catálogo profesional con fotos HD listo para vender:
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <button
+                  type="button"
+                  onClick={() => handleLoadNicheProducts('food')}
+                  className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 text-xs font-bold transition-all shadow-2xs cursor-pointer flex items-center gap-1"
+                >
+                  <span>☕</span>
+                  <span>Alimentos & Café</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleLoadNicheProducts('fashion')}
+                  className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 text-xs font-bold transition-all shadow-2xs cursor-pointer flex items-center gap-1"
+                >
+                  <span>👗</span>
+                  <span>Moda & Ropa</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleLoadNicheProducts('services')}
+                  className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 text-xs font-bold transition-all shadow-2xs cursor-pointer flex items-center gap-1"
+                >
+                  <span>💼</span>
+                  <span>Servicios B2B</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleLoadNicheProducts('general')}
+                  className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 text-xs font-bold transition-all shadow-2xs cursor-pointer flex items-center gap-1"
+                >
+                  <span>⚡</span>
+                  <span>Ferretería / Retail</span>
+                </button>
+              </div>
+            </div>
+
             {/* Products Table / Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {activeStore.products.map((prod) => {
@@ -1039,6 +1126,38 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
                   onChange={(e) => setBannerUrl(e.target.value)}
                   className="w-full py-2.5 px-3 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-[#00b37e]"
                 />
+              </div>
+
+              {/* Giro / Rubro Comercial */}
+              <div className="space-y-2 pt-2 border-t border-slate-100">
+                <label className="text-xs font-bold text-slate-700 block">Rubro o Giro Comercial del Negocio</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="w-full py-2.5 px-3 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#00b37e] bg-white"
+                  >
+                    <option value="Alimentos y Bebidas">Alimentos y Bebidas (Cafetería, Restaurante, Snacks)</option>
+                    <option value="Moda & Streetwear">Moda & Ropa (Boutique, Calzado, Lookbook)</option>
+                    <option value="Asesoría Fiscal & Legal">Servicios Profesionales (Consultoría, Asesoría, B2B)</option>
+                    <option value="Ferretería Industrial">Ferretería & Retail (Herramientas, Mayoreo, Tienda General)</option>
+                  </select>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const niche: ProductNiche = 
+                        category.includes('Alimentos') ? 'food' :
+                        category.includes('Moda') ? 'fashion' :
+                        category.includes('Fiscal') || category.includes('Servicios') ? 'services' : 'general';
+                      handleApplyFullNiche(niche);
+                    }}
+                    className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Adaptar Plantilla & Artículos a este Rubro</span>
+                  </button>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
@@ -1747,36 +1866,98 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
               </div>
             </div>
 
-            {/* Quick Template Switcher Toolbar inside Simulator */}
-            <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <LayoutTemplate className="w-4 h-4 text-[#00b37e]" />
-                <span className="text-xs font-bold text-slate-800">
-                  Probar con otra Plantilla:
-                </span>
+            {/* Quick Demo Switcher by Niche & Templates */}
+            <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-2xs space-y-3">
+              {/* Row 1: Switch by Business Niche (Store + Real Products) */}
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#00b37e] animate-pulse" />
+                  <div>
+                    <span className="text-xs font-black text-slate-800 uppercase tracking-wider block">
+                      Ver Tienda de Demostración por Rubro:
+                    </span>
+                    <span className="text-[10px] text-slate-400">
+                      Cambia la tienda activa y muestra los artículos reales de cada giro comercial
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {([
+                    { id: 'store-geisha', label: 'Alimentos & Cafetería', icon: '🍔' },
+                    { id: 'store-boutique', label: 'Moda & Boutique', icon: '👗' },
+                    { id: 'store-consultoria', label: 'Corporativo & B2B', icon: '💼' },
+                    { id: 'store-ferreteria', label: 'Ferretería & Retail', icon: '⚡' }
+                  ] as const).map(item => {
+                    const isSelected = activeStore.id === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => handleSelectStore(item.id)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                          isSelected
+                            ? 'bg-[#00b37e] text-white shadow-xs scale-105 ring-2 ring-[#00b37e]/30'
+                            : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                        }`}
+                      >
+                        <span>{item.icon}</span>
+                        <span>{item.label}</span>
+                        {isSelected && <Check className="w-3.5 h-3.5 text-white" />}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
-              <div className="flex items-center gap-1.5 flex-wrap">
-                {STORE_TEMPLATES_LIST.map(tmpl => {
-                  const isCurrent = activeTemplateId === tmpl.id;
-                  const icon = tmpl.id === 'modern_delivery' ? '🍔' : tmpl.id === 'boutique_editorial' ? '👗' : tmpl.id === 'corporate_services' ? '💼' : '⚡';
-                  return (
-                    <button
-                      key={tmpl.id}
-                      type="button"
-                      onClick={() => handleApplyTemplate(tmpl.id)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                        isCurrent
-                          ? 'bg-slate-900 text-white shadow-xs scale-105'
-                          : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
-                      }`}
-                    >
-                      <span>{icon}</span>
-                      <span>{tmpl.name.split('&')[0].trim()}</span>
-                      {isCurrent && <Check className="w-3 h-3 text-emerald-400" />}
-                    </button>
-                  );
-                })}
+              {/* Row 2: Switch Visual Template & Option to load Sample Products */}
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-0.5">
+                <div className="flex items-center gap-2">
+                  <LayoutTemplate className="w-4 h-4 text-slate-400" />
+                  <span className="text-xs text-slate-600">
+                    Plantilla activa de <strong className="text-slate-900 font-bold">{activeStore.businessName}</strong>:
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {STORE_TEMPLATES_LIST.map(tmpl => {
+                    const isCurrent = activeTemplateId === tmpl.id;
+                    const icon = tmpl.id === 'modern_delivery' ? '🍔' : tmpl.id === 'boutique_editorial' ? '👗' : tmpl.id === 'corporate_services' ? '💼' : '⚡';
+                    return (
+                      <button
+                        key={tmpl.id}
+                        type="button"
+                        onClick={() => handleApplyTemplate(tmpl.id)}
+                        className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                          isCurrent
+                            ? 'bg-slate-900 text-white shadow-xs scale-105'
+                            : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
+                        }`}
+                      >
+                        <span>{icon}</span>
+                        <span>{tmpl.name.split('&')[0].trim()}</span>
+                        {isCurrent && <Check className="w-3 h-3 text-emerald-400" />}
+                      </button>
+                    );
+                  })}
+
+                  {/* Button to sync articles to this template's niche */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const niche: ProductNiche = 
+                        activeTemplateId === 'modern_delivery' ? 'food' :
+                        activeTemplateId === 'boutique_editorial' ? 'fashion' :
+                        activeTemplateId === 'corporate_services' ? 'services' : 'general';
+                      handleApplyFullNiche(niche);
+                    }}
+                    className="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                    title="Adaptar los artículos de esta tienda al rubro de la plantilla seleccionada"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Adaptar Artículos a este Rubro</span>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -1784,7 +1965,7 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
             <div className="flex justify-center items-center py-2 px-2 overflow-x-auto">
               {previewDevice === 'mobile' ? (
                 /* Luxury iPhone 16 Pro Titanium Mockup Frame */
-                <div className="w-full max-w-[365px] sm:max-w-[390px] h-[670px] sm:h-[740px] bg-slate-950 rounded-[52px] p-2.5 sm:p-3 border-[8px] border-slate-800 shadow-2xl relative flex flex-col mx-auto overflow-hidden ring-1 ring-white/10">
+                <div className="w-full max-w-[375px] sm:max-w-[400px] h-[700px] sm:h-[750px] bg-slate-950 rounded-[52px] p-2.5 sm:p-3 border-[8px] border-slate-800 shadow-2xl relative flex flex-col mx-auto overflow-hidden ring-1 ring-white/10">
                   
                   {/* Top iOS Status Bar */}
                   <div className="w-full h-8 px-5 flex items-center justify-between text-white text-[11px] font-semibold shrink-0 z-30 select-none bg-black/40 backdrop-blur-sm">

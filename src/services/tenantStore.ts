@@ -1,4 +1,4 @@
-import type { TenantStore, PlanTier, PlanDetails, StoreProduct } from '../types/tenant';
+import type { TenantStore, PlanTier, PlanDetails, StoreProduct, ProductNiche, StoreTemplateId, StoreThemeConfig } from '../types/tenant';
 import { THEME_PRESETS } from '../utils/themePresets';
 
 export const PLANS: Record<PlanTier, PlanDetails> = {
@@ -525,6 +525,80 @@ const SEED_STORES: TenantStore[] = [
   }
 ];
 
+export interface NicheCatalogPreset {
+  niche: ProductNiche;
+  title: string;
+  badge: string;
+  category: string;
+  tagline: string;
+  description: string;
+  bannerUrl: string;
+  defaultTemplate: StoreTemplateId;
+  themeConfig: StoreThemeConfig;
+  brandColor: string;
+  sampleStoreId: string;
+  products: StoreProduct[];
+}
+
+export const NICHE_CATALOG_PRESETS: Record<ProductNiche, NicheCatalogPreset> = {
+  food: {
+    niche: 'food',
+    title: 'Alimentos, Cafetería & Delivery',
+    badge: '🍔 Delivery & Menú',
+    category: 'Alimentos y Bebidas',
+    tagline: 'Café de altura y repostería artesanal en la puerta de tu casa',
+    description: 'Seleccionamos granos finos de Chiapas y Veracruz tostados semanalmente. Haz tu pedido y recíbelo en minutos con atención personalizada por WhatsApp.',
+    bannerUrl: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=1200&auto=format&fit=crop&q=80',
+    defaultTemplate: 'modern_delivery',
+    themeConfig: THEME_PRESETS.cream,
+    brandColor: '#b45309',
+    sampleStoreId: 'store-geisha',
+    products: SEED_STORES[0].products
+  },
+  fashion: {
+    niche: 'fashion',
+    title: 'Moda, Ropa & Lookbook',
+    badge: '👗 Boutique Editorial',
+    category: 'Moda & Streetwear',
+    tagline: 'Prendas exclusivas de corte contemporáneo y streetwear minimalista',
+    description: 'Diseño independiente elaborado con textiles de alta densidad 400 GSM. Envíos exprés a todo México y atención personalizada por WhatsApp.',
+    bannerUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&auto=format&fit=crop&q=80',
+    defaultTemplate: 'boutique_editorial',
+    themeConfig: THEME_PRESETS.dark,
+    brandColor: '#7c3aed',
+    sampleStoreId: 'store-boutique',
+    products: SEED_STORES[1].products
+  },
+  services: {
+    niche: 'services',
+    title: 'Consultoría, Servicios & B2B',
+    badge: '💼 Corporativo B2B',
+    category: 'Asesoría Fiscal & Legal',
+    tagline: 'Estrategias fiscales preventivas y blindaje patrimonial para empresas y profesionistas',
+    description: 'Especialistas en Régimen Simplificado de Confianza (RESICO), auditorías preventivas del SAT y planeación fiscal con CFDI 4.0.',
+    bannerUrl: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&auto=format&fit=crop&q=80',
+    defaultTemplate: 'corporate_services',
+    themeConfig: THEME_PRESETS.light,
+    brandColor: '#2563eb',
+    sampleStoreId: 'store-consultoria',
+    products: SEED_STORES[2].products
+  },
+  general: {
+    niche: 'general',
+    title: 'Ferretería, Mayoreo & Retail',
+    badge: '⚡ Catálogo Express',
+    category: 'Ferretería Industrial',
+    tagline: 'Distribuidora líder de herramientas eléctricas, manuales y equipo de seguridad',
+    description: 'Venta al menudeo y mayoreo de marcas líderes (DeWalt, Urrea, Makita, Truper) con entrega inmediata y facturación SAT CFDI 4.0.',
+    bannerUrl: 'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=1200&auto=format&fit=crop&q=80',
+    defaultTemplate: 'catalog_express',
+    themeConfig: THEME_PRESETS.mint,
+    brandColor: '#ea580c',
+    sampleStoreId: 'store-ferreteria',
+    products: SEED_STORES[3].products
+  }
+};
+
 const STORAGE_KEY = 'dayabit_tenant_stores_v1';
 const ACTIVE_TENANT_KEY = 'dayabit_active_tenant_id';
 
@@ -669,5 +743,35 @@ export class TenantStorageService {
 
   public static setActiveTenantId(id: string): void {
     localStorage.setItem(ACTIVE_TENANT_KEY, id);
+  }
+
+  public static getSampleProductsForNiche(niche: ProductNiche): StoreProduct[] {
+    const preset = NICHE_CATALOG_PRESETS[niche];
+    if (!preset) return [];
+    return preset.products.map(p => ({
+      ...p,
+      id: `p-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`
+    }));
+  }
+
+  public static applyNicheProductsToStore(storeId: string, niche: ProductNiche): TenantStore | null {
+    const products = this.getSampleProductsForNiche(niche);
+    return this.updateStore(storeId, { products });
+  }
+
+  public static applyFullNicheToStore(storeId: string, niche: ProductNiche): TenantStore | null {
+    const preset = NICHE_CATALOG_PRESETS[niche];
+    if (!preset) return null;
+    const products = this.getSampleProductsForNiche(niche);
+    return this.updateStore(storeId, {
+      category: preset.category,
+      tagline: preset.tagline,
+      description: preset.description,
+      bannerUrl: preset.bannerUrl,
+      templateId: preset.defaultTemplate,
+      brandColor: preset.brandColor,
+      themeConfig: preset.themeConfig,
+      products
+    });
   }
 }

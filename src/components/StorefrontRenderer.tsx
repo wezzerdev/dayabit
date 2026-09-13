@@ -136,7 +136,7 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
 
   return (
     <div 
-      className={`${isMobileSimulator ? 'min-h-full' : 'min-h-screen'} flex flex-col justify-between w-full overflow-x-hidden text-left relative transition-colors duration-200`}
+      className={`${isMobileSimulator ? 'min-h-full' : 'min-h-screen'} flex flex-col justify-between w-full max-w-full text-left relative transition-colors duration-200`}
       style={{
         backgroundColor: theme.pageBackground,
         color: theme.textColor,
@@ -378,78 +378,72 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
 
       {/* ================= TEMPLATE 3: CORPORATIVA & SERVICIOS B2B ================= */}
       {activeTemplate === 'corporate_services' && (
-        <div className={`mx-auto w-full ${isMobileSimulator ? 'px-3 py-4' : 'max-w-6xl px-4 sm:px-6 py-6'} space-y-6`}>
+        <div className={`mx-auto w-full ${isMobileSimulator ? 'px-2.5 py-3' : 'max-w-6xl px-4 sm:px-6 py-6'} space-y-4 sm:space-y-6`}>
           {/* Executive Value Proposition Banner */}
           <div 
-            className="rounded-3xl p-6 sm:p-10 border shadow-sm space-y-5"
+            className={`${isMobileSimulator ? 'rounded-2xl p-3.5 space-y-3' : 'rounded-3xl p-6 sm:p-10 space-y-5'} border shadow-sm`}
             style={{ backgroundColor: theme.cardBackground, borderColor: theme.borderColor }}
           >
-            <div className="max-w-3xl space-y-3">
+            <div className="max-w-3xl space-y-2 sm:space-y-3">
               <span 
-                className="text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full inline-block"
+                className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full inline-block"
                 style={{ backgroundColor: `${theme.accentColor}18`, color: theme.accentColor }}
               >
                 Firma Profesional • {store.category}
               </span>
-              <h2 className="font-display font-black text-2xl sm:text-4xl tracking-tight leading-tight" style={{ color: theme.textColor }}>
+              <h2 className={`font-display font-black tracking-tight leading-tight ${isMobileSimulator ? 'text-base sm:text-xl line-clamp-2' : 'text-2xl sm:text-4xl'}`} style={{ color: theme.textColor }}>
                 {store.tagline || store.businessName}
               </h2>
-              <p className="text-xs sm:text-sm leading-relaxed" style={{ color: theme.textMutedColor }}>
+              <p className={`leading-relaxed ${isMobileSimulator ? 'text-[11px] line-clamp-2' : 'text-xs sm:text-sm'}`} style={{ color: theme.textMutedColor }}>
                 {store.description}
               </p>
             </div>
 
-            {/* 3 Trust Credibility Metric Badges */}
-            <div className="grid grid-cols-3 gap-1.5 sm:gap-3 pt-2">
-              <div className="p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border text-center sm:text-left space-y-0.5 sm:space-y-1 shadow-2xs" style={{ backgroundColor: `${theme.textColor}04`, borderColor: theme.borderColor }}>
-                <div className="flex items-center justify-center sm:justify-start gap-1.5" style={{ color: theme.accentColor }}>
-                  <Award className="w-3.5 h-3.5 shrink-0" />
-                  <span className="font-display font-black text-xs sm:text-xl leading-none">+{store.aboutUs?.experienceYears || 10} Años</span>
+            {/* 3 Trust Credibility Metric Badges - Compact on mobile */}
+            <div className={`grid grid-cols-3 ${isMobileSimulator ? 'gap-1' : 'gap-1.5 sm:gap-3'} pt-1`}>
+              <div className={`${isMobileSimulator ? 'p-1.5 rounded-xl' : 'p-2.5 sm:p-4 rounded-xl sm:rounded-2xl'} border text-center space-y-0.5 shadow-2xs`} style={{ backgroundColor: `${theme.textColor}04`, borderColor: theme.borderColor }}>
+                <div className="flex items-center justify-center gap-1" style={{ color: theme.accentColor }}>
+                  <Award className="w-3 h-3 shrink-0" />
+                  <span className={`font-display font-black leading-none ${isMobileSimulator ? 'text-[10px]' : 'text-xs sm:text-xl'}`}>+{store.aboutUs?.experienceYears || 5} Años</span>
                 </div>
-                <p className="text-[9px] sm:text-[11px] opacity-70 leading-tight">Experiencia y respaldo legal</p>
+                <p className={`${isMobileSimulator ? 'text-[7px]' : 'text-[9px] sm:text-[11px]'} opacity-70 leading-tight truncate`}>Experiencia</p>
               </div>
 
-              <div className="p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border text-center sm:text-left space-y-0.5 sm:space-y-1 shadow-2xs" style={{ backgroundColor: `${theme.textColor}04`, borderColor: theme.borderColor }}>
-                <div className="flex items-center justify-center sm:justify-start gap-1.5 text-emerald-500">
-                  <FileText className="w-3.5 h-3.5 shrink-0" />
-                  <span className="font-display font-black text-xs sm:text-xl leading-none">SAT CFDI</span>
+              <div className={`${isMobileSimulator ? 'p-1.5 rounded-xl' : 'p-2.5 sm:p-4 rounded-xl sm:rounded-2xl'} border text-center space-y-0.5 shadow-2xs`} style={{ backgroundColor: `${theme.textColor}04`, borderColor: theme.borderColor }}>
+                <div className="flex items-center justify-center gap-1 text-emerald-500">
+                  <FileText className="w-3 h-3 shrink-0" />
+                  <span className={`font-display font-black leading-none ${isMobileSimulator ? 'text-[10px]' : 'text-xs sm:text-xl'}`}>SAT CFDI</span>
                 </div>
-                <p className="text-[9px] sm:text-[11px] opacity-70 leading-tight">100% deducible de impuestos</p>
+                <p className={`${isMobileSimulator ? 'text-[7px]' : 'text-[9px] sm:text-[11px]'} opacity-70 leading-tight truncate`}>Facturación</p>
               </div>
 
-              <div className="p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border text-center sm:text-left space-y-0.5 sm:space-y-1 shadow-2xs" style={{ backgroundColor: `${theme.textColor}04`, borderColor: theme.borderColor }}>
-                <div className="flex items-center justify-center sm:justify-start gap-1.5 text-blue-500">
-                  <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-                  <span className="font-display font-black text-xs sm:text-xl leading-none">Confidencial</span>
+              <div className={`${isMobileSimulator ? 'p-1.5 rounded-xl' : 'p-2.5 sm:p-4 rounded-xl sm:rounded-2xl'} border text-center space-y-0.5 shadow-2xs`} style={{ backgroundColor: `${theme.textColor}04`, borderColor: theme.borderColor }}>
+                <div className="flex items-center justify-center gap-1 text-blue-500">
+                  <ShieldCheck className="w-3 h-3 shrink-0" />
+                  <span className={`font-display font-black leading-none ${isMobileSimulator ? 'text-[10px]' : 'text-xs sm:text-xl'}`}>Garantía</span>
                 </div>
-                <p className="text-[9px] sm:text-[11px] opacity-70 leading-tight">Contrato formal garantizado</p>
+                <p className={`${isMobileSimulator ? 'text-[7px]' : 'text-[9px] sm:text-[11px]'} opacity-70 leading-tight truncate`}>Contrato Legal</p>
               </div>
             </div>
 
             {/* 3-Step Process Workflow Banner */}
-            <div className="pt-3 border-t space-y-2.5" style={{ borderColor: theme.borderColor }}>
-              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider opacity-60 block">Metodología de Trabajo:</span>
-              <div className="grid grid-cols-3 gap-2 text-[10px] sm:text-xs">
-                <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-1 sm:gap-2.5">
-                  <span className="w-5 h-5 rounded-full flex items-center justify-center font-bold text-white shrink-0 text-[10px]" style={{ backgroundColor: theme.accentColor }}>1</span>
-                  <div>
-                    <h5 className="font-bold text-[10px] sm:text-xs">Diagnóstico</h5>
-                    <p className="text-[9px] sm:text-[11px] opacity-70 hidden sm:block">Evaluamos tu situación.</p>
-                  </div>
+            <div className="pt-2 border-t space-y-1.5" style={{ borderColor: theme.borderColor }}>
+              <span className="text-[9px] sm:text-[11px] font-bold uppercase tracking-wider opacity-60 block">Metodología de Trabajo:</span>
+              <div className={`grid grid-cols-3 ${isMobileSimulator ? 'gap-1 text-[8px]' : 'gap-2 text-[10px] sm:text-xs'}`}>
+                <div className="flex flex-col items-center text-center gap-0.5">
+                  <span className={`${isMobileSimulator ? 'w-4 h-4 text-[8px]' : 'w-5 h-5 text-[10px]'} rounded-full flex items-center justify-center font-bold text-white shrink-0`} style={{ backgroundColor: theme.accentColor }}>1</span>
+                  <h5 className="font-bold truncate w-full">Diagnóstico</h5>
+                  <p className="opacity-70 hidden sm:block">Evaluamos tu situación.</p>
                 </div>
-                <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-1 sm:gap-2.5">
-                  <span className="w-5 h-5 rounded-full flex items-center justify-center font-bold text-white shrink-0 text-[10px]" style={{ backgroundColor: theme.accentColor }}>2</span>
-                  <div>
-                    <h5 className="font-bold text-[10px] sm:text-xs">Propuesta</h5>
-                    <p className="text-[9px] sm:text-[11px] opacity-70 hidden sm:block">Estrategia y cotización.</p>
-                  </div>
+                <div className="flex flex-col items-center text-center gap-0.5">
+                  <span className={`${isMobileSimulator ? 'w-4 h-4 text-[8px]' : 'w-5 h-5 text-[10px]'} rounded-full flex items-center justify-center font-bold text-white shrink-0`} style={{ backgroundColor: theme.accentColor }}>2</span>
+                  <h5 className="font-bold truncate w-full">Propuesta</h5>
+                  <p className="opacity-70 hidden sm:block">Estrategia y cotización.</p>
                 </div>
-                <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-1 sm:gap-2.5">
-                  <span className="w-5 h-5 rounded-full flex items-center justify-center font-bold text-white shrink-0 text-[10px]" style={{ backgroundColor: theme.accentColor }}>3</span>
-                  <div>
-                    <h5 className="font-bold text-[10px] sm:text-xs">Ejecución</h5>
-                    <p className="text-[9px] sm:text-[11px] opacity-70 hidden sm:block">Entregables y soporte.</p>
-                  </div>
+                <div className="flex flex-col items-center text-center gap-0.5">
+                  <span className={`${isMobileSimulator ? 'w-4 h-4 text-[8px]' : 'w-5 h-5 text-[10px]'} rounded-full flex items-center justify-center font-bold text-white shrink-0`} style={{ backgroundColor: theme.accentColor }}>3</span>
+                  <h5 className="font-bold truncate w-full">Ejecución</h5>
+                  <p className="opacity-70 hidden sm:block">Entregables y soporte.</p>
                 </div>
               </div>
             </div>
@@ -673,13 +667,13 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
             {filteredProducts.map(service => (
               <div 
                 key={service.id}
-                className="p-5 sm:p-6 rounded-3xl border shadow-sm flex flex-col justify-between transition-transform hover:-translate-y-1 space-y-4"
+                className={`${isMobileSimulator ? 'p-3.5 rounded-2xl space-y-2.5' : 'p-5 sm:p-6 rounded-3xl space-y-4'} border shadow-sm flex flex-col justify-between transition-transform hover:-translate-y-1`}
                 style={{ backgroundColor: theme.cardBackground, borderColor: theme.borderColor }}
               >
-                <div className="space-y-3">
+                <div className={`${isMobileSimulator ? 'space-y-2' : 'space-y-3'}`}>
                   {/* Real Corporate Cover Photo if Available */}
                   {service.imageUrl && (
-                    <div className="w-full h-36 rounded-2xl overflow-hidden shadow-inner">
+                    <div className={`w-full ${isMobileSimulator ? 'h-28 rounded-xl' : 'h-36 rounded-2xl'} overflow-hidden shadow-inner`}>
                       <img src={service.imageUrl} alt={service.name} className="w-full h-full object-cover" loading="lazy" />
                     </div>
                   )}
@@ -751,13 +745,13 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
               return (
                 <div 
                   key={product.id}
-                  className="p-3 sm:p-4 rounded-2xl border shadow-2xs flex items-center justify-between gap-3 transition-all hover:border-slate-400"
+                  className={`${isMobileSimulator ? 'p-2.5 rounded-xl gap-2' : 'p-3 sm:p-4 rounded-2xl gap-3'} border shadow-2xs flex items-center justify-between transition-all hover:border-slate-400`}
                   style={{ backgroundColor: theme.cardBackground, borderColor: theme.borderColor }}
                 >
                   {/* Left: Thumbnail + Details */}
-                  <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex items-center gap-2.5 min-w-0">
                     <div 
-                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center shrink-0 shadow-inner overflow-hidden relative"
+                      className={`${isMobileSimulator ? 'w-13 h-13 rounded-lg' : 'w-16 h-16 sm:w-20 sm:h-20 rounded-xl'} flex items-center justify-center shrink-0 shadow-inner overflow-hidden relative`}
                       style={{ backgroundColor: `${theme.textColor}08`, border: `1px solid ${theme.borderColor}` }}
                     >
                       {product.imageUrl ? (
