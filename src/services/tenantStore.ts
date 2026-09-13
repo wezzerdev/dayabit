@@ -1,4 +1,5 @@
-import type { TenantStore, PlanDetails, PlanTier, StoreProduct } from '../types/tenant';
+import type { TenantStore, PlanTier, PlanDetails, StoreProduct } from '../types/tenant';
+import { THEME_PRESETS } from '../utils/themePresets';
 
 export const PLANS: Record<PlanTier, PlanDetails> = {
   esencial: {
@@ -66,7 +67,8 @@ const SEED_STORES: TenantStore[] = [
     ownerEmail: 'sofia@geishagourmet.com',
     planId: 'pro',
     whatsapp: '5625785033',
-    brandColor: '#00b37e',
+    brandColor: '#b45309',
+    themeConfig: THEME_PRESETS.cream,
     tagline: 'Café de altura y repostería artesanal en la puerta de tu casa',
     description: 'Seleccionamos granos finos de Chiapas y Veracruz tostados semanalmente. Haz tu pedido y recíbelo en minutos con atención personalizada por WhatsApp.',
     category: 'Alimentos y Bebidas',
@@ -196,6 +198,7 @@ const SEED_STORES: TenantStore[] = [
     planId: 'vitrina',
     whatsapp: '5625785033',
     brandColor: '#7c3aed',
+    themeConfig: THEME_PRESETS.dark,
     tagline: 'Moda contemporánea y streetwear exclusivo en México',
     description: 'Prendas seleccionadas con materiales premium para tu estilo diario. Cotiza tallas y disponibilidad directamente a nuestro WhatsApp.',
     category: 'Moda y Ropa',
@@ -292,6 +295,7 @@ const SEED_STORES: TenantStore[] = [
     planId: 'esencial',
     whatsapp: '5625785033',
     brandColor: '#0284c7',
+    themeConfig: { ...THEME_PRESETS.light, accentColor: '#0284c7' },
     tagline: 'Estrategia fiscal, auditoría y contabilidad para PYMES y personas físicas',
     description: 'Optimizamos la carga tributaria de tu empresa cumpliendo al 100% con las disposiciones del SAT. Agenda tu diagnóstico contable inicial por WhatsApp.',
     category: 'Servicios Profesionales',
@@ -395,6 +399,7 @@ export class TenantStorageService {
             const seed = SEED_STORES.find(s => s.id === store.id);
             return {
               ...store,
+              themeConfig: store.themeConfig || seed?.themeConfig || { ...THEME_PRESETS.light, accentColor: store.brandColor || '#00b37e' },
               bannerUrl: store.bannerUrl || seed?.bannerUrl || '',
               aboutUs: store.aboutUs || seed?.aboutUs || {
                 story: 'Empresa dedicada a brindar la mejor calidad y servicio personalizado con atención por WhatsApp.',

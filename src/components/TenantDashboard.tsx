@@ -2,12 +2,17 @@ import React, { useState } from 'react';
 import { 
   Store, ShoppingBag, Sliders, CreditCard, ExternalLink, Copy, Check, Plus, Trash2, 
   ArrowLeft, RefreshCw, Share2, ShieldCheck, Truck, Globe, 
-  Smartphone, Monitor, HelpCircle, Award, BookOpen, Utensils, Shirt, Briefcase, Package, Image as ImageIcon
+  Smartphone, Monitor, HelpCircle, Award, BookOpen, Utensils, Shirt, Briefcase, Package, 
+  Image as ImageIcon, Palette
 } from 'lucide-react';
-import type { TenantStore, StoreProduct, ProductNiche, FAQItem, NicheProductAttributes } from '../types/tenant';
+import type { 
+  TenantStore, StoreProduct, ProductNiche, FAQItem, NicheProductAttributes, 
+  StoreThemeConfig, ThemePaletteMode 
+} from '../types/tenant';
 import { TenantStorageService, PLANS } from '../services/tenantStore';
 import { InstagramIcon, FacebookIcon, TikTokIcon, GoogleMapsIcon } from './SocialIcons';
 import { formatSocialUrl } from '../utils/formatSocial';
+import { THEME_PRESETS, THEME_PRESET_CARDS, resolveStoreTheme } from '../utils/themePresets';
 import StorefrontRenderer from './StorefrontRenderer';
 
 interface TenantDashboardProps {
@@ -50,6 +55,14 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
   const [previewDevice, setPreviewDevice] = useState<'mobile' | 'desktop'>('mobile');
   const [copiedLink, setCopiedLink] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+
+  // Theme configuration states
+  const initialTheme = resolveStoreTheme(activeStore);
+  const [themeMode, setThemeMode] = useState<ThemePaletteMode>(initialTheme.palette);
+  const [pageBackground, setPageBackground] = useState(initialTheme.pageBackground);
+  const [cardBackground, setCardBackground] = useState(initialTheme.cardBackground);
+  const [textColor, setTextColor] = useState(initialTheme.textColor);
+  const [accentColor, setAccentColor] = useState(initialTheme.accentColor);
 
   // Form states for brand customization
   const [businessName, setBusinessName] = useState(activeStore.businessName);
@@ -138,6 +151,24 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
       setExperienceYears(s.aboutUs?.experienceYears || 3);
       setHighlightValues(s.aboutUs?.highlightValues?.join(', ') || 'Calidad Garantizada, Atención Inmediata, Precios Claros');
       setFaqs(s.faqs || []);
+      const t = resolveStoreTheme(s);
+      setThemeMode(t.palette);
+      setPageBackground(t.pageBackground);
+      setCardBackground(t.cardBackground);
+      setTextColor(t.textColor);
+      setAccentColor(t.accentColor);
+    }
+  };
+
+  const handleSelectThemePreset = (presetKey: ThemePaletteMode) => {
+    setThemeMode(presetKey);
+    if (presetKey !== 'custom') {
+      const p = THEME_PRESETS[presetKey];
+      setPageBackground(p.pageBackground);
+      setCardBackground(p.cardBackground);
+      setTextColor(p.textColor);
+      setAccentColor(p.accentColor);
+      setBrandColor(p.accentColor);
     }
   };
 
@@ -150,12 +181,27 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
 
   const handleSaveBrand = (e: React.FormEvent) => {
     e.preventDefault();
+    const effectiveAccent = accentColor || brandColor || '#00b37e';
+    const isDarkTheme = textColor === '#ffffff' || textColor === '#f8fafc' || pageBackground.startsWith('#0') || pageBackground.startsWith('#1');
+
+    const themeConfig: StoreThemeConfig = {
+      palette: themeMode,
+      pageBackground,
+      cardBackground,
+      headerBackground: cardBackground.startsWith('#') ? `${cardBackground}f2` : cardBackground,
+      textColor,
+      textMutedColor: isDarkTheme ? '#94a3b8' : '#64748b',
+      borderColor: isDarkTheme ? '#1e293b' : '#e2e8f0',
+      accentColor: effectiveAccent,
+    };
+
     const updated = TenantStorageService.updateStore(activeStore.id, {
       businessName,
       tagline,
       description,
       whatsapp: whatsapp.replace(/\D/g, ''),
-      brandColor,
+      brandColor: effectiveAccent,
+      themeConfig,
       address,
       hours,
       bannerUrl
@@ -695,23 +741,212 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Color Distintivo de Marca</label>
-                <div className="flex flex-wrap gap-3 pt-1">
-                  {COLOR_SWATCHES.map(swatch => (
-                    <button
-                      key={swatch.hex}
-                      type="button"
-                      onClick={() => setBrandColor(swatch.hex)}
-                      title={swatch.name}
-                      className={`w-8 h-8 rounded-full transition-transform flex items-center justify-center cursor-pointer ${
-                        brandColor === swatch.hex ? 'scale-125 ring-2 ring-offset-2 ring-slate-400' : 'hover:scale-110'
-                      }`}
-                      style={{ backgroundColor: swatch.hex }}
-                    >
-                      {brandColor === swatch.hex && <Check className="w-4 h-4 text-white stroke-[3]" />}
-                    </button>
-                  ))}
+              {/* SECTION: FULL PAGE THEME & COLORS */}
+              <div className="space-y-4 pt-3 border-t border-slate-100">
+                <div className="flex items-center gap-2">
+                  <Palette className="w-4 h-4 text-[#00b37e]" />
+                  <h4 className="font-display font-bold text-slate-900 text-sm">
+                    Paleta & Colores de la Página Completa
+                  </h4>
+                </div>
+                <p className="text-xs text-slate-500">
+                  Elige una paleta profesional o define tú mismo el color de fondo de toda la página, tarjetas, textos y botones.
+                </p>
+
+                {/* Preset Themes Cards */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                  {THEME_PRESET_CARDS.map(preset => {
+                    const isSelected = themeMode === preset.id;
+                    return (
+                      <button
+                        key={preset.id}
+                        type="button"
+                        onClick={() => handleSelectThemePreset(preset.id)}
+                        className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between relative overflow-hidden ${
+                          isSelected 
+                            ? 'border-[#00b37e] ring-2 ring-[#00b37e]/40 shadow-sm' 
+                            : 'border-slate-200 hover:border-slate-300'
+                        }`}
+                        style={{ backgroundColor: preset.previewBg }}
+                      >
+                        <div className="flex items-center justify-between w-full mb-2">
+                          <span 
+                            className="text-[11px] font-bold px-2 py-0.5 rounded-md shadow-2xs"
+                            style={{ backgroundColor: preset.previewCard, color: preset.previewText }}
+                          >
+                            {preset.name}
+                          </span>
+                          {isSelected && (
+                            <span className="w-5 h-5 rounded-full bg-[#00b37e] text-white flex items-center justify-center text-[10px] font-bold">
+                              ✓
+                            </span>
+                          )}
+                        </div>
+                        <div 
+                          className="p-2 rounded-xl text-[10px] space-y-1 shadow-2xs border"
+                          style={{ 
+                            backgroundColor: preset.previewCard, 
+                            borderColor: `${preset.previewText}20`,
+                            color: preset.previewText 
+                          }}
+                        >
+                          <div className="flex justify-between items-center">
+                            <span className="font-bold">Tarjeta Demo</span>
+                            <span 
+                              className="w-2.5 h-2.5 rounded-full" 
+                              style={{ backgroundColor: preset.previewAccent }} 
+                            />
+                          </div>
+                          <p className="line-clamp-1 opacity-70">{preset.desc}</p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Fine-tuning Color Pickers */}
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-4 mt-2">
+                  <span className="text-xs font-bold text-slate-800 block">
+                    Personalizador de Colores Específicos:
+                  </span>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    {/* 1. Page Background */}
+                    <div className="space-y-1 bg-white p-2.5 rounded-xl border border-slate-200">
+                      <label className="text-[11px] font-bold text-slate-700 block">
+                        Fondo de Página
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="color"
+                          value={pageBackground.startsWith('#') ? pageBackground : '#ffffff'}
+                          onChange={(e) => {
+                            setPageBackground(e.target.value);
+                            setThemeMode('custom');
+                          }}
+                          className="w-7 h-7 rounded-lg cursor-pointer border-0 p-0"
+                        />
+                        <input
+                          type="text"
+                          value={pageBackground}
+                          onChange={(e) => {
+                            setPageBackground(e.target.value);
+                            setThemeMode('custom');
+                          }}
+                          className="flex-1 py-1 px-2 text-xs font-mono rounded border border-slate-200 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    {/* 2. Card Background */}
+                    <div className="space-y-1 bg-white p-2.5 rounded-xl border border-slate-200">
+                      <label className="text-[11px] font-bold text-slate-700 block">
+                        Fondo de Tarjetas
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="color"
+                          value={cardBackground.startsWith('#') ? cardBackground : '#ffffff'}
+                          onChange={(e) => {
+                            setCardBackground(e.target.value);
+                            setThemeMode('custom');
+                          }}
+                          className="w-7 h-7 rounded-lg cursor-pointer border-0 p-0"
+                        />
+                        <input
+                          type="text"
+                          value={cardBackground}
+                          onChange={(e) => {
+                            setCardBackground(e.target.value);
+                            setThemeMode('custom');
+                          }}
+                          className="flex-1 py-1 px-2 text-xs font-mono rounded border border-slate-200 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    {/* 3. Text Color */}
+                    <div className="space-y-1 bg-white p-2.5 rounded-xl border border-slate-200">
+                      <label className="text-[11px] font-bold text-slate-700 block">
+                        Color del Texto
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="color"
+                          value={textColor.startsWith('#') ? textColor : '#0f172a'}
+                          onChange={(e) => {
+                            setTextColor(e.target.value);
+                            setThemeMode('custom');
+                          }}
+                          className="w-7 h-7 rounded-lg cursor-pointer border-0 p-0"
+                        />
+                        <input
+                          type="text"
+                          value={textColor}
+                          onChange={(e) => {
+                            setTextColor(e.target.value);
+                            setThemeMode('custom');
+                          }}
+                          className="flex-1 py-1 px-2 text-xs font-mono rounded border border-slate-200 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    {/* 4. Accent / Brand Color */}
+                    <div className="space-y-1 bg-white p-2.5 rounded-xl border border-slate-200">
+                      <label className="text-[11px] font-bold text-slate-700 block">
+                        Botones & Acento
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="color"
+                          value={accentColor.startsWith('#') ? accentColor : '#00b37e'}
+                          onChange={(e) => {
+                            setAccentColor(e.target.value);
+                            setBrandColor(e.target.value);
+                            setThemeMode('custom');
+                          }}
+                          className="w-7 h-7 rounded-lg cursor-pointer border-0 p-0"
+                        />
+                        <input
+                          type="text"
+                          value={accentColor}
+                          onChange={(e) => {
+                            setAccentColor(e.target.value);
+                            setBrandColor(e.target.value);
+                            setThemeMode('custom');
+                          }}
+                          className="flex-1 py-1 px-2 text-xs font-mono rounded border border-slate-200 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Quick Accent Swatches */}
+                  <div className="pt-2">
+                    <span className="text-[10px] text-slate-400 font-bold block mb-1.5 uppercase tracking-wider">
+                      Sugerencias rápidas para el botón de compra:
+                    </span>
+                    <div className="flex flex-wrap gap-2">
+                      {COLOR_SWATCHES.map(swatch => (
+                        <button
+                          key={swatch.hex}
+                          type="button"
+                          onClick={() => {
+                            setAccentColor(swatch.hex);
+                            setBrandColor(swatch.hex);
+                          }}
+                          title={swatch.name}
+                          className={`w-7 h-7 rounded-full transition-transform flex items-center justify-center cursor-pointer ${
+                            accentColor === swatch.hex ? 'scale-125 ring-2 ring-offset-2 ring-slate-400' : 'hover:scale-110'
+                          }`}
+                          style={{ backgroundColor: swatch.hex }}
+                        >
+                          {accentColor === swatch.hex && <Check className="w-3.5 h-3.5 text-white stroke-[3]" />}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1138,46 +1373,64 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
                 <h3 className="font-display font-black text-xl text-slate-900 mt-1">
                   Así ven tus clientes la Landing Page de {activeStore.businessName}
                 </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  100% responsivo y optimizado para cualquier smartphone (iPhone/Android) y computadoras.
+                </p>
               </div>
 
-              {/* Device Selector */}
-              <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200 w-fit">
+              {/* Controls: Device & External Link */}
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200">
+                  <button
+                    type="button"
+                    onClick={() => setPreviewDevice('mobile')}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                      previewDevice === 'mobile'
+                        ? 'bg-white text-slate-900 shadow-2xs'
+                        : 'text-slate-500 hover:text-slate-800'
+                    }`}
+                  >
+                    <Smartphone className="w-3.5 h-3.5" />
+                    <span>Móvil (iPhone / Android)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewDevice('desktop')}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                      previewDevice === 'desktop'
+                        ? 'bg-white text-slate-900 shadow-2xs'
+                        : 'text-slate-500 hover:text-slate-800'
+                    }`}
+                  >
+                    <Monitor className="w-3.5 h-3.5" />
+                    <span>Escritorio (Desktop)</span>
+                  </button>
+                </div>
+
                 <button
                   type="button"
-                  onClick={() => setPreviewDevice('mobile')}
-                  className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                    previewDevice === 'mobile'
-                      ? 'bg-white text-slate-900 shadow-2xs'
-                      : 'text-slate-500 hover:text-slate-800'
-                  }`}
+                  onClick={() => onOpenStore(activeStore.slug)}
+                  className="px-3.5 py-2 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-xs"
+                  title="Abrir en pantalla completa"
                 >
-                  <Smartphone className="w-3.5 h-3.5" />
-                  <span>Celular (Móvil)</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPreviewDevice('desktop')}
-                  className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                    previewDevice === 'desktop'
-                      ? 'bg-white text-slate-900 shadow-2xs'
-                      : 'text-slate-500 hover:text-slate-800'
-                  }`}
-                >
-                  <Monitor className="w-3.5 h-3.5" />
-                  <span>Escritorio (Desktop)</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Ver en Pantalla Completa</span>
                 </button>
               </div>
             </div>
 
             {/* Device Container */}
-            <div className="flex justify-center items-center py-4">
+            <div className="flex justify-center items-center py-2 px-2 overflow-x-auto">
               {previewDevice === 'mobile' ? (
-                /* Mobile Mockup Frame */
-                <div className="w-[380px] h-[740px] bg-slate-900 rounded-[50px] shadow-2xl p-3 border-4 border-slate-800 relative flex flex-col">
+                /* Mobile Mockup Frame - Perfectly Adapted to any screen and OS */
+                <div className="w-full max-w-[360px] sm:max-w-[385px] h-[640px] sm:h-[720px] bg-slate-950 rounded-[48px] p-2.5 sm:p-3 border-[6px] sm:border-[8px] border-slate-800 shadow-2xl relative flex flex-col mx-auto overflow-hidden">
                   {/* Dynamic Island / Speaker notch */}
-                  <div className="w-28 h-4 bg-slate-900 rounded-full mx-auto mb-2 shrink-0 z-30" />
-                  <div className="flex-1 bg-white rounded-[38px] overflow-y-auto relative scrollbar-thin">
-                    <StorefrontRenderer store={activeStore} />
+                  <div className="w-24 h-4 bg-slate-900 rounded-full mx-auto mb-2 shrink-0 z-30 flex items-center justify-center">
+                    <div className="w-2 h-2 rounded-full bg-slate-950 mr-2" />
+                  </div>
+                  {/* Device screen inside frame */}
+                  <div className="flex-1 rounded-[36px] overflow-y-auto relative scrollbar-thin">
+                    <StorefrontRenderer store={activeStore} isMobileSimulator={true} />
                   </div>
                 </div>
               ) : (
@@ -1190,12 +1443,19 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
                       <div className="w-3 h-3 rounded-full bg-amber-400" />
                       <div className="w-3 h-3 rounded-full bg-emerald-400" />
                     </div>
-                    <div className="flex-1 max-w-sm mx-auto bg-white px-3 py-1 rounded-lg text-xs text-slate-600 font-mono text-center border border-slate-200">
+                    <div className="flex-1 max-w-sm mx-auto bg-white px-3 py-1 rounded-lg text-xs text-slate-600 font-mono text-center border border-slate-200 truncate">
                       https://dayabit.com/p/{activeStore.slug}
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => onOpenStore(activeStore.slug)}
+                      className="text-xs text-[#00b37e] font-bold flex items-center gap-1 hover:underline cursor-pointer"
+                    >
+                      <ExternalLink className="w-3 h-3" /> Abrir
+                    </button>
                   </div>
                   <div className="flex-1 overflow-y-auto">
-                    <StorefrontRenderer store={activeStore} />
+                    <StorefrontRenderer store={activeStore} isMobileSimulator={false} />
                   </div>
                 </div>
               )}

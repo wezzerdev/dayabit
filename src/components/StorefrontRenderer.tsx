@@ -1,13 +1,19 @@
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, MessageCircle, MapPin, Clock, Plus, Minus, Trash2, Search, ArrowLeft, ExternalLink, X, ShieldCheck, Truck, CreditCard, Globe, ChevronDown, HelpCircle, Award, Sparkles, CheckCircle2 } from 'lucide-react';
+import { 
+  ShoppingCart, MessageCircle, MapPin, Clock, Plus, Minus, Trash2, Search, 
+  ArrowLeft, X, ShieldCheck, Truck, CreditCard, 
+  ChevronDown, HelpCircle, Award, CheckCircle2 
+} from 'lucide-react';
 import type { TenantStore, StoreProduct } from '../types/tenant';
 import { InstagramIcon, FacebookIcon, TikTokIcon, GoogleMapsIcon } from './SocialIcons';
 import { formatSocialUrl } from '../utils/formatSocial';
+import { resolveStoreTheme } from '../utils/themePresets';
 
 interface StorefrontRendererProps {
   store: TenantStore;
   onBackToMain?: () => void;
+  isMobileSimulator?: boolean;
 }
 
 interface CartItem {
@@ -16,7 +22,7 @@ interface CartItem {
   selectedOption?: string;
 }
 
-export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRendererProps) {
+export default function StorefrontRenderer({ store, onBackToMain, isMobileSimulator = false }: StorefrontRendererProps) {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -26,6 +32,11 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
   const [deliveryNotes, setDeliveryNotes] = useState('');
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
   const [expandedFaq, setExpandedFaq] = useState<string | null>(null);
+
+  // Resolve store full-page theme colors
+  const theme = resolveStoreTheme(store);
+  const isDark = theme.palette === 'dark' || theme.palette === 'black' || 
+    (theme.pageBackground?.startsWith('#0') || theme.pageBackground?.startsWith('#1'));
 
   // Extract unique categories
   const categories = useMemo(() => {
@@ -123,169 +134,229 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
 
   return (
     <div 
-      className="min-h-screen bg-slate-50 text-slate-900 flex flex-col justify-between"
-      style={{ '--store-brand': store.brandColor } as React.CSSProperties}
+      className="min-h-screen flex flex-col justify-between w-full overflow-x-hidden text-left transition-colors duration-200"
+      style={{
+        backgroundColor: theme.pageBackground,
+        color: theme.textColor,
+        '--store-brand': theme.accentColor,
+      } as React.CSSProperties}
     >
-      {/* Top Banner & Navigation */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
-        <div className="max-w-6xl mx-auto px-5 py-3.5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+      {/* ================= TOP BANNER & NAVIGATION ================= */}
+      <header 
+        className="sticky top-0 z-40 backdrop-blur-md transition-colors"
+        style={{
+          backgroundColor: theme.headerBackground,
+          borderBottom: `1px solid ${theme.borderColor}`
+        }}
+      >
+        <div className={`mx-auto ${isMobileSimulator ? 'px-3 py-2.5' : 'max-w-6xl px-4 sm:px-6 py-3'} flex items-center justify-between gap-2`}>
+          
+          {/* Brand Identity / Left */}
+          <div className="flex items-center gap-2 min-w-0">
             {onBackToMain && (
               <button
                 onClick={onBackToMain}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
+                className="p-1.5 rounded-lg opacity-70 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 transition-colors shrink-0 cursor-pointer"
                 title="Volver al portal principal"
               >
                 <ArrowLeft className="w-4 h-4" />
               </button>
             )}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 min-w-0">
               <div 
-                className="w-8 h-8 rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-xs"
-                style={{ backgroundColor: store.brandColor }}
+                className="w-8 h-8 rounded-xl flex items-center justify-center text-white font-black text-sm shrink-0 shadow-xs"
+                style={{ backgroundColor: theme.accentColor }}
               >
                 {store.businessName.charAt(0).toUpperCase()}
               </div>
-              <div>
-                <h1 className="font-display font-black text-slate-900 text-sm sm:text-base leading-tight">
+              <div className="min-w-0">
+                <h1 
+                  className="font-display font-black text-xs sm:text-sm truncate leading-tight"
+                  style={{ color: theme.textColor }}
+                >
                   {store.businessName}
                 </h1>
-                <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                  Tienda Verificada ✓
+                <span 
+                  className="text-[9px] font-bold px-1.5 py-0.2 rounded-full inline-flex items-center gap-0.5"
+                  style={{ 
+                    color: theme.accentColor, 
+                    backgroundColor: `${theme.accentColor}18`,
+                    border: `1px solid ${theme.accentColor}35`
+                  }}
+                >
+                  ✓ Verificado
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Social media icons in header if configured */}
-            {store.socialLinks?.instagram && (
-              <a
-                href={formatSocialUrl('instagram', store.socialLinks.instagram)}
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Instagram oficial"
-                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 flex items-center justify-center transition-colors"
-              >
-                <InstagramIcon className="w-3.5 h-3.5" />
-              </a>
-            )}
-            {store.socialLinks?.facebook && (
-              <a
-                href={formatSocialUrl('facebook', store.socialLinks.facebook)}
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Facebook oficial"
-                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 flex items-center justify-center transition-colors"
-              >
-                <FacebookIcon className="w-3.5 h-3.5" />
-              </a>
-            )}
-            {store.socialLinks?.tiktok && (
-              <a
-                href={formatSocialUrl('tiktok', store.socialLinks.tiktok)}
-                target="_blank"
-                rel="noopener noreferrer"
-                title="TikTok oficial"
-                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 flex items-center justify-center transition-colors"
-              >
-                <TikTokIcon className="w-3.5 h-3.5" />
-              </a>
+          {/* Actions / Right */}
+          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+            {/* Desktop Social Icons */}
+            {!isMobileSimulator && (
+              <div className="hidden md:flex items-center gap-1.5">
+                {store.socialLinks?.instagram && (
+                  <a
+                    href={formatSocialUrl('instagram', store.socialLinks.instagram)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Instagram oficial"
+                    className="w-7 h-7 rounded-full flex items-center justify-center transition-opacity hover:opacity-80"
+                    style={{ backgroundColor: `${theme.textColor}12`, color: theme.textColor }}
+                  >
+                    <InstagramIcon className="w-3.5 h-3.5" />
+                  </a>
+                )}
+                {store.socialLinks?.facebook && (
+                  <a
+                    href={formatSocialUrl('facebook', store.socialLinks.facebook)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Facebook oficial"
+                    className="w-7 h-7 rounded-full flex items-center justify-center transition-opacity hover:opacity-80"
+                    style={{ backgroundColor: `${theme.textColor}12`, color: theme.textColor }}
+                  >
+                    <FacebookIcon className="w-3.5 h-3.5" />
+                  </a>
+                )}
+                {store.socialLinks?.tiktok && (
+                  <a
+                    href={formatSocialUrl('tiktok', store.socialLinks.tiktok)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="TikTok oficial"
+                    className="w-7 h-7 rounded-full flex items-center justify-center transition-opacity hover:opacity-80"
+                    style={{ backgroundColor: `${theme.textColor}12`, color: theme.textColor }}
+                  >
+                    <TikTokIcon className="w-3.5 h-3.5" />
+                  </a>
+                )}
+              </div>
             )}
 
             {/* Direct WhatsApp chat button */}
             <a
-              href={`https://wa.me/52${store.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Hola ${store.businessName}, vi su página web y me gustaría información.`)}`}
+              href={`https://wa.me/52${store.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Hola ${store.businessName}, vi su catálogo web y me gustaría ordenar.`)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 transition-colors text-xs font-bold decoration-none"
+              className="flex items-center gap-1 px-2.5 sm:px-3.5 py-1.5 rounded-full text-xs font-bold transition-transform hover:scale-105 decoration-none shadow-2xs cursor-pointer"
+              style={{
+                backgroundColor: isDark ? '#00b37e' : '#ecfdf5',
+                color: isDark ? '#ffffff' : '#065f46',
+                border: isDark ? 'none' : '1px solid #a7f3d0'
+              }}
             >
-              <MessageCircle className="w-3.5 h-3.5 text-[#00b37e]" />
-              <span className="hidden sm:inline">WhatsApp</span>
+              <MessageCircle className="w-3.5 h-3.5 shrink-0 text-[#00b37e] dark:text-white" />
+              <span className={isMobileSimulator ? 'text-[11px]' : 'hidden xs:inline text-xs'}>WhatsApp</span>
             </a>
 
             {/* Cart Button (Only for Plan Pro Tier 3) */}
             {store.planId === 'pro' && (
               <button
+                type="button"
                 onClick={() => setIsCartOpen(true)}
-                className="relative px-3.5 py-1.5 rounded-full text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-transform hover:scale-105 cursor-pointer"
-                style={{ backgroundColor: store.brandColor }}
+                className="relative px-2.5 sm:px-3 py-1.5 rounded-full text-white text-xs font-bold flex items-center gap-1 shadow-xs transition-transform hover:scale-105 cursor-pointer shrink-0"
+                style={{ backgroundColor: theme.accentColor }}
               >
-                <ShoppingCart className="w-3.5 h-3.5" />
-                <span>Carrito ({totalItemsCount})</span>
+                <ShoppingCart className="w-3.5 h-3.5 shrink-0" />
+                <span>({totalItemsCount})</span>
               </button>
             )}
           </div>
+
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-grow max-w-6xl mx-auto px-5 py-8 w-full space-y-10">
+      {/* ================= MAIN STOREFRONT BODY ================= */}
+      <main className={`flex-grow mx-auto w-full ${isMobileSimulator ? 'px-3 py-4 space-y-6' : 'max-w-6xl px-4 sm:px-6 py-6 sm:py-8 space-y-8 sm:space-y-10'}`}>
         
         {/* ================= HERO SECTION ================= */}
-        <section className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-xs relative overflow-hidden text-left space-y-6">
+        <section 
+          className={`rounded-3xl border shadow-xs relative overflow-hidden text-left transition-colors ${
+            isMobileSimulator ? 'p-4 space-y-4' : 'p-5 sm:p-8 space-y-5'
+          }`}
+          style={{
+            backgroundColor: theme.cardBackground,
+            borderColor: theme.borderColor
+          }}
+        >
+          {/* Ambient Glow */}
           <div 
-            className="absolute top-0 right-0 w-80 h-80 rounded-full blur-3xl opacity-15 pointer-events-none"
-            style={{ backgroundColor: store.brandColor }}
+            className="absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl opacity-15 pointer-events-none"
+            style={{ backgroundColor: theme.accentColor }}
           />
 
           {/* Hero Banner if available */}
           {store.bannerUrl && (
-            <div className="w-full h-44 sm:h-64 -mt-6 sm:-mt-10 -mx-6 sm:-mx-10 rounded-t-3xl overflow-hidden relative shadow-inner mb-2">
+            <div className={`w-full ${isMobileSimulator ? 'h-36' : 'h-40 sm:h-56'} rounded-2xl overflow-hidden relative shadow-inner mb-2`}>
               <img
                 src={store.bannerUrl}
                 alt={store.businessName}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-transparent" />
-              <div className="absolute bottom-4 left-6 sm:left-10 text-white flex items-center gap-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute bottom-3 left-4 text-white flex items-center gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30">
                   {store.category}
                 </span>
               </div>
             </div>
           )}
 
-          <div className="max-w-2xl space-y-4 relative z-10">
+          <div className="space-y-3 relative z-10 max-w-2xl">
             {!store.bannerUrl && (
               <span 
-                className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full inline-block"
-                style={{ color: store.brandColor, backgroundColor: `${store.brandColor}15` }}
+                className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full inline-block"
+                style={{ color: theme.accentColor, backgroundColor: `${theme.accentColor}15` }}
               >
                 {store.category}
               </span>
             )}
-            <h2 className="text-2xl sm:text-4xl font-display font-black text-slate-900 leading-tight">
+            
+            <h2 
+              className={`font-display font-black leading-tight ${isMobileSimulator ? 'text-xl' : 'text-xl sm:text-3xl'}`}
+              style={{ color: theme.textColor }}
+            >
               {store.tagline}
             </h2>
-            <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+            
+            <p 
+              className={`leading-relaxed ${isMobileSimulator ? 'text-xs' : 'text-xs sm:text-sm'}`}
+              style={{ color: theme.textMutedColor }}
+            >
               {store.description}
             </p>
 
             {/* Hours and Address */}
-            <div className="pt-2 flex flex-wrap gap-4 text-xs text-slate-500">
-              {store.hours && (
-                <div className="flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-slate-400" />
-                  <span>{store.hours}</span>
-                </div>
-              )}
-              {store.address && (
-                <div className="flex items-center gap-1.5">
-                  <MapPin className="w-4 h-4 text-slate-400" />
-                  <span>{store.address}</span>
-                </div>
-              )}
-            </div>
+            {(store.hours || store.address) && (
+              <div 
+                className="pt-1 flex flex-wrap gap-3 text-xs"
+                style={{ color: theme.textMutedColor }}
+              >
+                {store.hours && (
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 opacity-60" />
+                    <span>{store.hours}</span>
+                  </div>
+                )}
+                {store.address && (
+                  <div className="flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 opacity-60" />
+                    <span>{store.address}</span>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Social Network Links & Store Policies Button */}
-            <div className="pt-3 flex flex-wrap items-center gap-2">
+            <div className="pt-2 flex flex-wrap items-center gap-2">
               {store.socialLinks?.instagram && (
                 <a
                   href={formatSocialUrl('instagram', store.socialLinks.instagram)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-700 text-xs font-bold transition-colors"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold transition-opacity hover:opacity-80"
+                  style={{ backgroundColor: `${theme.textColor}10`, color: theme.textColor }}
                 >
                   <InstagramIcon className="w-3.5 h-3.5 text-rose-500" />
                   <span>Instagram</span>
@@ -296,9 +367,10 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
                   href={formatSocialUrl('facebook', store.socialLinks.facebook)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-700 text-xs font-bold transition-colors"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold transition-opacity hover:opacity-80"
+                  style={{ backgroundColor: `${theme.textColor}10`, color: theme.textColor }}
                 >
-                  <FacebookIcon className="w-3.5 h-3.5 text-blue-600" />
+                  <FacebookIcon className="w-3.5 h-3.5 text-blue-500" />
                   <span>Facebook</span>
                 </a>
               )}
@@ -307,7 +379,8 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
                   href={formatSocialUrl('tiktok', store.socialLinks.tiktok)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-colors"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold transition-opacity hover:opacity-80"
+                  style={{ backgroundColor: `${theme.textColor}10`, color: theme.textColor }}
                 >
                   <TikTokIcon className="w-3.5 h-3.5" />
                   <span>TikTok</span>
@@ -318,21 +391,11 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
                   href={formatSocialUrl('maps', store.socialLinks.mapsUrl)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 text-xs font-bold transition-colors"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold transition-opacity hover:opacity-80"
+                  style={{ backgroundColor: `${theme.textColor}10`, color: theme.textColor }}
                 >
-                  <GoogleMapsIcon className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Ver en Maps</span>
-                </a>
-              )}
-              {store.socialLinks?.website && (
-                <a
-                  href={formatSocialUrl('web', store.socialLinks.website)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
-                >
-                  <Globe className="w-3.5 h-3.5 text-slate-500" />
-                  <span>Sitio Web</span>
+                  <GoogleMapsIcon className="w-3.5 h-3.5 text-emerald-500" />
+                  <span>Ubicación</span>
                 </a>
               )}
 
@@ -340,19 +403,34 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
               <button
                 type="button"
                 onClick={() => setIsPoliciesOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-colors cursor-pointer"
+                style={{
+                  backgroundColor: isDark ? '#ffffff' : '#0f172a',
+                  color: isDark ? '#0f172a' : '#ffffff'
+                }}
               >
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
                 <span>Políticas & Garantías</span>
               </button>
             </div>
 
             {/* Payment Methods Badges */}
             {store.paymentMethods && store.paymentMethods.length > 0 && (
-              <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500">
-                <span className="font-bold text-slate-700">Formas de pago:</span>
+              <div 
+                className="pt-2 flex flex-wrap items-center gap-1.5 text-[10px]"
+                style={{ borderTop: `1px solid ${theme.borderColor}` }}
+              >
+                <span className="font-bold opacity-75" style={{ color: theme.textColor }}>Pagos:</span>
                 {store.paymentMethods.map(pm => (
-                  <span key={pm} className="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-slate-700 font-medium">
+                  <span 
+                    key={pm} 
+                    className="px-2 py-0.5 rounded-md font-medium"
+                    style={{
+                      backgroundColor: `${theme.textColor}0a`,
+                      border: `1px solid ${theme.borderColor}`,
+                      color: theme.textColor
+                    }}
+                  >
                     ✓ {pm}
                   </span>
                 ))}
@@ -361,42 +439,64 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
           </div>
         </section>
 
-        {/* ================= TEMPLATE 1: PLAN ESENCIAL (SERVICES & PORTFOLIO) ================= */}
+        {/* ================= TEMPLATE 1: PLAN ESENCIAL (SERVICES) ================= */}
         {store.planId === 'esencial' && (
-          <section className="space-y-6 text-left">
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="font-display font-black text-xl text-slate-900">
-                  Nuestros Servicios & Especialidades
-                </h3>
-                <p className="text-xs text-slate-500">
-                  Consulta de forma directa a nuestro WhatsApp para una cotización personalizada.
-                </p>
-              </div>
+          <section className="space-y-4 text-left">
+            <div>
+              <h3 
+                className="font-display font-black text-lg sm:text-xl"
+                style={{ color: theme.textColor }}
+              >
+                Nuestros Servicios & Soluciones
+              </h3>
+              <p className="text-xs" style={{ color: theme.textMutedColor }}>
+                Consulta directa por WhatsApp para agendar o solicitar una cotización formal.
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className={`grid gap-4 ${isMobileSimulator ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-3'}`}>
               {store.products.map(item => (
                 <div 
                   key={item.id}
-                  className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
+                  className="p-5 rounded-2xl border shadow-2xs flex flex-col justify-between transition-transform hover:-translate-y-1"
+                  style={{
+                    backgroundColor: theme.cardBackground,
+                    borderColor: theme.borderColor
+                  }}
                 >
-                  <div className="space-y-3">
-                    <div className="text-3xl">{item.iconText || '💼'}</div>
-                    <h4 className="font-bold text-slate-900 text-base">{item.name}</h4>
-                    <p className="text-xs text-slate-500 leading-relaxed">{item.description}</p>
+                  <div className="space-y-2.5">
+                    <div className="text-2xl">{item.iconText || '💼'}</div>
+                    <h4 className="font-bold text-sm sm:text-base" style={{ color: theme.textColor }}>
+                      {item.name}
+                    </h4>
+                    <p className="text-xs leading-relaxed" style={{ color: theme.textMutedColor }}>
+                      {item.description}
+                    </p>
+
+                    {item.nicheAttributes?.serviceDuration && (
+                      <div 
+                        className="text-[11px] font-semibold flex items-center gap-1 pt-1"
+                        style={{ color: theme.accentColor }}
+                      >
+                        <Clock className="w-3 h-3" />
+                        <span>{item.nicheAttributes.serviceDuration} · {item.nicheAttributes.serviceModality}</span>
+                      </div>
+                    )}
                   </div>
 
-                  <div className="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between">
-                    <span className="font-mono font-bold text-slate-900 text-sm">
+                  <div 
+                    className="pt-4 mt-4 flex items-center justify-between"
+                    style={{ borderTop: `1px solid ${theme.borderColor}` }}
+                  >
+                    <span className="font-mono font-bold text-sm" style={{ color: theme.textColor }}>
                       ${item.price} MXN
                     </span>
                     <a
-                      href={`https://wa.me/52${store.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Hola ${store.businessName}, me interesa solicitar información sobre su servicio: *${item.name}*.`)}`}
+                      href={`https://wa.me/52${store.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Hola ${store.businessName}, me interesa solicitar información sobre: *${item.name}*.`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3.5 py-1.5 rounded-full text-white text-xs font-bold shadow-xs transition-opacity hover:opacity-90 flex items-center gap-1 decoration-none"
-                      style={{ backgroundColor: store.brandColor }}
+                      className="px-3 py-1.5 rounded-full text-white text-xs font-bold shadow-xs transition-opacity hover:opacity-90 flex items-center gap-1 decoration-none cursor-pointer"
+                      style={{ backgroundColor: theme.accentColor }}
                     >
                       <MessageCircle className="w-3.5 h-3.5" /> Cotizar
                     </a>
@@ -409,33 +509,41 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
 
         {/* ================= TEMPLATES 2 & 3: VITRINA DIGITAL & WHATSAPP ORDERING ================= */}
         {(store.planId === 'vitrina' || store.planId === 'pro') && (
-          <section className="space-y-6 text-left">
+          <section className="space-y-4 sm:space-y-5 text-left">
             
             {/* Search & Categories Bar */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              {/* Category Pills */}
-              <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              {/* Category Pills with smooth horizontal swipe on mobile */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full scrollbar-none">
                 <button
+                  type="button"
                   onClick={() => setActiveCategory('all')}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
-                    activeCategory === 'all'
-                      ? 'text-white shadow-xs'
-                      : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
-                  }`}
-                  style={activeCategory === 'all' ? { backgroundColor: store.brandColor } : {}}
+                  className="px-3 py-1 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer"
+                  style={activeCategory === 'all' ? {
+                    backgroundColor: theme.accentColor,
+                    color: '#ffffff'
+                  } : {
+                    backgroundColor: theme.cardBackground,
+                    border: `1px solid ${theme.borderColor}`,
+                    color: theme.textColor
+                  }}
                 >
                   Todos ({store.products.length})
                 </button>
                 {categories.map(cat => (
                   <button
                     key={cat}
+                    type="button"
                     onClick={() => setActiveCategory(cat)}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
-                      activeCategory === cat
-                        ? 'text-white shadow-xs'
-                        : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
-                    }`}
-                    style={activeCategory === cat ? { backgroundColor: store.brandColor } : {}}
+                    className="px-3 py-1 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer"
+                    style={activeCategory === cat ? {
+                      backgroundColor: theme.accentColor,
+                      color: '#ffffff'
+                    } : {
+                      backgroundColor: theme.cardBackground,
+                      border: `1px solid ${theme.borderColor}`,
+                      color: theme.textColor
+                    }}
                   >
                     {cat}
                   </button>
@@ -443,67 +551,112 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
               </div>
 
               {/* Search Bar */}
-              <div className="relative w-full sm:w-64">
+              <div className="relative w-full sm:w-60 shrink-0">
                 <input
                   type="text"
-                  placeholder="Buscar en el catálogo..."
+                  placeholder="Buscar producto..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full py-2 px-3 pl-9 rounded-full bg-white border border-slate-200 text-xs text-slate-800 focus:outline-none shadow-2xs"
+                  className="w-full py-1.5 px-3 pl-8 rounded-full text-xs focus:outline-none shadow-2xs"
+                  style={{
+                    backgroundColor: theme.cardBackground,
+                    border: `1px solid ${theme.borderColor}`,
+                    color: theme.textColor
+                  }}
                 />
-                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+                <Search className="w-3.5 h-3.5 absolute left-2.5 top-2 opacity-50" style={{ color: theme.textColor }} />
               </div>
             </div>
 
-            {/* Products Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {/* Products Grid - Always 1 column in mobile simulator to prevent squished cards */}
+            <div className={`grid gap-4 ${isMobileSimulator ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
               {filteredProducts.map(product => {
-                const inCart = cart.find(c => c.product.id === product.id);
                 const niche = product.nicheAttributes;
+                const inCart = cart.find(c => c.product.id === product.id);
+
                 return (
                   <div
                     key={product.id}
-                    className="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-xs hover:shadow-lg transition-all flex flex-col justify-between group"
+                    className="rounded-3xl p-4 border shadow-xs transition-all flex flex-col justify-between"
+                    style={{
+                      backgroundColor: theme.cardBackground,
+                      borderColor: theme.borderColor
+                    }}
                   >
                     <div className="space-y-3">
-                      <div className="w-full h-36 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-4xl shadow-inner relative">
+                      {/* Product Thumbnail / Icon */}
+                      <div 
+                        className="w-full h-32 sm:h-36 rounded-2xl flex items-center justify-center text-4xl relative shadow-inner"
+                        style={{
+                          backgroundColor: `${theme.textColor}08`,
+                          border: `1px solid ${theme.borderColor}`
+                        }}
+                      >
                         {product.iconText || '📦'}
                         {product.category && (
-                          <span className="absolute top-2.5 left-2.5 text-[10px] font-bold text-slate-500 bg-white/90 border border-slate-200 px-2 py-0.5 rounded-full">
+                          <span 
+                            className="absolute top-2 left-2 text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-md"
+                            style={{
+                              backgroundColor: `${theme.cardBackground}ee`,
+                              border: `1px solid ${theme.borderColor}`,
+                              color: theme.textMutedColor
+                            }}
+                          >
                             {product.category}
                           </span>
                         )}
                         {niche?.badge && (
-                          <span className="absolute bottom-2.5 right-2.5 text-[10px] font-bold text-white bg-[#00b37e] px-2.5 py-0.5 rounded-full shadow-2xs">
+                          <span 
+                            className="absolute bottom-2 right-2 text-[9px] font-bold text-white px-2 py-0.5 rounded-full shadow-2xs"
+                            style={{ backgroundColor: theme.accentColor }}
+                          >
                             {niche.badge}
                           </span>
                         )}
                       </div>
 
                       <div>
-                        <h4 className="font-bold text-slate-900 text-base line-clamp-1">
+                        <h4 
+                          className="font-bold text-sm sm:text-base leading-snug line-clamp-1"
+                          style={{ color: theme.textColor }}
+                        >
                           {product.name}
                         </h4>
-                        <p className="text-xs text-slate-500 line-clamp-2 mt-1">
-                          {product.description || 'Disponible para pedido inmediato con atención por WhatsApp.'}
+                        <p 
+                          className="text-xs line-clamp-2 mt-1"
+                          style={{ color: theme.textMutedColor }}
+                        >
+                          {product.description || 'Disponible para pedido inmediato con atención directa por WhatsApp.'}
                         </p>
 
-                        {/* Food Attributes */}
+                        {/* Food attributes */}
                         {niche?.ingredients && (
-                          <p className="text-[11px] text-slate-500 italic mt-2 bg-slate-50 p-2 rounded-xl border border-slate-100">
+                          <p 
+                            className="text-[11px] italic mt-2 p-2 rounded-xl"
+                            style={{
+                              backgroundColor: `${theme.textColor}06`,
+                              border: `1px solid ${theme.borderColor}`,
+                              color: theme.textMutedColor
+                            }}
+                          >
                             <strong>Ingredientes:</strong> {niche.ingredients}
                           </p>
                         )}
                         {niche?.preparationTime && (
-                          <span className="text-[10px] font-medium text-slate-400 mt-1 inline-block">
+                          <span 
+                            className="text-[10px] font-medium mt-1 inline-block"
+                            style={{ color: theme.textMutedColor }}
+                          >
                             ⏱️ {niche.preparationTime}
                           </span>
                         )}
 
-                        {/* Fashion Sizes */}
+                        {/* Fashion sizes */}
                         {niche?.sizes && niche.sizes.length > 0 && (
-                          <div className="mt-2.5 pt-2 border-t border-slate-100">
-                            <span className="text-[10px] font-bold text-slate-400 block mb-1">Talla:</span>
+                          <div className="mt-2 pt-2" style={{ borderTop: `1px solid ${theme.borderColor}` }}>
+                            <span className="text-[10px] font-bold opacity-60 block mb-1" style={{ color: theme.textColor }}>
+                              Talla:
+                            </span>
                             <div className="flex flex-wrap gap-1">
                               {niche.sizes.map(size => {
                                 const isChosen = (selectedVariants[product.id] || niche.sizes?.[0]) === size;
@@ -512,77 +665,55 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
                                     key={size}
                                     type="button"
                                     onClick={() => handleSelectVariant(product.id, size)}
-                                    className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition-all cursor-pointer ${
-                                      isChosen 
-                                        ? 'bg-slate-900 text-white shadow-2xs' 
-                                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                                    }`}
+                                    className="px-2 py-0.5 rounded-md text-[10px] font-bold transition-all cursor-pointer"
+                                    style={isChosen ? {
+                                      backgroundColor: theme.accentColor,
+                                      color: '#ffffff'
+                                    } : {
+                                      backgroundColor: `${theme.textColor}0a`,
+                                      color: theme.textColor
+                                    }}
                                   >
                                     {size}
                                   </button>
                                 );
                               })}
                             </div>
-                            {niche.material && (
-                              <p className="text-[10px] text-slate-400 mt-1.5">{niche.material}</p>
-                            )}
                           </div>
-                        )}
-
-                        {/* Services Attributes */}
-                        {niche?.serviceDuration && (
-                          <div className="mt-2.5 flex items-center gap-2 text-[11px]">
-                            <span className="font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md">
-                              🕒 {niche.serviceDuration}
-                            </span>
-                            {niche.serviceModality && (
-                              <span className="capitalize text-slate-500 font-medium">
-                                📍 {niche.serviceModality}
-                              </span>
-                            )}
-                          </div>
-                        )}
-                        {niche?.includes && niche.includes.length > 0 && (
-                          <div className="mt-2 space-y-1">
-                            {niche.includes.slice(0, 3).map((inc, i) => (
-                              <div key={i} className="flex items-center gap-1.5 text-[11px] text-slate-600">
-                                <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
-                                <span className="truncate">{inc}</span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-
-                        {/* General Retail Attributes */}
-                        {niche?.warranty && (
-                          <p className="text-[10px] font-semibold text-slate-400 mt-1">🛡️ {niche.warranty}</p>
                         )}
                       </div>
                     </div>
 
-                    <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between">
-                      <span className="font-mono font-black text-slate-900 text-base">
-                        ${product.price} <span className="text-[10px] font-normal text-slate-400">MXN</span>
+                    {/* Card Footer: Price & Action */}
+                    <div 
+                      className="pt-3 mt-3 flex items-center justify-between"
+                      style={{ borderTop: `1px solid ${theme.borderColor}` }}
+                    >
+                      <span className="font-mono font-black text-sm" style={{ color: theme.textColor }}>
+                        ${product.price} MXN
                       </span>
 
-                      {/* If Plan 3 (Pro): Cart Addition Button */}
-                      {store.planId === 'pro' ? (
+                      {/* Tier 3: Add to Cart */}
+                      {store.planId === 'pro' && (
                         <button
+                          type="button"
                           onClick={() => addToCart(product)}
-                          className="px-4 py-2 rounded-xl text-white text-xs font-bold shadow-xs hover:opacity-90 transition-all flex items-center gap-1.5 cursor-pointer"
-                          style={{ backgroundColor: store.brandColor }}
+                          className="px-3 py-1.5 rounded-full text-white text-xs font-bold flex items-center gap-1 shadow-2xs hover:opacity-95 transition-transform active:scale-95 cursor-pointer"
+                          style={{ backgroundColor: theme.accentColor }}
                         >
                           <Plus className="w-3.5 h-3.5" />
-                          {inCart ? `En Carrito (${inCart.quantity})` : 'Agregar'}
+                          <span>{inCart ? `Agregar (${inCart.quantity})` : 'Agregar'}</span>
                         </button>
-                      ) : (
-                        /* If Plan 2 (Vitrina): Direct WhatsApp Quote Link */
+                      )}
+
+                      {/* Tier 2: Order direct via WhatsApp */}
+                      {store.planId === 'vitrina' && (
                         <a
                           href={getProductQuoteLink(product)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="px-4 py-2 rounded-xl text-white text-xs font-bold shadow-xs hover:opacity-90 transition-all flex items-center gap-1.5 decoration-none cursor-pointer"
-                          style={{ backgroundColor: store.brandColor }}
+                          className="px-3 py-1.5 rounded-full text-white text-xs font-bold flex items-center gap-1 shadow-2xs hover:opacity-95 transition-transform active:scale-95 cursor-pointer decoration-none"
+                          style={{ backgroundColor: theme.accentColor }}
                         >
                           <MessageCircle className="w-3.5 h-3.5" /> Pedir
                         </a>
@@ -594,88 +725,138 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
             </div>
 
             {filteredProducts.length === 0 && (
-              <div className="py-16 text-center bg-white rounded-3xl border border-slate-200 text-slate-400 text-xs">
-                No se encontraron artículos con ese criterio de búsqueda.
+              <div 
+                className="py-12 text-center rounded-3xl border text-xs"
+                style={{
+                  backgroundColor: theme.cardBackground,
+                  borderColor: theme.borderColor,
+                  color: theme.textMutedColor
+                }}
+              >
+                No se encontraron artículos que coincidan con la búsqueda.
               </div>
             )}
+
           </section>
         )}
 
-        {/* ================= ABOUT US / QUIÉNES SOMOS ================= */}
-        {store.aboutUs && store.aboutUs.story && (
-          <section className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-xs text-left space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
-              <div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#00b37e]">
-                  Conoce a Nuestra Empresa
-                </span>
-                <h3 className="font-display font-black text-2xl text-slate-900 mt-1">
-                  Quiénes Somos & Nuestra Filosofía
+        {/* ================= SECTION: ABOUT US & PHILOSOPHY ================= */}
+        {store.aboutUs?.story && (
+          <section 
+            className="rounded-3xl p-5 sm:p-7 border shadow-xs text-left space-y-4"
+            style={{
+              backgroundColor: theme.cardBackground,
+              borderColor: theme.borderColor
+            }}
+          >
+            <div className="flex items-center gap-2" style={{ color: theme.accentColor }}>
+              <Award className="w-4 h-4" />
+              <span className="text-xs font-bold uppercase tracking-wider">Quiénes Somos & Nuestra Filosofía</span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-start">
+              <div className="md:col-span-2 space-y-2">
+                <h3 className="font-display font-black text-lg sm:text-xl" style={{ color: theme.textColor }}>
+                  Pasión, Compromiso y Calidad en {store.businessName}
                 </h3>
+                <p className="text-xs sm:text-sm leading-relaxed" style={{ color: theme.textMutedColor }}>
+                  {store.aboutUs.story}
+                </p>
               </div>
+
               {store.aboutUs.experienceYears && (
-                <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 px-3.5 py-1.5 rounded-2xl w-fit">
-                  <Award className="w-5 h-5 text-emerald-600" />
-                  <span className="text-xs font-bold text-emerald-900">
-                    +{store.aboutUs.experienceYears} años de experiencia
+                <div 
+                  className="p-4 rounded-2xl border text-center flex flex-col justify-center items-center"
+                  style={{
+                    backgroundColor: `${theme.textColor}05`,
+                    borderColor: theme.borderColor
+                  }}
+                >
+                  <span className="font-display font-black text-2xl sm:text-3xl" style={{ color: theme.accentColor }}>
+                    +{store.aboutUs.experienceYears}
+                  </span>
+                  <span className="text-xs font-bold mt-0.5" style={{ color: theme.textColor }}>
+                    Años de Experiencia
+                  </span>
+                  <span className="text-[10px] mt-1" style={{ color: theme.textMutedColor }}>
+                    Respaldando cada orden con garantía
                   </span>
                 </div>
               )}
             </div>
 
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-3xl">
-              {store.aboutUs.story}
-            </p>
-
             {store.aboutUs.highlightValues && store.aboutUs.highlightValues.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+              <div 
+                className="pt-3 flex flex-wrap items-center gap-2"
+                style={{ borderTop: `1px solid ${theme.borderColor}` }}
+              >
+                <span className="text-xs font-bold opacity-75" style={{ color: theme.textColor }}>Nuestros Pilares:</span>
                 {store.aboutUs.highlightValues.map((val, idx) => (
-                  <div key={idx} className="flex items-center gap-2 p-3 rounded-2xl bg-slate-50 border border-slate-100 text-xs font-bold text-slate-700">
-                    <Sparkles className="w-4 h-4 text-[#00b37e]" />
-                    <span>{val}</span>
-                  </div>
+                  <span
+                    key={idx}
+                    className="text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1"
+                    style={{
+                      backgroundColor: `${theme.accentColor}15`,
+                      color: theme.accentColor,
+                      border: `1px solid ${theme.accentColor}30`
+                    }}
+                  >
+                    <CheckCircle2 className="w-3 h-3" /> {val}
+                  </span>
                 ))}
               </div>
             )}
           </section>
         )}
 
-        {/* ================= FREQUENTLY ASKED QUESTIONS (FAQ) ================= */}
+        {/* ================= SECTION: FREQUENTLY ASKED QUESTIONS (FAQ) ================= */}
         {store.faqs && store.faqs.length > 0 && (
-          <section className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-xs text-left space-y-6">
-            <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#00b37e]">
-                Resuelve tus Dudas
-              </span>
-              <h3 className="font-display font-black text-2xl text-slate-900 mt-1">
-                Preguntas Frecuentes
-              </h3>
-              <p className="text-xs text-slate-500 mt-1">
-                Respuestas inmediatas a las consultas más habituales de nuestros clientes.
-              </p>
+          <section 
+            className="rounded-3xl p-5 sm:p-7 border shadow-xs text-left space-y-4"
+            style={{
+              backgroundColor: theme.cardBackground,
+              borderColor: theme.borderColor
+            }}
+          >
+            <div className="flex items-center gap-2" style={{ color: theme.accentColor }}>
+              <HelpCircle className="w-4 h-4" />
+              <span className="text-xs font-bold uppercase tracking-wider">Resolvemos tus Dudas</span>
             </div>
 
-            <div className="space-y-3">
+            <h3 className="font-display font-black text-lg sm:text-xl" style={{ color: theme.textColor }}>
+              Preguntas Frecuentes
+            </h3>
+
+            <div className="space-y-2">
               {store.faqs.map(faq => {
                 const isOpen = expandedFaq === faq.id;
                 return (
                   <div 
-                    key={faq.id} 
-                    className="border border-slate-200 rounded-2xl overflow-hidden transition-colors"
+                    key={faq.id}
+                    className="rounded-2xl border transition-all overflow-hidden"
+                    style={{
+                      backgroundColor: `${theme.textColor}04`,
+                      borderColor: theme.borderColor
+                    }}
                   >
                     <button
                       type="button"
                       onClick={() => setExpandedFaq(isOpen ? null : faq.id)}
-                      className="w-full p-4 text-left font-bold text-slate-900 text-xs sm:text-sm flex items-center justify-between hover:bg-slate-50 cursor-pointer"
+                      className="w-full p-3.5 text-left flex items-center justify-between gap-3 cursor-pointer"
                     >
-                      <span className="flex items-center gap-2">
-                        <HelpCircle className="w-4 h-4 text-[#00b37e]" />
+                      <span className="font-bold text-xs sm:text-sm" style={{ color: theme.textColor }}>
                         {faq.question}
                       </span>
-                      <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                      <ChevronDown 
+                        className={`w-4 h-4 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                        style={{ color: theme.accentColor }}
+                      />
                     </button>
                     {isOpen && (
-                      <div className="p-4 pt-0 text-xs text-slate-600 leading-relaxed border-t border-slate-100 bg-slate-50/50">
+                      <div 
+                        className="px-3.5 pb-3.5 pt-1 text-xs leading-relaxed"
+                        style={{ color: theme.textMutedColor }}
+                      >
                         {faq.answer}
                       </div>
                     )}
@@ -688,311 +869,276 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
 
       </main>
 
-      {/* ================= FLOATING CART DRAWER (PLAN PRO ONLY) ================= */}
-      {store.planId === 'pro' && (
-        <>
-          {/* Floating Cart Bar at Bottom if items in cart */}
-          {cart.length > 0 && !isCartOpen && (
+      {/* ================= CART MODAL (TIER 3 PRO) ================= */}
+      <AnimatePresence>
+        {isCartOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm">
             <motion.div
-              initial={{ y: 50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-lg"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="rounded-3xl max-w-lg w-full max-h-[85vh] overflow-y-auto p-5 sm:p-7 shadow-2xl space-y-5 text-left border"
+              style={{
+                backgroundColor: theme.cardBackground,
+                borderColor: theme.borderColor,
+                color: theme.textColor
+              }}
             >
-              <button
-                onClick={() => setIsCartOpen(true)}
-                className="w-full py-4 px-6 rounded-2xl text-white font-bold text-sm shadow-xl flex items-center justify-between cursor-pointer hover:opacity-95 transition-all"
-                style={{ backgroundColor: store.brandColor }}
-              >
+              <div className="flex items-center justify-between pb-3" style={{ borderBottom: `1px solid ${theme.borderColor}` }}>
                 <div className="flex items-center gap-2">
-                  <ShoppingCart className="w-4 h-4" />
-                  <span>Ver Pedido ({totalItemsCount} productos)</span>
+                  <ShoppingCart className="w-5 h-5" style={{ color: theme.accentColor }} />
+                  <h3 className="font-display font-black text-lg sm:text-xl">Tu Carrito de Compras</h3>
                 </div>
-                <span className="font-mono text-base font-black">${cartTotal} MXN →</span>
-              </button>
-            </motion.div>
-          )}
-
-          {/* Cart Modal / Drawer */}
-          <AnimatePresence>
-            {isCartOpen && (
-              <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex justify-end">
-                <motion.div
-                  initial={{ x: '100%' }}
-                  animate={{ x: 0 }}
-                  exit={{ x: '100%' }}
-                  transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                  className="w-full max-w-md bg-white h-full shadow-2xl p-6 flex flex-col justify-between text-left overflow-y-auto"
+                <button
+                  type="button"
+                  onClick={() => setIsCartOpen(false)}
+                  className="p-1 rounded-full opacity-60 hover:opacity-100 cursor-pointer"
                 >
-                  <div>
-                    {/* Drawer Header */}
-                    <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-                      <div className="flex items-center gap-2">
-                        <ShoppingCart className="w-5 h-5" style={{ color: store.brandColor }} />
-                        <h3 className="font-display font-bold text-lg text-slate-900">
-                          Tu Carrito ({totalItemsCount})
-                        </h3>
-                      </div>
-                      <button
-                        onClick={() => setIsCartOpen(false)}
-                        className="p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {cart.length === 0 ? (
+                <div className="py-10 text-center text-xs opacity-60">
+                  Tu carrito está vacío. Agrega productos desde el catálogo.
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="space-y-2.5 max-h-60 overflow-y-auto pr-1">
+                    {cart.map((item, idx) => (
+                      <div 
+                        key={`${item.product.id}-${item.selectedOption || idx}`}
+                        className="p-3 rounded-2xl flex items-center justify-between gap-3 text-xs border"
+                        style={{
+                          backgroundColor: `${theme.textColor}05`,
+                          borderColor: theme.borderColor
+                        }}
                       >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                    {/* Products List */}
-                    {cart.length === 0 ? (
-                      <div className="py-20 text-center text-slate-400 text-xs">
-                        Tu carrito está vacío. Agrega productos del catálogo.
-                      </div>
-                    ) : (
-                      <div className="space-y-3 py-4">
-                        {cart.map(item => (
-                          <div
-                            key={item.product.id}
-                            className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-100 text-xs"
-                          >
-                            <div>
-                              <h5 className="font-bold text-slate-800">{item.product.name}</h5>
-                              <p className="text-slate-400 font-mono">${item.product.price} MXN c/u</p>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                              <div className="flex items-center bg-white rounded-lg border border-slate-200">
-                                <button
-                                  onClick={() => updateQuantity(item.product.id, -1)}
-                                  className="p-1 text-slate-500 hover:text-slate-800"
-                                >
-                                  <Minus className="w-3 h-3" />
-                                </button>
-                                <span className="px-2 font-bold font-mono">{item.quantity}</span>
-                                <button
-                                  onClick={() => updateQuantity(item.product.id, 1)}
-                                  className="p-1 text-slate-500 hover:text-slate-800"
-                                >
-                                  <Plus className="w-3 h-3" />
-                                </button>
-                              </div>
-                              <button
-                                onClick={() => removeFromCart(item.product.id)}
-                                className="p-1 text-slate-400 hover:text-rose-500"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-
-                        {/* Customer details in cart */}
-                        <div className="pt-4 border-t border-slate-100 space-y-3 text-xs">
-                          <div className="space-y-1">
-                            <label className="font-bold text-slate-700">Tu Nombre (opcional)</label>
-                            <input
-                              type="text"
-                              placeholder="Ej. Ana García"
-                              value={customerName}
-                              onChange={(e) => setCustomerName(e.target.value)}
-                              className="w-full py-2 px-3 rounded-xl border border-slate-200 focus:outline-none text-xs"
-                            />
-                          </div>
-                          <div className="space-y-1">
-                            <label className="font-bold text-slate-700">Indicaciones o dirección de entrega</label>
-                            <input
-                              type="text"
-                              placeholder="Ej. Calle Morelos #123, timbre 2"
-                              value={deliveryNotes}
-                              onChange={(e) => setDeliveryNotes(e.target.value)}
-                              className="w-full py-2 px-3 rounded-xl border border-slate-200 focus:outline-none text-xs"
-                            />
-                          </div>
+                        <div className="min-w-0">
+                          <h5 className="font-bold truncate">{item.product.name}</h5>
+                          {item.selectedOption && (
+                            <span className="text-[10px] opacity-70 block">Opción: {item.selectedOption}</span>
+                          )}
+                          <span className="font-mono font-bold text-xs block mt-0.5">
+                            ${item.product.price * item.quantity} MXN
+                          </span>
                         </div>
 
+                        <div className="flex items-center gap-2 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => updateQuantity(item.product.id, -1, item.selectedOption)}
+                            className="w-6 h-6 rounded-full flex items-center justify-center border cursor-pointer opacity-70 hover:opacity-100"
+                            style={{ borderColor: theme.borderColor }}
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className="font-bold text-xs w-4 text-center">{item.quantity}</span>
+                          <button
+                            type="button"
+                            onClick={() => updateQuantity(item.product.id, 1, item.selectedOption)}
+                            className="w-6 h-6 rounded-full flex items-center justify-center border cursor-pointer opacity-70 hover:opacity-100"
+                            style={{ borderColor: theme.borderColor }}
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeFromCart(item.product.id, item.selectedOption)}
+                            className="p-1 text-rose-500 hover:text-rose-600 cursor-pointer ml-1"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
-                    )}
+                    ))}
                   </div>
 
-                  {/* Checkout Footer */}
-                  {cart.length > 0 && (
-                    <div className="pt-4 border-t border-slate-100 space-y-3">
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="font-bold text-slate-600">Total a Pagar:</span>
-                        <span className="font-mono font-black text-xl text-slate-900">${cartTotal} MXN</span>
-                      </div>
+                  {/* Customer Information */}
+                  <div className="space-y-2 pt-2" style={{ borderTop: `1px solid ${theme.borderColor}` }}>
+                    <label className="text-xs font-bold block">Tu Nombre (opcional):</label>
+                    <input
+                      type="text"
+                      placeholder="Ej. Juan Pérez"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      className="w-full py-2 px-3 rounded-xl text-xs focus:outline-none border"
+                      style={{
+                        backgroundColor: `${theme.textColor}05`,
+                        borderColor: theme.borderColor,
+                        color: theme.textColor
+                      }}
+                    />
 
-                      <a
-                        href={generateWhatsAppOrderLink()}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-full py-3.5 rounded-2xl text-white font-black text-xs shadow-lg flex items-center justify-center gap-2 cursor-pointer decoration-none hover:opacity-95"
-                        style={{ backgroundColor: store.brandColor }}
-                      >
-                        <MessageCircle className="w-4 h-4" />
-                        Enviar Pedido a WhatsApp
-                      </a>
+                    <label className="text-xs font-bold block pt-1">Notas o instrucciones de entrega:</label>
+                    <input
+                      type="text"
+                      placeholder="Ej. Sin cebolla / Enviar a tal dirección"
+                      value={deliveryNotes}
+                      onChange={(e) => setDeliveryNotes(e.target.value)}
+                      className="w-full py-2 px-3 rounded-xl text-xs focus:outline-none border"
+                      style={{
+                        backgroundColor: `${theme.textColor}05`,
+                        borderColor: theme.borderColor,
+                        color: theme.textColor
+                      }}
+                    />
+                  </div>
+
+                  {/* Total & WhatsApp Order Button */}
+                  <div className="pt-3 space-y-3" style={{ borderTop: `1px solid ${theme.borderColor}` }}>
+                    <div className="flex justify-between items-center text-sm font-bold">
+                      <span>Total Estimado:</span>
+                      <span className="font-mono text-base" style={{ color: theme.accentColor }}>
+                        ${cartTotal} MXN
+                      </span>
                     </div>
-                  )}
 
-                </motion.div>
-              </div>
-            )}
-          </AnimatePresence>
-        </>
-      )}
+                    <a
+                      href={generateWhatsAppOrderLink()}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full py-3 rounded-2xl text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md hover:opacity-95 transition-transform active:scale-98 cursor-pointer decoration-none"
+                      style={{ backgroundColor: '#00b37e' }}
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      <span>Confirmar Pedido por WhatsApp</span>
+                    </a>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
-      {/* ================= STORE POLICIES & GUARANTEE MODAL ================= */}
+      {/* ================= STORE POLICIES MODAL ================= */}
       <AnimatePresence>
         {isPoliciesOpen && (
-          <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm">
             <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl space-y-6 text-left"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="rounded-3xl max-w-lg w-full max-h-[85vh] overflow-y-auto p-5 sm:p-7 shadow-2xl space-y-5 text-left border"
+              style={{
+                backgroundColor: theme.cardBackground,
+                borderColor: theme.borderColor,
+                color: theme.textColor
+              }}
             >
-              <div className="flex items-start justify-between pb-4 border-b border-slate-100">
+              <div className="flex items-start justify-between pb-3" style={{ borderBottom: `1px solid ${theme.borderColor}` }}>
                 <div>
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#00b37e] uppercase tracking-wider">
+                  <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider" style={{ color: theme.accentColor }}>
                     <ShieldCheck className="w-4 h-4" />
                     <span>Políticas del Negocio</span>
                   </div>
-                  <h3 className="font-display font-black text-xl text-slate-900 mt-1">
+                  <h3 className="font-display font-black text-lg sm:text-xl mt-1">
                     {store.businessName}
                   </h3>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsPoliciesOpen(false)}
-                  className="p-1.5 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                  className="p-1 rounded-full opacity-60 hover:opacity-100 cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               {/* Shipping Policy */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
-                  <Truck className="w-4 h-4 text-[#00b37e]" />
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2 font-bold text-xs sm:text-sm">
+                  <Truck className="w-4 h-4" style={{ color: theme.accentColor }} />
                   <span>Envíos y Tiempos de Entrega</span>
                 </div>
-                <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                <p 
+                  className="text-xs leading-relaxed p-3 rounded-2xl border"
+                  style={{
+                    backgroundColor: `${theme.textColor}05`,
+                    borderColor: theme.borderColor,
+                    color: theme.textMutedColor
+                  }}
+                >
                   {store.storePolicies?.shipping || 'Las entregas locales y envíos se coordinan directamente a través de nuestro WhatsApp oficial para brindarte atención inmediata y personalizada.'}
                 </p>
               </div>
 
               {/* Guarantee & Returns */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
-                  <ShieldCheck className="w-4 h-4 text-[#00b37e]" />
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2 font-bold text-xs sm:text-sm">
+                  <ShieldCheck className="w-4 h-4" style={{ color: theme.accentColor }} />
                   <span>Garantía de Satisfacción y Devoluciones</span>
                 </div>
-                <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                <p 
+                  className="text-xs leading-relaxed p-3 rounded-2xl border"
+                  style={{
+                    backgroundColor: `${theme.textColor}05`,
+                    borderColor: theme.borderColor,
+                    color: theme.textMutedColor
+                  }}
+                >
                   {store.storePolicies?.returns || 'Tu satisfacción es nuestra máxima prioridad. Si existe cualquier inconveniente con tu producto o servicio, comunícate con nosotros por WhatsApp para solucionarlo de inmediato.'}
                 </p>
               </div>
 
               {/* Payment Methods */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
-                  <CreditCard className="w-4 h-4 text-[#00b37e]" />
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2 font-bold text-xs sm:text-sm">
+                  <CreditCard className="w-4 h-4" style={{ color: theme.accentColor }} />
                   <span>Formas de Pago Aceptadas</span>
                 </div>
-                <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                <p 
+                  className="text-xs leading-relaxed p-3 rounded-2xl border"
+                  style={{
+                    backgroundColor: `${theme.textColor}05`,
+                    borderColor: theme.borderColor,
+                    color: theme.textMutedColor
+                  }}
+                >
                   {store.storePolicies?.paymentTerms || 'Aceptamos transferencias electrónicas SPEI y pagos en efectivo al momento de recibir tu orden.'}
                 </p>
-                {store.paymentMethods && store.paymentMethods.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    {store.paymentMethods.map(pm => (
-                      <span key={pm} className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200">
-                        ✓ {pm}
-                      </span>
-                    ))}
-                  </div>
-                )}
               </div>
 
-              {/* Official Social Links in Modal */}
-              {store.socialLinks && Object.values(store.socialLinks).some(Boolean) && (
-                <div className="space-y-2 pt-2 border-t border-slate-100">
-                  <span className="text-xs font-bold text-slate-700">Canales y Redes Oficiales:</span>
-                  <div className="flex flex-wrap gap-2">
-                    {store.socialLinks.instagram && (
-                      <a
-                        href={formatSocialUrl('instagram', store.socialLinks.instagram)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold hover:bg-rose-50 hover:text-rose-600"
-                      >
-                        <InstagramIcon className="w-3 h-3 text-rose-500" />
-                        <span>Instagram</span>
-                      </a>
-                    )}
-                    {store.socialLinks.facebook && (
-                      <a
-                        href={formatSocialUrl('facebook', store.socialLinks.facebook)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold hover:bg-blue-50 hover:text-blue-600"
-                      >
-                        <FacebookIcon className="w-3 h-3 text-blue-600" />
-                        <span>Facebook</span>
-                      </a>
-                    )}
-                    {store.socialLinks.tiktok && (
-                      <a
-                        href={formatSocialUrl('tiktok', store.socialLinks.tiktok)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold hover:bg-slate-200"
-                      >
-                        <TikTokIcon className="w-3 h-3" />
-                        <span>TikTok</span>
-                      </a>
-                    )}
-                    {store.socialLinks.mapsUrl && (
-                      <a
-                        href={formatSocialUrl('maps', store.socialLinks.mapsUrl)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold hover:bg-emerald-50 hover:text-emerald-700"
-                      >
-                        <GoogleMapsIcon className="w-3 h-3 text-emerald-600" />
-                        <span>Ubicación</span>
-                      </a>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Legal Notice */}
-              <div className="text-[11px] text-slate-400 pt-3 border-t border-slate-100 text-center">
-                Comercio verificado. Esta tienda opera bajo su propia razón social y administración. Dayabit provee la infraestructura técnica.
+              <div 
+                className="text-[10px] pt-3 text-center opacity-60"
+                style={{ borderTop: `1px solid ${theme.borderColor}` }}
+              >
+                Comercio verificado. Esta tienda opera bajo su propia administración. Dayabit provee la tecnología de catálogo web.
               </div>
 
               <button
                 type="button"
                 onClick={() => setIsPoliciesOpen(false)}
-                className="w-full py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold cursor-pointer transition-colors"
+                className="w-full py-2.5 rounded-2xl text-white text-xs font-bold cursor-pointer transition-opacity hover:opacity-90"
+                style={{ backgroundColor: isDark ? '#ffffff' : '#0f172a', color: isDark ? '#0f172a' : '#ffffff' }}
               >
-                Entendido, volver al catálogo
+                Cerrar y Volver a la Tienda
               </button>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
 
-      {/* ================= VIRAL FOOTER BADGE ================= */}
-      <footer className="py-8 border-t border-slate-200 bg-white text-center text-xs text-slate-500 space-y-4">
-        
-        {/* Footer Social Links & Policies link */}
-        <div className="flex flex-wrap items-center justify-center gap-4">
+      {/* ================= FOOTER ================= */}
+      <footer 
+        className="py-6 border-t text-center text-xs space-y-3 transition-colors"
+        style={{
+          backgroundColor: theme.cardBackground,
+          borderColor: theme.borderColor,
+          color: theme.textMutedColor
+        }}
+      >
+        <div className="flex flex-wrap items-center justify-center gap-3">
           {store.socialLinks?.instagram && (
             <a
               href={formatSocialUrl('instagram', store.socialLinks.instagram)}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-slate-500 hover:text-rose-600 transition-colors flex items-center gap-1 font-bold"
+              className="hover:opacity-100 transition-opacity flex items-center gap-1 font-bold"
+              style={{ color: theme.textColor }}
             >
-              <InstagramIcon className="w-3.5 h-3.5" /> Instagram
+              <InstagramIcon className="w-3.5 h-3.5 text-rose-500" /> Instagram
             </a>
           )}
           {store.socialLinks?.facebook && (
@@ -1000,9 +1146,10 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
               href={formatSocialUrl('facebook', store.socialLinks.facebook)}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-slate-500 hover:text-blue-600 transition-colors flex items-center gap-1 font-bold"
+              className="hover:opacity-100 transition-opacity flex items-center gap-1 font-bold"
+              style={{ color: theme.textColor }}
             >
-              <FacebookIcon className="w-3.5 h-3.5" /> Facebook
+              <FacebookIcon className="w-3.5 h-3.5 text-blue-500" /> Facebook
             </a>
           )}
           {store.socialLinks?.tiktok && (
@@ -1010,32 +1157,24 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
               href={formatSocialUrl('tiktok', store.socialLinks.tiktok)}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-slate-500 hover:text-slate-900 transition-colors flex items-center gap-1 font-bold"
+              className="hover:opacity-100 transition-opacity flex items-center gap-1 font-bold"
+              style={{ color: theme.textColor }}
             >
               <TikTokIcon className="w-3.5 h-3.5" /> TikTok
-            </a>
-          )}
-          {store.socialLinks?.mapsUrl && (
-            <a
-              href={formatSocialUrl('maps', store.socialLinks.mapsUrl)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-slate-500 hover:text-emerald-700 transition-colors flex items-center gap-1 font-bold"
-            >
-              <GoogleMapsIcon className="w-3.5 h-3.5" /> Cómo Llegar
             </a>
           )}
           <button
             type="button"
             onClick={() => setIsPoliciesOpen(true)}
-            className="text-slate-500 hover:text-slate-900 font-bold underline transition-colors cursor-pointer"
+            className="font-bold underline cursor-pointer hover:opacity-100 transition-opacity"
+            style={{ color: theme.textColor }}
           >
-            Políticas y Garantías del Comercio
+            Políticas y Garantías
           </button>
         </div>
 
-        <p className="flex items-center justify-center gap-1.5 text-slate-400">
-          <span>Tienda oficial de <strong>{store.businessName}</strong> • Impulsada por</span>
+        <p className="opacity-70 text-[11px]">
+          Tienda oficial de <strong>{store.businessName}</strong> • Impulsada por{' '}
           <a
             href="/"
             onClick={(e) => {
@@ -1044,9 +1183,10 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
                 onBackToMain();
               }
             }}
-            className="font-bold text-slate-700 hover:text-[#00b37e] transition-colors flex items-center gap-1"
+            className="font-bold underline hover:opacity-100"
+            style={{ color: theme.accentColor }}
           >
-            Dayabit Cloud <ExternalLink className="w-3 h-3" />
+            Dayabit Cloud
           </a>
         </p>
       </footer>

@@ -59,6 +59,19 @@ export interface FAQItem {
   answer: string;
 }
 
+export type ThemePaletteMode = 'light' | 'dark' | 'cream' | 'mint' | 'black' | 'custom';
+
+export interface StoreThemeConfig {
+  palette: ThemePaletteMode;
+  pageBackground: string;
+  cardBackground: string;
+  headerBackground: string;
+  textColor: string;
+  textMutedColor: string;
+  borderColor: string;
+  accentColor: string;
+}
+
 export interface TenantStore {
   id: string;
   slug: string; // e.g. 'taqueria-pepe' -> URL: dayabit.com/p/taqueria-pepe
@@ -68,6 +81,7 @@ export interface TenantStore {
   planId: PlanTier;
   whatsapp: string; // 10 digits, e.g. '5625785033'
   brandColor: string; // e.g. '#00b37e', '#2563eb', '#dc2626'
+  themeConfig?: StoreThemeConfig;
   tagline: string;
   description: string;
   category: string;
