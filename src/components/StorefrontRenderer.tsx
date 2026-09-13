@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, MessageCircle, MapPin, Clock, Plus, Minus, Trash2, Search, ArrowLeft, ExternalLink, X, ShieldCheck, Truck, CreditCard, Globe } from 'lucide-react';
+import { ShoppingCart, MessageCircle, MapPin, Clock, Plus, Minus, Trash2, Search, ArrowLeft, ExternalLink, X, ShieldCheck, Truck, CreditCard, Globe, ChevronDown, HelpCircle, Award, Sparkles, CheckCircle2 } from 'lucide-react';
 import type { TenantStore, StoreProduct } from '../types/tenant';
 import { InstagramIcon, FacebookIcon, TikTokIcon, GoogleMapsIcon } from './SocialIcons';
 import { formatSocialUrl } from '../utils/formatSocial';
@@ -13,6 +13,7 @@ interface StorefrontRendererProps {
 interface CartItem {
   product: StoreProduct;
   quantity: number;
+  selectedOption?: string;
 }
 
 export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRendererProps) {
@@ -23,6 +24,8 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
   const [isPoliciesOpen, setIsPoliciesOpen] = useState(false);
   const [customerName, setCustomerName] = useState('');
   const [deliveryNotes, setDeliveryNotes] = useState('');
+  const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
+  const [expandedFaq, setExpandedFaq] = useState<string | null>(null);
 
   // Extract unique categories
   const categories = useMemo(() => {
@@ -44,21 +47,27 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
     });
   }, [store.products, activeCategory, searchQuery]);
 
+  // Handle variant selection
+  const handleSelectVariant = (productId: string, variant: string) => {
+    setSelectedVariants(prev => ({ ...prev, [productId]: variant }));
+  };
+
   // Cart functions
   const addToCart = (product: StoreProduct) => {
+    const variant = selectedVariants[product.id] || product.nicheAttributes?.sizes?.[0];
     setCart(prev => {
-      const exists = prev.find(item => item.product.id === product.id);
+      const exists = prev.find(item => item.product.id === product.id && item.selectedOption === variant);
       if (exists) {
-        return prev.map(item => item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item);
+        return prev.map(item => item === exists ? { ...item, quantity: item.quantity + 1 } : item);
       }
-      return [...prev, { product, quantity: 1 }];
+      return [...prev, { product, quantity: 1, selectedOption: variant }];
     });
   };
 
-  const updateQuantity = (productId: string, amount: number) => {
+  const updateQuantity = (productId: string, amount: number, variant?: string) => {
     setCart(prev => {
       return prev.map(item => {
-        if (item.product.id === productId) {
+        if (item.product.id === productId && item.selectedOption === variant) {
           const next = item.quantity + amount;
           return next > 0 ? { ...item, quantity: next } : null;
         }
@@ -67,8 +76,8 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
     });
   };
 
-  const removeFromCart = (productId: string) => {
-    setCart(prev => prev.filter(item => item.product.id !== productId));
+  const removeFromCart = (productId: string, variant?: string) => {
+    setCart(prev => prev.filter(item => !(item.product.id === productId && item.selectedOption === variant)));
   };
 
   const cartTotal = cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
@@ -85,7 +94,8 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
 
     text += `📋 *Productos solicitados:*\n`;
     cart.forEach(item => {
-      text += `• ${item.quantity}x ${item.product.name} - $${item.product.price * item.quantity} MXN\n`;
+      const optStr = item.selectedOption ? ` [Opción: ${item.selectedOption}]` : '';
+      text += `• ${item.quantity}x ${item.product.name}${optStr} - $${item.product.price * item.quantity} MXN\n`;
     });
 
     text += `\n💰 *TOTAL: $${cartTotal} MXN*\n`;
@@ -104,7 +114,8 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
 
   // Build individual product WhatsApp link for Plan 2 (Vitrina)
   const getProductQuoteLink = (product: StoreProduct) => {
-    const text = `¡Hola *${store.businessName}*! Vi su catálogo web y me interesa ordenar:\n\n• *${product.name}* ($${product.price} MXN)\n\n¿Tienen disponibilidad y costos de envío?`;
+    const optStr = selectedVariants[product.id] ? ` (Opción: ${selectedVariants[product.id]})` : '';
+    const text = `¡Hola *${store.businessName}*! Vi su catálogo web y me interesa ordenar:\n\n• *${product.name}*${optStr} ($${product.price} MXN)\n\n¿Tienen disponibilidad y costos de envío?`;
     const cleanPhone = store.whatsapp.replace(/\D/g, '');
     const prefix = cleanPhone.startsWith('52') ? cleanPhone : `52${cleanPhone}`;
     return `https://wa.me/${prefix}?text=${encodeURIComponent(text)}`;
@@ -212,19 +223,38 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
       <main className="flex-grow max-w-6xl mx-auto px-5 py-8 w-full space-y-10">
         
         {/* ================= HERO SECTION ================= */}
-        <section className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-xs relative overflow-hidden text-left space-y-5">
+        <section className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-xs relative overflow-hidden text-left space-y-6">
           <div 
             className="absolute top-0 right-0 w-80 h-80 rounded-full blur-3xl opacity-15 pointer-events-none"
             style={{ backgroundColor: store.brandColor }}
           />
 
+          {/* Hero Banner if available */}
+          {store.bannerUrl && (
+            <div className="w-full h-44 sm:h-64 -mt-6 sm:-mt-10 -mx-6 sm:-mx-10 rounded-t-3xl overflow-hidden relative shadow-inner mb-2">
+              <img
+                src={store.bannerUrl}
+                alt={store.businessName}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-transparent" />
+              <div className="absolute bottom-4 left-6 sm:left-10 text-white flex items-center gap-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30">
+                  {store.category}
+                </span>
+              </div>
+            </div>
+          )}
+
           <div className="max-w-2xl space-y-4 relative z-10">
-            <span 
-              className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full inline-block"
-              style={{ color: store.brandColor, backgroundColor: `${store.brandColor}15` }}
-            >
-              {store.category}
-            </span>
+            {!store.bannerUrl && (
+              <span 
+                className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full inline-block"
+                style={{ color: store.brandColor, backgroundColor: `${store.brandColor}15` }}
+              >
+                {store.category}
+              </span>
+            )}
             <h2 className="text-2xl sm:text-4xl font-display font-black text-slate-900 leading-tight">
               {store.tagline}
             </h2>
@@ -429,6 +459,7 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {filteredProducts.map(product => {
                 const inCart = cart.find(c => c.product.id === product.id);
+                const niche = product.nicheAttributes;
                 return (
                   <div
                     key={product.id}
@@ -442,6 +473,11 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
                             {product.category}
                           </span>
                         )}
+                        {niche?.badge && (
+                          <span className="absolute bottom-2.5 right-2.5 text-[10px] font-bold text-white bg-[#00b37e] px-2.5 py-0.5 rounded-full shadow-2xs">
+                            {niche.badge}
+                          </span>
+                        )}
                       </div>
 
                       <div>
@@ -451,6 +487,76 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
                         <p className="text-xs text-slate-500 line-clamp-2 mt-1">
                           {product.description || 'Disponible para pedido inmediato con atención por WhatsApp.'}
                         </p>
+
+                        {/* Food Attributes */}
+                        {niche?.ingredients && (
+                          <p className="text-[11px] text-slate-500 italic mt-2 bg-slate-50 p-2 rounded-xl border border-slate-100">
+                            <strong>Ingredientes:</strong> {niche.ingredients}
+                          </p>
+                        )}
+                        {niche?.preparationTime && (
+                          <span className="text-[10px] font-medium text-slate-400 mt-1 inline-block">
+                            ⏱️ {niche.preparationTime}
+                          </span>
+                        )}
+
+                        {/* Fashion Sizes */}
+                        {niche?.sizes && niche.sizes.length > 0 && (
+                          <div className="mt-2.5 pt-2 border-t border-slate-100">
+                            <span className="text-[10px] font-bold text-slate-400 block mb-1">Talla:</span>
+                            <div className="flex flex-wrap gap-1">
+                              {niche.sizes.map(size => {
+                                const isChosen = (selectedVariants[product.id] || niche.sizes?.[0]) === size;
+                                return (
+                                  <button
+                                    key={size}
+                                    type="button"
+                                    onClick={() => handleSelectVariant(product.id, size)}
+                                    className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition-all cursor-pointer ${
+                                      isChosen 
+                                        ? 'bg-slate-900 text-white shadow-2xs' 
+                                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                    }`}
+                                  >
+                                    {size}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                            {niche.material && (
+                              <p className="text-[10px] text-slate-400 mt-1.5">{niche.material}</p>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Services Attributes */}
+                        {niche?.serviceDuration && (
+                          <div className="mt-2.5 flex items-center gap-2 text-[11px]">
+                            <span className="font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md">
+                              🕒 {niche.serviceDuration}
+                            </span>
+                            {niche.serviceModality && (
+                              <span className="capitalize text-slate-500 font-medium">
+                                📍 {niche.serviceModality}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        {niche?.includes && niche.includes.length > 0 && (
+                          <div className="mt-2 space-y-1">
+                            {niche.includes.slice(0, 3).map((inc, i) => (
+                              <div key={i} className="flex items-center gap-1.5 text-[11px] text-slate-600">
+                                <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
+                                <span className="truncate">{inc}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* General Retail Attributes */}
+                        {niche?.warranty && (
+                          <p className="text-[10px] font-semibold text-slate-400 mt-1">🛡️ {niche.warranty}</p>
+                        )}
                       </div>
                     </div>
 
@@ -492,6 +598,91 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
                 No se encontraron artículos con ese criterio de búsqueda.
               </div>
             )}
+          </section>
+        )}
+
+        {/* ================= ABOUT US / QUIÉNES SOMOS ================= */}
+        {store.aboutUs && store.aboutUs.story && (
+          <section className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-xs text-left space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+              <div>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#00b37e]">
+                  Conoce a Nuestra Empresa
+                </span>
+                <h3 className="font-display font-black text-2xl text-slate-900 mt-1">
+                  Quiénes Somos & Nuestra Filosofía
+                </h3>
+              </div>
+              {store.aboutUs.experienceYears && (
+                <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 px-3.5 py-1.5 rounded-2xl w-fit">
+                  <Award className="w-5 h-5 text-emerald-600" />
+                  <span className="text-xs font-bold text-emerald-900">
+                    +{store.aboutUs.experienceYears} años de experiencia
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-3xl">
+              {store.aboutUs.story}
+            </p>
+
+            {store.aboutUs.highlightValues && store.aboutUs.highlightValues.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                {store.aboutUs.highlightValues.map((val, idx) => (
+                  <div key={idx} className="flex items-center gap-2 p-3 rounded-2xl bg-slate-50 border border-slate-100 text-xs font-bold text-slate-700">
+                    <Sparkles className="w-4 h-4 text-[#00b37e]" />
+                    <span>{val}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* ================= FREQUENTLY ASKED QUESTIONS (FAQ) ================= */}
+        {store.faqs && store.faqs.length > 0 && (
+          <section className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-xs text-left space-y-6">
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#00b37e]">
+                Resuelve tus Dudas
+              </span>
+              <h3 className="font-display font-black text-2xl text-slate-900 mt-1">
+                Preguntas Frecuentes
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">
+                Respuestas inmediatas a las consultas más habituales de nuestros clientes.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              {store.faqs.map(faq => {
+                const isOpen = expandedFaq === faq.id;
+                return (
+                  <div 
+                    key={faq.id} 
+                    className="border border-slate-200 rounded-2xl overflow-hidden transition-colors"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setExpandedFaq(isOpen ? null : faq.id)}
+                      className="w-full p-4 text-left font-bold text-slate-900 text-xs sm:text-sm flex items-center justify-between hover:bg-slate-50 cursor-pointer"
+                    >
+                      <span className="flex items-center gap-2">
+                        <HelpCircle className="w-4 h-4 text-[#00b37e]" />
+                        {faq.question}
+                      </span>
+                      <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    {isOpen && (
+                      <div className="p-4 pt-0 text-xs text-slate-600 leading-relaxed border-t border-slate-100 bg-slate-50/50">
+                        {faq.answer}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </section>
         )}
 

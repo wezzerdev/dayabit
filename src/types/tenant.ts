@@ -1,5 +1,26 @@
 export type PlanTier = 'esencial' | 'vitrina' | 'pro';
 
+export type ProductNiche = 'food' | 'fashion' | 'services' | 'general';
+
+export interface NicheProductAttributes {
+  niche?: ProductNiche;
+  // Food & Beverages
+  ingredients?: string;
+  preparationTime?: string;
+  badge?: string; // e.g. 'Recomendado', 'Más Vendido', 'Vegano', 'Nuevo'
+  // Fashion & Apparel
+  sizes?: string[]; // e.g. ['S', 'M', 'L', 'XL']
+  colors?: string[]; // e.g. ['Negro', 'Blanco', 'Gris']
+  material?: string;
+  // Services & Consulting
+  serviceDuration?: string; // e.g. '45 min', '1 hora', 'Mensual'
+  serviceModality?: 'online' | 'presencial' | 'domicilio';
+  includes?: string[];
+  // General Retail
+  warranty?: string;
+  brand?: string;
+}
+
 export interface StoreProduct {
   id: string;
   name: string;
@@ -9,6 +30,7 @@ export interface StoreProduct {
   imageUrl?: string;
   iconText?: string;
   inStock: boolean;
+  nicheAttributes?: NicheProductAttributes;
 }
 
 export interface SocialLinks {
@@ -23,6 +45,18 @@ export interface StorePolicies {
   shipping?: string;    // e.g. 'Entregas locales en menos de 45 min o envíos a todo México.'
   returns?: string;     // e.g. 'Garantía de satisfacción de 7 días.'
   paymentTerms?: string;// e.g. 'Aceptamos transferencias SPEI, efectivo contra entrega y tarjetas.'
+}
+
+export interface AboutUs {
+  story?: string;
+  experienceYears?: number;
+  highlightValues?: string[];
+}
+
+export interface FAQItem {
+  id: string;
+  question: string;
+  answer: string;
 }
 
 export interface TenantStore {
@@ -44,6 +78,8 @@ export interface TenantStore {
   socialLinks?: SocialLinks;
   paymentMethods?: string[];
   storePolicies?: StorePolicies;
+  aboutUs?: AboutUs;
+  faqs?: FAQItem[];
   products: StoreProduct[];
   subscriptionStatus: 'active' | 'trial' | 'past_due';
   subscriptionPeriodEnd?: string;
@@ -61,3 +97,4 @@ export interface PlanDetails {
   hasOrderingSystem: boolean;
   features: string[];
 }
+
