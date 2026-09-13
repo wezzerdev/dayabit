@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  ShoppingCart, MessageCircle, MapPin, Clock, Plus, Minus, Trash2, Search, 
+  ShoppingCart, ShoppingBag, MessageCircle, MapPin, Clock, Plus, Minus, Trash2, Search, 
   ArrowLeft, X, ShieldCheck, Truck, CreditCard, 
   ChevronDown, HelpCircle, Award, FileText, Check
 } from 'lucide-react';
@@ -193,19 +193,20 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
           </div>
 
           {/* Quick Actions / Right */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <a
               href={`https://wa.me/52${store.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Hola ${store.businessName}, vi su catálogo web y me gustaría información.`)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all hover:scale-105 decoration-none shadow-sm cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-bold transition-all hover:scale-105 decoration-none shadow-sm cursor-pointer"
               style={{
                 backgroundColor: theme.accentColor,
                 color: '#ffffff',
               }}
+              title="Contactar por WhatsApp"
             >
               <MessageCircle className="w-3.5 h-3.5 fill-current" />
-              <span className="text-xs">WhatsApp</span>
+              <span className={isMobileSimulator ? 'hidden' : 'hidden sm:inline text-xs'}>WhatsApp</span>
             </a>
 
             {store.planId === 'pro' && (
@@ -638,20 +639,31 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
                       <button
                         type="button"
                         onClick={() => addToCart(product)}
-                        className="px-2.5 sm:px-4 py-1.5 rounded-full text-white text-[10px] sm:text-xs font-bold shadow-sm hover:scale-105 active:scale-95 transition-all cursor-pointer shrink-0"
+                        className="px-2.5 sm:px-3.5 py-1.5 rounded-full text-white text-[10px] sm:text-xs font-bold shadow-sm hover:scale-105 active:scale-95 transition-all cursor-pointer shrink-0 flex items-center gap-1"
                         style={{ backgroundColor: theme.accentColor }}
+                        title={inCart ? `En bolsa: ${inCart.quantity}` : 'Añadir a la bolsa'}
                       >
-                        {inCart ? `Bolsa (${inCart.quantity})` : 'Añadir'}
+                        <ShoppingBag className="w-3.5 h-3.5" />
+                        <span className={isMobileSimulator ? 'hidden' : 'hidden sm:inline'}>
+                          {inCart ? `Bolsa (${inCart.quantity})` : 'Añadir'}
+                        </span>
+                        {inCart && (
+                          <span className={`${isMobileSimulator ? 'inline' : 'sm:hidden'} text-[10px] font-mono font-bold`}>
+                            {inCart.quantity}
+                          </span>
+                        )}
                       </button>
                     ) : (
                       <a
                         href={getProductQuoteLink(product)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-2.5 sm:px-4 py-1.5 rounded-full text-white text-[10px] sm:text-xs font-bold shadow-sm hover:scale-105 active:scale-95 transition-all cursor-pointer decoration-none shrink-0"
+                        className="px-2.5 sm:px-3.5 py-1.5 rounded-full text-white text-[10px] sm:text-xs font-bold shadow-sm hover:scale-105 active:scale-95 transition-all cursor-pointer decoration-none shrink-0 flex items-center gap-1"
                         style={{ backgroundColor: theme.accentColor }}
+                        title="Pedir por WhatsApp"
                       >
-                        Pedir
+                        <MessageCircle className="w-3.5 h-3.5 fill-current" />
+                        <span className={isMobileSimulator ? 'hidden' : 'hidden sm:inline'}>Pedir</span>
                       </a>
                     )}
                   </div>
@@ -724,10 +736,12 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
                     href={`https://wa.me/52${store.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Hola ${store.businessName}, me interesa agendar una consulta sobre el servicio: *${service.name}*.`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 rounded-full text-white text-xs font-bold shadow-md hover:scale-105 transition-all flex items-center gap-1.5 decoration-none cursor-pointer"
+                    className="p-2 sm:px-4 sm:py-2 rounded-full text-white text-xs font-bold shadow-md hover:scale-105 transition-all flex items-center gap-1.5 decoration-none cursor-pointer"
                     style={{ backgroundColor: theme.accentColor }}
+                    title={`Agendar Cita para ${service.name}`}
                   >
-                    <MessageCircle className="w-3.5 h-3.5" /> Agendar Cita
+                    <MessageCircle className="w-3.5 h-3.5 fill-current" />
+                    <span className={isMobileSimulator ? 'hidden' : 'hidden sm:inline'}>Agendar Cita</span>
                   </a>
                 </div>
               </div>
@@ -793,21 +807,25 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
                       <button
                         type="button"
                         onClick={() => addToCart(product)}
-                        className="px-3 py-1.5 rounded-xl text-white font-bold text-xs flex items-center gap-1 shadow-sm hover:scale-105 active:scale-95 cursor-pointer"
+                        className="p-1.5 sm:px-3 sm:py-1.5 rounded-xl text-white font-bold text-xs flex items-center gap-1 shadow-sm hover:scale-105 active:scale-95 cursor-pointer"
                         style={{ backgroundColor: theme.accentColor }}
+                        title={inCart ? `En pedido: ${inCart.quantity}` : 'Añadir al pedido'}
                       >
                         <Plus className="w-3.5 h-3.5" />
-                        <span>{inCart ? inCart.quantity : 'Pedir'}</span>
+                        <span className={isMobileSimulator ? 'hidden' : 'hidden sm:inline'}>{inCart ? `(${inCart.quantity})` : 'Pedir'}</span>
+                        {inCart && <span className={`${isMobileSimulator ? 'inline' : 'sm:hidden'} text-[11px] font-mono font-bold`}>{inCart.quantity}</span>}
                       </button>
                     ) : (
                       <a
                         href={getProductQuoteLink(product)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-3 py-1.5 rounded-xl text-white font-bold text-xs flex items-center gap-1 shadow-sm hover:scale-105 active:scale-95 cursor-pointer decoration-none"
+                        className="p-1.5 sm:px-3 sm:py-1.5 rounded-xl text-white font-bold text-xs flex items-center gap-1 shadow-sm hover:scale-105 active:scale-95 cursor-pointer decoration-none"
                         style={{ backgroundColor: theme.accentColor }}
+                        title="Cotizar por WhatsApp"
                       >
-                        Cotizar
+                        <MessageCircle className="w-3.5 h-3.5 fill-current" />
+                        <span className={isMobileSimulator ? 'hidden' : 'hidden sm:inline'}>Cotizar</span>
                       </a>
                     )}
                   </div>
@@ -902,22 +920,25 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
                       <button
                         type="button"
                         onClick={() => addToCart(product)}
-                        className="px-3.5 py-1.5 rounded-full text-white text-xs font-bold flex items-center gap-1 shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                        className="px-2.5 sm:px-3.5 py-1.5 rounded-full text-white text-xs font-bold flex items-center gap-1 shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer"
                         style={{ backgroundColor: theme.accentColor }}
+                        title={inCart ? `En carrito: ${inCart.quantity}` : 'Agregar al carrito'}
                       >
                         <Plus className="w-3.5 h-3.5" />
-                        <span>{inCart ? `Agregado (${inCart.quantity})` : 'Agregar'}</span>
+                        <span className={isMobileSimulator ? 'hidden' : 'hidden sm:inline'}>{inCart ? 'Agregado' : 'Agregar'}</span>
+                        {inCart && <span className="font-mono text-xs font-bold">({inCart.quantity})</span>}
                       </button>
                     ) : (
                       <a
                         href={getProductQuoteLink(product)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-3.5 py-1.5 rounded-full text-white text-xs font-bold flex items-center gap-1 shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer decoration-none"
+                        className="px-2.5 sm:px-3.5 py-1.5 rounded-full text-white text-xs font-bold flex items-center gap-1 shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer decoration-none"
                         style={{ backgroundColor: theme.accentColor }}
+                        title="Ordenar por WhatsApp"
                       >
                         <MessageCircle className="w-3.5 h-3.5 fill-current" />
-                        <span>Ordenar</span>
+                        <span className={isMobileSimulator ? 'hidden' : 'hidden sm:inline'}>Ordenar</span>
                       </a>
                     )}
                   </div>

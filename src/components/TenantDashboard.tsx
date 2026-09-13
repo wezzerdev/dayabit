@@ -26,14 +26,7 @@ interface TenantDashboardProps {
   onCreateNewStore: () => void;
 }
 
-const COLOR_SWATCHES = [
-  { name: 'Verde Esmeralda', hex: '#00b37e' },
-  { name: 'Azul Real', hex: '#2563eb' },
-  { name: 'Púrpura Vibrante', hex: '#7c3aed' },
-  { name: 'Rojo Coral', hex: '#e11d48' },
-  { name: 'Ámbar Cálido', hex: '#d97706' },
-  { name: 'Slate Ejecutivo', hex: '#0f172a' }
-];
+
 
 const AVAILABLE_PAYMENT_METHODS = [
   'Transferencia SPEI',
@@ -787,42 +780,46 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
           </div>
 
           {/* Quick Actions */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-2.5">
             <button
               onClick={onCreateNewStore}
-              className="px-3.5 py-1.5 rounded-full border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs transition-colors cursor-pointer flex items-center gap-1.5"
+              className="p-2 sm:px-3.5 sm:py-1.5 rounded-full border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs transition-colors cursor-pointer flex items-center gap-1.5"
+              title="Nueva Tienda"
             >
-              <Plus className="w-3.5 h-3.5" />
-              Nueva Tienda
+              <Plus className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
+              <span className="hidden sm:inline">Nueva Tienda</span>
             </button>
 
             <button
               onClick={handleCopyLink}
-              className="px-3.5 py-1.5 rounded-full border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs transition-colors cursor-pointer flex items-center gap-1.5"
+              className="p-2 sm:px-3.5 sm:py-1.5 rounded-full border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs transition-colors cursor-pointer flex items-center gap-1.5"
+              title={copiedLink ? '¡Enlace copiado!' : 'Copiar enlace a la tienda'}
             >
-              {copiedLink ? <Check className="w-3.5 h-3.5 text-[#00b37e]" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copiedLink ? '¡Copiado!' : 'Copiar Link'}</span>
+              {copiedLink ? <Check className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-[#00b37e]" /> : <Copy className="w-4 h-4 sm:w-3.5 sm:h-3.5" />}
+              <span className="hidden sm:inline">{copiedLink ? '¡Copiado!' : 'Copiar Link'}</span>
             </button>
 
             <button
               onClick={() => setActiveTab('design')}
-              className={`px-3.5 py-1.5 rounded-full font-bold text-xs transition-colors cursor-pointer flex items-center gap-1.5 ${
+              className={`p-2 sm:px-3.5 sm:py-1.5 rounded-full font-bold text-xs transition-colors cursor-pointer flex items-center gap-1.5 ${
                 activeTab === 'design' 
                   ? 'bg-slate-900 text-white shadow-xs' 
                   : 'bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100'
               }`}
+              title="Diseño & Vista Previa"
             >
-              <Smartphone className="w-3.5 h-3.5 text-[#00b37e]" />
-              <span>Diseño & Vista Previa</span>
+              <Smartphone className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-[#00b37e]" />
+              <span className="hidden sm:inline">Diseño & Vista Previa</span>
             </button>
 
             <button
               onClick={() => onOpenStore(activeStore.slug)}
-              className="px-4 py-1.5 rounded-full text-white font-bold text-xs shadow-xs hover:opacity-90 transition-all cursor-pointer flex items-center gap-1.5"
+              className="p-2 sm:px-4 sm:py-1.5 rounded-full text-white font-bold text-xs shadow-xs hover:opacity-90 transition-all cursor-pointer flex items-center gap-1.5"
               style={{ backgroundColor: activeStore.brandColor }}
+              title="Abrir Web Pública"
             >
-              <ExternalLink className="w-3.5 h-3.5" />
-              Abrir Web Pública
+              <ExternalLink className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
+              <span className="hidden sm:inline">Abrir Web Pública</span>
             </button>
           </div>
 
@@ -830,20 +827,22 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
       </header>
 
       {/* Main Dashboard Layout */}
-      <main className="max-w-7xl mx-auto px-6 py-8 w-full flex-grow space-y-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 w-full flex-grow space-y-6">
         
         {/* Navigation Tabs */}
-        <div className="flex border-b border-slate-200 gap-6 overflow-x-auto pb-1">
+        <div className="flex border-b border-slate-200 gap-3 sm:gap-6 overflow-x-auto pb-1 scrollbar-none">
           <button
             onClick={() => setActiveTab('design')}
-            className={`pb-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer shrink-0 ${
+            className={`pb-3 font-bold text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 border-b-2 transition-all cursor-pointer shrink-0 ${
               activeTab === 'design'
                 ? 'border-[#00b37e] text-[#00b37e]'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
+            title="Diseño & Vista Previa"
           >
-            <LayoutTemplate className="w-4 h-4" />
-            Diseño & Vista Previa
+            <LayoutTemplate className="w-4 h-4 shrink-0" />
+            <span className="hidden sm:inline">Diseño & Vista Previa</span>
+            <span className="sm:hidden">Diseño</span>
             <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
               En Vivo
             </span>
@@ -851,62 +850,72 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
 
           <button
             onClick={() => setActiveTab('catalog')}
-            className={`pb-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer shrink-0 ${
+            className={`pb-3 font-bold text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 border-b-2 transition-all cursor-pointer shrink-0 ${
               activeTab === 'catalog'
                 ? 'border-[#00b37e] text-[#00b37e]'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
+            title="Catálogo & Artículos"
           >
-            <ShoppingBag className="w-4 h-4" />
-            Catálogo & Artículos ({activeStore.products.length})
+            <ShoppingBag className="w-4 h-4 shrink-0" />
+            <span className="hidden sm:inline">Catálogo & Artículos ({activeStore.products.length})</span>
+            <span className="sm:hidden">Artículos ({activeStore.products.length})</span>
           </button>
 
           <button
             onClick={() => setActiveTab('brand')}
-            className={`pb-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer shrink-0 ${
+            className={`pb-3 font-bold text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 border-b-2 transition-all cursor-pointer shrink-0 ${
               activeTab === 'brand'
                 ? 'border-[#00b37e] text-[#00b37e]'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
+            title="Datos del Negocio"
           >
-            <Store className="w-4 h-4" />
-            Datos del Negocio & Redes
+            <Store className="w-4 h-4 shrink-0" />
+            <span className="hidden sm:inline">Datos del Negocio</span>
+            <span className="sm:hidden">Negocio</span>
           </button>
 
           <button
             onClick={() => setActiveTab('policies')}
-            className={`pb-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer shrink-0 ${
+            className={`pb-3 font-bold text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 border-b-2 transition-all cursor-pointer shrink-0 ${
               activeTab === 'policies'
                 ? 'border-[#00b37e] text-[#00b37e]'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
+            title="Garantías & Formas de Pago"
           >
-            <ShieldCheck className="w-4 h-4" />
-            Garantías & Formas de Pago
+            <ShieldCheck className="w-4 h-4 shrink-0" />
+            <span className="hidden sm:inline">Garantías & Formas de Pago</span>
+            <span className="sm:hidden">Políticas</span>
           </button>
 
           <button
             onClick={() => setActiveTab('sections')}
-            className={`pb-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer shrink-0 ${
+            className={`pb-3 font-bold text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 border-b-2 transition-all cursor-pointer shrink-0 ${
               activeTab === 'sections'
                 ? 'border-[#00b37e] text-[#00b37e]'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
+            title="Quiénes Somos & Preguntas Frecuentes"
           >
-            <BookOpen className="w-4 h-4" />
-            Quiénes Somos & FAQ
+            <BookOpen className="w-4 h-4 shrink-0" />
+            <span className="hidden sm:inline">Quiénes Somos & FAQ</span>
+            <span className="sm:hidden">FAQ</span>
           </button>
 
           <button
             onClick={() => setActiveTab('subscription')}
-            className={`pb-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer shrink-0 ${
+            className={`pb-3 font-bold text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 border-b-2 transition-all cursor-pointer shrink-0 ${
               activeTab === 'subscription'
                 ? 'border-[#00b37e] text-[#00b37e]'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
+            title="Suscripción & Plan"
           >
-            <CreditCard className="w-4 h-4" />
-            Suscripción & Plan
+            <CreditCard className="w-4 h-4 shrink-0" />
+            <span className="hidden sm:inline">Suscripción & Plan</span>
+            <span className="sm:hidden">Plan</span>
           </button>
         </div>
 
@@ -929,42 +938,44 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
               </div>
 
               {/* Device switcher and fullscreen open */}
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex items-center gap-2">
                 <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200">
                   <button
                     type="button"
                     onClick={() => setPreviewDevice('mobile')}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                    className={`px-2.5 sm:px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                       previewDevice === 'mobile'
                         ? 'bg-white text-slate-900 shadow-2xs'
                         : 'text-slate-500 hover:text-slate-800'
                     }`}
+                    title="Vista Móvil (iPhone)"
                   >
                     <Smartphone className="w-3.5 h-3.5" />
-                    <span>Móvil (iPhone)</span>
+                    <span className="hidden sm:inline">Móvil (iPhone)</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setPreviewDevice('desktop')}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                    className={`px-2.5 sm:px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                       previewDevice === 'desktop'
                         ? 'bg-white text-slate-900 shadow-2xs'
                         : 'text-slate-500 hover:text-slate-800'
                     }`}
+                    title="Vista Escritorio (Desktop)"
                   >
                     <Monitor className="w-3.5 h-3.5" />
-                    <span>Escritorio</span>
+                    <span className="hidden sm:inline">Escritorio</span>
                   </button>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => onOpenStore(activeStore.slug)}
-                  className="px-3.5 py-2 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-xs transition-colors"
-                  title="Abrir tienda en una pestaña nueva"
+                  className="p-2 sm:px-3.5 sm:py-2 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-xs transition-colors"
+                  title="Abrir tienda en pantalla completa en una pestaña nueva"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
-                  <span>Pantalla Completa</span>
+                  <span className="hidden sm:inline">Pantalla Completa</span>
                 </button>
               </div>
             </div>
@@ -1586,7 +1597,7 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
                             title={`Cambiar a ${pill.label}`}
                           >
                             <span>{pill.icon}</span>
-                            <span>{pill.label}</span>
+                            <span className="hidden sm:inline">{pill.label}</span>
                           </button>
                         );
                       })}
@@ -1971,213 +1982,25 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
                 </div>
               </div>
 
-              {/* SECTION: FULL PAGE THEME & COLORS */}
-              <div className="space-y-4 pt-3 border-t border-slate-100">
-                <div className="flex items-center gap-2">
-                  <Palette className="w-4 h-4 text-[#00b37e]" />
-                  <h4 className="font-display font-bold text-slate-900 text-sm">
-                    Paleta & Colores de la Página Completa
-                  </h4>
-                </div>
-                <p className="text-xs text-slate-500">
-                  Elige una paleta profesional o define tú mismo el color de fondo de toda la página, tarjetas, textos y botones.
-                </p>
-
-                {/* Preset Themes Cards */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                  {THEME_PRESET_CARDS.map(preset => {
-                    const isSelected = themeMode === preset.id;
-                    return (
-                      <button
-                        key={preset.id}
-                        type="button"
-                        onClick={() => handleSelectThemePreset(preset.id)}
-                        className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between relative overflow-hidden ${
-                          isSelected 
-                            ? 'border-[#00b37e] ring-2 ring-[#00b37e]/40 shadow-sm' 
-                            : 'border-slate-200 hover:border-slate-300'
-                        }`}
-                        style={{ backgroundColor: preset.previewBg }}
-                      >
-                        <div className="flex items-center justify-between w-full mb-2">
-                          <span 
-                            className="text-[11px] font-bold px-2 py-0.5 rounded-md shadow-2xs"
-                            style={{ backgroundColor: preset.previewCard, color: preset.previewText }}
-                          >
-                            {preset.name}
-                          </span>
-                          {isSelected && (
-                            <span className="w-5 h-5 rounded-full bg-[#00b37e] text-white flex items-center justify-center text-[10px] font-bold">
-                              ✓
-                            </span>
-                          )}
-                        </div>
-                        <div 
-                          className="p-2 rounded-xl text-[10px] space-y-1 shadow-2xs border"
-                          style={{ 
-                            backgroundColor: preset.previewCard, 
-                            borderColor: `${preset.previewText}20`,
-                            color: preset.previewText 
-                          }}
-                        >
-                          <div className="flex justify-between items-center">
-                            <span className="font-bold">Tarjeta Demo</span>
-                            <span 
-                              className="w-2.5 h-2.5 rounded-full" 
-                              style={{ backgroundColor: preset.previewAccent }} 
-                            />
-                          </div>
-                          <p className="line-clamp-1 opacity-70">{preset.desc}</p>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Fine-tuning Color Pickers */}
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-4 mt-2">
-                  <span className="text-xs font-bold text-slate-800 block">
-                    Personalizador de Colores Específicos:
-                  </span>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                    {/* 1. Page Background */}
-                    <div className="space-y-1 bg-white p-2.5 rounded-xl border border-slate-200">
-                      <label className="text-[11px] font-bold text-slate-700 block">
-                        Fondo de Página
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="color"
-                          value={pageBackground.startsWith('#') ? pageBackground : '#ffffff'}
-                          onChange={(e) => {
-                            setPageBackground(e.target.value);
-                            setThemeMode('custom');
-                          }}
-                          className="w-7 h-7 rounded-lg cursor-pointer border-0 p-0"
-                        />
-                        <input
-                          type="text"
-                          value={pageBackground}
-                          onChange={(e) => {
-                            setPageBackground(e.target.value);
-                            setThemeMode('custom');
-                          }}
-                          className="flex-1 py-1 px-2 text-xs font-mono rounded border border-slate-200 focus:outline-none"
-                        />
-                      </div>
-                    </div>
-
-                    {/* 2. Card Background */}
-                    <div className="space-y-1 bg-white p-2.5 rounded-xl border border-slate-200">
-                      <label className="text-[11px] font-bold text-slate-700 block">
-                        Fondo de Tarjetas
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="color"
-                          value={cardBackground.startsWith('#') ? cardBackground : '#ffffff'}
-                          onChange={(e) => {
-                            setCardBackground(e.target.value);
-                            setThemeMode('custom');
-                          }}
-                          className="w-7 h-7 rounded-lg cursor-pointer border-0 p-0"
-                        />
-                        <input
-                          type="text"
-                          value={cardBackground}
-                          onChange={(e) => {
-                            setCardBackground(e.target.value);
-                            setThemeMode('custom');
-                          }}
-                          className="flex-1 py-1 px-2 text-xs font-mono rounded border border-slate-200 focus:outline-none"
-                        />
-                      </div>
-                    </div>
-
-                    {/* 3. Text Color */}
-                    <div className="space-y-1 bg-white p-2.5 rounded-xl border border-slate-200">
-                      <label className="text-[11px] font-bold text-slate-700 block">
-                        Color del Texto
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="color"
-                          value={textColor.startsWith('#') ? textColor : '#0f172a'}
-                          onChange={(e) => {
-                            setTextColor(e.target.value);
-                            setThemeMode('custom');
-                          }}
-                          className="w-7 h-7 rounded-lg cursor-pointer border-0 p-0"
-                        />
-                        <input
-                          type="text"
-                          value={textColor}
-                          onChange={(e) => {
-                            setTextColor(e.target.value);
-                            setThemeMode('custom');
-                          }}
-                          className="flex-1 py-1 px-2 text-xs font-mono rounded border border-slate-200 focus:outline-none"
-                        />
-                      </div>
-                    </div>
-
-                    {/* 4. Accent / Brand Color */}
-                    <div className="space-y-1 bg-white p-2.5 rounded-xl border border-slate-200">
-                      <label className="text-[11px] font-bold text-slate-700 block">
-                        Botones & Acento
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="color"
-                          value={accentColor.startsWith('#') ? accentColor : '#00b37e'}
-                          onChange={(e) => {
-                            setAccentColor(e.target.value);
-                            setBrandColor(e.target.value);
-                            setThemeMode('custom');
-                          }}
-                          className="w-7 h-7 rounded-lg cursor-pointer border-0 p-0"
-                        />
-                        <input
-                          type="text"
-                          value={accentColor}
-                          onChange={(e) => {
-                            setAccentColor(e.target.value);
-                            setBrandColor(e.target.value);
-                            setThemeMode('custom');
-                          }}
-                          className="flex-1 py-1 px-2 text-xs font-mono rounded border border-slate-200 focus:outline-none"
-                        />
-                      </div>
-                    </div>
+              {/* SHORTCUT TO DESIGN STUDIO (Eliminación de duplicados) */}
+              <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-100 text-[#00b37e] flex items-center justify-center shrink-0">
+                    <Palette className="w-5 h-5" />
                   </div>
-
-                  {/* Quick Accent Swatches */}
-                  <div className="pt-2">
-                    <span className="text-[10px] text-slate-400 font-bold block mb-1.5 uppercase tracking-wider">
-                      Sugerencias rápidas para el botón de compra:
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      {COLOR_SWATCHES.map(swatch => (
-                        <button
-                          key={swatch.hex}
-                          type="button"
-                          onClick={() => {
-                            setAccentColor(swatch.hex);
-                            setBrandColor(swatch.hex);
-                          }}
-                          title={swatch.name}
-                          className={`w-7 h-7 rounded-full transition-transform flex items-center justify-center cursor-pointer ${
-                            accentColor === swatch.hex ? 'scale-125 ring-2 ring-offset-2 ring-slate-400' : 'hover:scale-110'
-                          }`}
-                          style={{ backgroundColor: swatch.hex }}
-                        >
-                          {accentColor === swatch.hex && <Check className="w-3.5 h-3.5 text-white stroke-[3]" />}
-                        </button>
-                      ))}
-                    </div>
+                  <div>
+                    <h5 className="font-bold text-xs text-slate-900">Personalización de Colores, Temas y Plantilla</h5>
+                    <p className="text-[11px] text-slate-500">Toda la configuración visual y bordes se gestiona en tiempo real en la pestaña principal de diseño.</p>
                   </div>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('design')}
+                  className="px-3.5 py-1.5 rounded-xl bg-[#00b37e] hover:bg-[#009e6f] text-white text-xs font-bold shrink-0 transition-colors shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <LayoutTemplate className="w-3.5 h-3.5" />
+                  <span>Ir a Diseño & Vista Previa →</span>
+                </button>
               </div>
 
               <div className="space-y-1">

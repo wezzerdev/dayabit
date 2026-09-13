@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, ArrowRight } from 'lucide-react';
+import { Menu, X, ArrowRight, Store } from 'lucide-react';
 
 interface NavbarProps {
   onOpenOnboarding?: () => void;
@@ -119,13 +119,23 @@ export default function Navbar({ onOpenOnboarding, onOpenDashboard }: NavbarProp
           </button>
         </div>
 
-        {/* Mobile Menu Button */}
-        <button 
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="md:hidden p-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
-        >
-          {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+        {/* Mobile Quick Action & Hamburger */}
+        <div className="flex md:hidden items-center gap-2">
+          <button
+            onClick={onOpenDashboard}
+            className="p-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+            title="Mi Tienda (Dashboard)"
+          >
+            <Store className="w-5 h-5 text-[#00b37e]" />
+          </button>
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="p-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
+            title={isMobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+          >
+            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu Dropdown */}
