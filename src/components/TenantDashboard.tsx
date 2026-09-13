@@ -7,12 +7,15 @@ import {
 } from 'lucide-react';
 import type { 
   TenantStore, StoreProduct, ProductNiche, FAQItem, NicheProductAttributes, 
-  StoreThemeConfig, ThemePaletteMode, StoreTemplateId 
+  StoreThemeConfig, ThemePaletteMode, StoreTemplateId, CardBorderStyle 
 } from '../types/tenant';
 import { TenantStorageService, PLANS } from '../services/tenantStore';
 import { InstagramIcon, FacebookIcon, TikTokIcon, GoogleMapsIcon } from './SocialIcons';
 import { formatSocialUrl } from '../utils/formatSocial';
-import { THEME_PRESETS, THEME_PRESET_CARDS, resolveStoreTheme } from '../utils/themePresets';
+import { 
+  THEME_PRESET_CARDS, BRAND_COLOR_SWATCHES, 
+  resolveStoreTheme, computeHarmoniousBorder, createHarmoniousTheme 
+} from '../utils/themePresets';
 import { STORE_TEMPLATES_LIST, resolveStoreTemplate } from '../utils/templateDefinitions';
 import StorefrontRenderer from './StorefrontRenderer';
 
@@ -226,6 +229,8 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
   const [cardBackground, setCardBackground] = useState(initialTheme.cardBackground);
   const [textColor, setTextColor] = useState(initialTheme.textColor);
   const [accentColor, setAccentColor] = useState(initialTheme.accentColor);
+  const [borderColor, setBorderColor] = useState(initialTheme.borderColor);
+  const [borderStyle, setBorderStyle] = useState<CardBorderStyle>(initialTheme.borderStyle || 'tinted');
 
   // Form states for brand customization
   const [businessName, setBusinessName] = useState(activeStore.businessName);
@@ -324,6 +329,8 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
       setCardBackground(t.cardBackground);
       setTextColor(t.textColor);
       setAccentColor(t.accentColor);
+      setBorderColor(t.borderColor);
+      setBorderStyle(t.borderStyle || 'tinted');
     }
   };
 
@@ -405,6 +412,8 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
       setTextColor(t.textColor);
       setAccentColor(t.accentColor);
       setBrandColor(t.accentColor);
+      setBorderColor(t.borderColor);
+      setBorderStyle(t.borderStyle || 'tinted');
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 2500);
     }
@@ -413,28 +422,15 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
   const handleSelectThemePreset = (presetKey: ThemePaletteMode) => {
     setThemeMode(presetKey);
     if (presetKey !== 'custom') {
-      const p = THEME_PRESETS[presetKey];
-      setPageBackground(p.pageBackground);
-      setCardBackground(p.cardBackground);
-      setTextColor(p.textColor);
-      setAccentColor(p.accentColor);
-      setBrandColor(p.accentColor);
-
-      const isDark = p.textColor === '#ffffff' || p.textColor === '#f8fafc' || p.pageBackground.startsWith('#0') || p.pageBackground.startsWith('#1');
-      const themeConfig: StoreThemeConfig = {
-        palette: presetKey,
-        pageBackground: p.pageBackground,
-        cardBackground: p.cardBackground,
-        headerBackground: p.cardBackground.startsWith('#') ? `${p.cardBackground}f2` : p.cardBackground,
-        textColor: p.textColor,
-        textMutedColor: isDark ? '#94a3b8' : '#64748b',
-        borderColor: isDark ? '#1e293b' : '#e2e8f0',
-        accentColor: p.accentColor,
-      };
+      const harmonious = createHarmoniousTheme(presetKey, accentColor, borderStyle);
+      setPageBackground(harmonious.pageBackground);
+      setCardBackground(harmonious.cardBackground);
+      setTextColor(harmonious.textColor);
+      setBorderColor(harmonious.borderColor);
 
       const updated = TenantStorageService.updateStore(activeStore.id, {
-        themeConfig,
-        brandColor: p.accentColor
+        themeConfig: harmonious,
+        brandColor: accentColor
       });
       if (updated) {
         setActiveStore(updated);
@@ -445,11 +441,75 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
     }
   };
 
-  const handleUpdateCustomTheme = (updates: Partial<{ pageBackground: string; cardBackground: string; textColor: string; accentColor: string; bannerUrl: string }>) => {
+  const handleSelectBrandColor = (newAccent: string) => {
+    setAccentColor(newAccent);
+    setBrandColor(newAccent);
+
+    const newBorder = computeHarmoniousBorder(pageBackground, cardBackground, newAccent, borderStyle);
+    setBorderColor(newBorder);
+
+    const isDark = textColor === '#ffffff' || textColor === '#f8fafc' || pageBackground.startsWith('#0') || pageBackground.startsWith('#1');
+    const themeConfig: StoreThemeConfig = {
+      palette: themeMode,
+      pageBackground,
+      cardBackground,
+      headerBackground: cardBackground.startsWith('#') ? `${cardBackground}f0` : cardBackground,
+      textColor,
+      textMutedColor: isDark ? '#9ca3af' : '#64748b',
+      borderColor: newBorder,
+      accentColor: newAccent,
+      borderStyle,
+      borderRadius: 'rounded'
+    };
+
+    const updated = TenantStorageService.updateStore(activeStore.id, {
+      themeConfig,
+      brandColor: newAccent
+    });
+    if (updated) {
+      setActiveStore(updated);
+      setAllStores(TenantStorageService.getAllStores());
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 2000);
+    }
+  };
+
+  const handleSelectBorderStyle = (newStyle: CardBorderStyle) => {
+    setBorderStyle(newStyle);
+    const newBorder = computeHarmoniousBorder(pageBackground, cardBackground, accentColor, newStyle);
+    setBorderColor(newBorder);
+
+    const isDark = textColor === '#ffffff' || textColor === '#f8fafc' || pageBackground.startsWith('#0') || pageBackground.startsWith('#1');
+    const themeConfig: StoreThemeConfig = {
+      palette: themeMode,
+      pageBackground,
+      cardBackground,
+      headerBackground: cardBackground.startsWith('#') ? `${cardBackground}f0` : cardBackground,
+      textColor,
+      textMutedColor: isDark ? '#9ca3af' : '#64748b',
+      borderColor: newBorder,
+      accentColor,
+      borderStyle: newStyle,
+      borderRadius: 'rounded'
+    };
+
+    const updated = TenantStorageService.updateStore(activeStore.id, {
+      themeConfig
+    });
+    if (updated) {
+      setActiveStore(updated);
+      setAllStores(TenantStorageService.getAllStores());
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 2000);
+    }
+  };
+
+  const handleUpdateCustomTheme = (updates: Partial<{ pageBackground: string; cardBackground: string; textColor: string; accentColor: string; borderColor: string; bannerUrl: string }>) => {
     const newPageBg = updates.pageBackground ?? pageBackground;
     const newCardBg = updates.cardBackground ?? cardBackground;
     const newTextColor = updates.textColor ?? textColor;
     const newAccent = updates.accentColor ?? accentColor;
+    const newBorder = updates.borderColor ?? (updates.accentColor ? computeHarmoniousBorder(newPageBg, newCardBg, updates.accentColor, borderStyle) : borderColor);
     const newBanner = updates.bannerUrl ?? bannerUrl;
 
     if (updates.pageBackground) setPageBackground(updates.pageBackground);
@@ -459,6 +519,7 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
       setAccentColor(updates.accentColor);
       setBrandColor(updates.accentColor);
     }
+    if (updates.borderColor) setBorderColor(updates.borderColor);
     if (updates.bannerUrl !== undefined) setBannerUrl(updates.bannerUrl);
 
     setThemeMode('custom');
@@ -468,11 +529,13 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
       palette: 'custom',
       pageBackground: newPageBg,
       cardBackground: newCardBg,
-      headerBackground: newCardBg.startsWith('#') ? `${newCardBg}f2` : newCardBg,
+      headerBackground: newCardBg.startsWith('#') ? `${newCardBg}f0` : newCardBg,
       textColor: newTextColor,
-      textMutedColor: isDark ? '#94a3b8' : '#64748b',
-      borderColor: isDark ? '#1e293b' : '#e2e8f0',
+      textMutedColor: isDark ? '#9ca3af' : '#64748b',
+      borderColor: newBorder,
       accentColor: newAccent,
+      borderStyle,
+      borderRadius: 'rounded'
     };
 
     const updated = TenantStorageService.updateStore(activeStore.id, {
@@ -1093,28 +1156,79 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
                 </div>
 
                 {/* Section 2: Color Palettes & Custom Colors */}
-                <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+                <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-5">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
                     <div>
                       <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
                         <Palette className="w-4 h-4 text-[#00b37e]" />
-                        <span>Paso 2: Paleta de Colores y Modo</span>
+                        <span>Paso 3: Estilo Visual, Colores y Bordes</span>
                       </div>
                       <h4 className="font-display font-black text-lg text-slate-900 mt-0.5">
-                        Estilo Visual y Fondos de la Tienda
+                        Color de Marca, Ambiente y Bordes de Tarjetas
                       </h4>
                     </div>
-                    <span className="text-[11px] text-slate-400">
-                      Actualización inmediata al hacer clic
+                    <span className="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full w-fit flex items-center gap-1">
+                      <Sparkles className="w-3 h-3" />
+                      Reflejo en vivo en el simulador
                     </span>
                   </div>
 
-                  {/* Preset Swatches */}
-                  <div>
-                    <span className="text-xs font-bold text-slate-700 block mb-2">
-                      Estilos Preconfigurados:
-                    </span>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {/* Sub-bloque 1: Color de Marca (Acento & Botones) */}
+                  <div className="space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                        <span>1. Color de Marca Principal</span>
+                        <span className="text-[11px] font-normal text-slate-400">(Botones de WhatsApp, acentos y bordes armónicos)</span>
+                      </span>
+                      <span className="text-[11px] font-mono font-bold text-slate-600 uppercase bg-slate-100 px-2 py-0.5 rounded-md">
+                        {accentColor}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      {BRAND_COLOR_SWATCHES.map(swatch => {
+                        const isSelected = accentColor.toLowerCase() === swatch.hex.toLowerCase();
+                        return (
+                          <button
+                            key={swatch.hex}
+                            type="button"
+                            title={swatch.name}
+                            onClick={() => handleSelectBrandColor(swatch.hex)}
+                            className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all cursor-pointer shadow-xs ${
+                              isSelected
+                                ? 'ring-3 ring-[#00b37e] ring-offset-2 scale-110 shadow-md'
+                                : 'hover:scale-105 hover:shadow-sm opacity-90 hover:opacity-100'
+                            }`}
+                            style={{ backgroundColor: swatch.hex }}
+                          >
+                            {isSelected && <Check className="w-4 h-4 text-white drop-shadow-sm" />}
+                          </button>
+                        );
+                      })}
+
+                      {/* Custom color picker */}
+                      <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200">
+                        <input
+                          type="color"
+                          value={accentColor.startsWith('#') ? accentColor : '#00b37e'}
+                          onChange={e => handleSelectBrandColor(e.target.value)}
+                          className="w-7 h-7 rounded-lg border-0 cursor-pointer p-0 shrink-0"
+                          title="Elegir color personalizado libre"
+                        />
+                        <span className="text-[10px] font-medium text-slate-500 pr-1.5">Libre</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Sub-bloque 2: Ambiente de Fondo / Modo Visual */}
+                  <div className="space-y-2.5 pt-2 border-t border-slate-100">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                        <span>2. Ambiente de Fondo & Contraste</span>
+                        <span className="text-[11px] font-normal text-slate-400">(Conserva tu color de marca y adapta la iluminación)</span>
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                       {THEME_PRESET_CARDS.map(preset => {
                         const isSelected = themeMode === preset.id;
                         return (
@@ -1122,7 +1236,7 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
                             key={preset.id}
                             type="button"
                             onClick={() => handleSelectThemePreset(preset.id)}
-                            className={`p-3 rounded-2xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 ${
+                            className={`p-3 rounded-2xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between gap-2 ${
                               isSelected
                                 ? 'border-[#00b37e] bg-emerald-50/20 ring-2 ring-[#00b37e]/20 shadow-xs'
                                 : 'border-slate-200 hover:border-slate-300 bg-white'
@@ -1135,18 +1249,13 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
                               {isSelected && <Check className="w-3.5 h-3.5 text-[#00b37e] shrink-0" />}
                             </div>
 
-                            <div className="flex items-center gap-1.5">
+                            <div className="flex items-center gap-2">
                               <div
                                 className="w-5 h-5 rounded-md border border-slate-300 shadow-2xs shrink-0"
                                 style={{ backgroundColor: preset.previewBg }}
-                                title="Fondo de página"
+                                title="Fondo"
                               />
-                              <div
-                                className="w-5 h-5 rounded-md border border-slate-300 shadow-2xs shrink-0"
-                                style={{ backgroundColor: preset.previewAccent }}
-                                title="Color de acento"
-                              />
-                              <span className="text-[10px] text-slate-400 truncate">
+                              <span className="text-[10px] text-slate-500 leading-tight truncate">
                                 {preset.desc}
                               </span>
                             </div>
@@ -1156,29 +1265,68 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
                     </div>
                   </div>
 
-                  {/* Fine Tuning Custom Colors */}
-                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-3">
-                    <span className="text-xs font-bold text-slate-800 block">
-                      Ajuste Fino de Colores Personalizados:
-                    </span>
+                  {/* Sub-bloque 3: Acabado y Estilo de Bordes */}
+                  <div className="space-y-2.5 pt-2 border-t border-slate-100">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                        <span>3. Acabado de Bordes de Tarjetas</span>
+                        <span className="text-[11px] font-normal text-slate-400">(Ajusta cómo destacan los productos y secciones)</span>
+                      </span>
+                    </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {[
+                        { id: 'tinted', label: '✨ Tintado Marca', desc: 'Borde armónico con tu color' },
+                        { id: 'subtle', label: '⚪ Neutro Sutil', desc: 'Gris moderno discreto' },
+                        { id: 'glow', label: '🔮 Halo & Profundo', desc: 'Presencia nítida y contraste' },
+                        { id: 'flat', label: '⬜ Plano / Sin Borde', desc: 'Fondo suave sin línea' }
+                      ].map(styleOpt => {
+                        const isSelected = (borderStyle || 'tinted') === styleOpt.id;
+                        return (
+                          <button
+                            key={styleOpt.id}
+                            type="button"
+                            onClick={() => handleSelectBorderStyle(styleOpt.id as CardBorderStyle)}
+                            className={`p-2.5 rounded-xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between gap-1 ${
+                              isSelected
+                                ? 'border-[#00b37e] bg-emerald-50/30 text-slate-900 shadow-xs ring-1 ring-[#00b37e]/30'
+                                : 'border-slate-200 hover:border-slate-300 bg-white text-slate-600'
+                            }`}
+                          >
+                            <span className="text-xs font-bold truncate block">{styleOpt.label}</span>
+                            <span className="text-[10px] text-slate-400 block leading-tight">{styleOpt.desc}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Sub-bloque 4: Fine Tuning Custom Colors */}
+                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-800 block">
+                        4. Ajuste Manual Preciso de Colores:
+                      </span>
+                      <span className="text-[10px] text-slate-400">Personaliza cualquier elemento individual</span>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
                       <div>
                         <label className="block text-[11px] font-semibold text-slate-600 mb-1">
                           Fondo Página
                         </label>
-                        <div className="flex items-center gap-1.5 bg-white p-1.5 rounded-xl border border-slate-200">
+                        <div className="flex items-center gap-1 bg-white p-1.5 rounded-xl border border-slate-200">
                           <input
                             type="color"
                             value={pageBackground.startsWith('#') ? pageBackground : '#ffffff'}
                             onChange={e => handleUpdateCustomTheme({ pageBackground: e.target.value })}
-                            className="w-7 h-7 rounded-lg border-0 cursor-pointer p-0 shrink-0"
+                            className="w-6 h-6 rounded-lg border-0 cursor-pointer p-0 shrink-0"
                           />
                           <input
                             type="text"
                             value={pageBackground}
                             onChange={e => handleUpdateCustomTheme({ pageBackground: e.target.value })}
-                            className="w-full text-[11px] font-mono text-slate-700 bg-transparent outline-none uppercase"
+                            className="w-full text-[10px] font-mono text-slate-700 bg-transparent outline-none uppercase"
                           />
                         </div>
                       </div>
@@ -1187,18 +1335,38 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
                         <label className="block text-[11px] font-semibold text-slate-600 mb-1">
                           Fondo Tarjetas
                         </label>
-                        <div className="flex items-center gap-1.5 bg-white p-1.5 rounded-xl border border-slate-200">
+                        <div className="flex items-center gap-1 bg-white p-1.5 rounded-xl border border-slate-200">
                           <input
                             type="color"
                             value={cardBackground.startsWith('#') ? cardBackground : '#ffffff'}
                             onChange={e => handleUpdateCustomTheme({ cardBackground: e.target.value })}
-                            className="w-7 h-7 rounded-lg border-0 cursor-pointer p-0 shrink-0"
+                            className="w-6 h-6 rounded-lg border-0 cursor-pointer p-0 shrink-0"
                           />
                           <input
                             type="text"
                             value={cardBackground}
                             onChange={e => handleUpdateCustomTheme({ cardBackground: e.target.value })}
-                            className="w-full text-[11px] font-mono text-slate-700 bg-transparent outline-none uppercase"
+                            className="w-full text-[10px] font-mono text-slate-700 bg-transparent outline-none uppercase"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                          Color Bordes
+                        </label>
+                        <div className="flex items-center gap-1 bg-white p-1.5 rounded-xl border border-slate-200">
+                          <input
+                            type="color"
+                            value={borderColor.startsWith('#') ? borderColor : '#e2e8f0'}
+                            onChange={e => handleUpdateCustomTheme({ borderColor: e.target.value })}
+                            className="w-6 h-6 rounded-lg border-0 cursor-pointer p-0 shrink-0"
+                          />
+                          <input
+                            type="text"
+                            value={borderColor}
+                            onChange={e => handleUpdateCustomTheme({ borderColor: e.target.value })}
+                            className="w-full text-[10px] font-mono text-slate-700 bg-transparent outline-none uppercase"
                           />
                         </div>
                       </div>
@@ -1207,18 +1375,18 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
                         <label className="block text-[11px] font-semibold text-slate-600 mb-1">
                           Acento / Botón
                         </label>
-                        <div className="flex items-center gap-1.5 bg-white p-1.5 rounded-xl border border-slate-200">
+                        <div className="flex items-center gap-1 bg-white p-1.5 rounded-xl border border-slate-200">
                           <input
                             type="color"
                             value={accentColor.startsWith('#') ? accentColor : '#00b37e'}
                             onChange={e => handleUpdateCustomTheme({ accentColor: e.target.value })}
-                            className="w-7 h-7 rounded-lg border-0 cursor-pointer p-0 shrink-0"
+                            className="w-6 h-6 rounded-lg border-0 cursor-pointer p-0 shrink-0"
                           />
                           <input
                             type="text"
                             value={accentColor}
                             onChange={e => handleUpdateCustomTheme({ accentColor: e.target.value })}
-                            className="w-full text-[11px] font-mono text-slate-700 bg-transparent outline-none uppercase"
+                            className="w-full text-[10px] font-mono text-slate-700 bg-transparent outline-none uppercase"
                           />
                         </div>
                       </div>
@@ -1227,18 +1395,18 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
                         <label className="block text-[11px] font-semibold text-slate-600 mb-1">
                           Texto / Letra
                         </label>
-                        <div className="flex items-center gap-1.5 bg-white p-1.5 rounded-xl border border-slate-200">
+                        <div className="flex items-center gap-1 bg-white p-1.5 rounded-xl border border-slate-200">
                           <input
                             type="color"
                             value={textColor.startsWith('#') ? textColor : '#0f172a'}
                             onChange={e => handleUpdateCustomTheme({ textColor: e.target.value })}
-                            className="w-7 h-7 rounded-lg border-0 cursor-pointer p-0 shrink-0"
+                            className="w-6 h-6 rounded-lg border-0 cursor-pointer p-0 shrink-0"
                           />
                           <input
                             type="text"
                             value={textColor}
                             onChange={e => handleUpdateCustomTheme({ textColor: e.target.value })}
-                            className="w-full text-[11px] font-mono text-slate-700 bg-transparent outline-none uppercase"
+                            className="w-full text-[10px] font-mono text-slate-700 bg-transparent outline-none uppercase"
                           />
                         </div>
                       </div>
@@ -1252,7 +1420,7 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
                     <div>
                       <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
                         <ImageIcon className="w-4 h-4 text-[#00b37e]" />
-                        <span>Paso 3: Banner o Portada</span>
+                        <span>Paso 4: Banner o Portada</span>
                       </div>
                       <h4 className="font-display font-black text-lg text-slate-900 mt-0.5">
                         Imagen de Cabecera del Negocio

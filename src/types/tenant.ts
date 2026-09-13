@@ -59,7 +59,9 @@ export interface FAQItem {
   answer: string;
 }
 
-export type ThemePaletteMode = 'light' | 'dark' | 'cream' | 'mint' | 'black' | 'custom';
+export type ThemePaletteMode = 'light' | 'dark' | 'cream' | 'mint' | 'black' | 'slate' | 'rose' | 'custom';
+export type CardBorderStyle = 'tinted' | 'subtle' | 'glow' | 'flat';
+export type CardRadiusStyle = 'rounded' | 'smooth' | 'sharp';
 
 export interface StoreThemeConfig {
   palette: ThemePaletteMode;
@@ -70,6 +72,8 @@ export interface StoreThemeConfig {
   textMutedColor: string;
   borderColor: string;
   accentColor: string;
+  borderStyle?: CardBorderStyle;
+  borderRadius?: CardRadiusStyle;
 }
 
 export type StoreTemplateId = 'modern_delivery' | 'boutique_editorial' | 'corporate_services' | 'catalog_express';

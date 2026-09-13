@@ -200,7 +200,7 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all hover:scale-105 decoration-none shadow-sm cursor-pointer"
               style={{
-                backgroundColor: '#00b37e',
+                backgroundColor: theme.accentColor,
                 color: '#ffffff',
               }}
             >
@@ -649,7 +649,7 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
                         target="_blank"
                         rel="noopener noreferrer"
                         className="px-2.5 sm:px-4 py-1.5 rounded-full text-white text-[10px] sm:text-xs font-bold shadow-sm hover:scale-105 active:scale-95 transition-all cursor-pointer decoration-none shrink-0"
-                        style={{ backgroundColor: '#00b37e' }}
+                        style={{ backgroundColor: theme.accentColor }}
                       >
                         Pedir
                       </a>
@@ -805,7 +805,7 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
                         target="_blank"
                         rel="noopener noreferrer"
                         className="px-3 py-1.5 rounded-xl text-white font-bold text-xs flex items-center gap-1 shadow-sm hover:scale-105 active:scale-95 cursor-pointer decoration-none"
-                        style={{ backgroundColor: '#00b37e' }}
+                        style={{ backgroundColor: theme.accentColor }}
                       >
                         Cotizar
                       </a>
@@ -914,7 +914,7 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
                         target="_blank"
                         rel="noopener noreferrer"
                         className="px-3.5 py-1.5 rounded-full text-white text-xs font-bold flex items-center gap-1 shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer decoration-none"
-                        style={{ backgroundColor: '#00b37e' }}
+                        style={{ backgroundColor: theme.accentColor }}
                       >
                         <MessageCircle className="w-3.5 h-3.5 fill-current" />
                         <span>Ordenar</span>
@@ -1177,7 +1177,7 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full py-3.5 rounded-2xl text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg hover:opacity-95 transition-transform active:scale-98 cursor-pointer decoration-none"
-                      style={{ backgroundColor: '#00b37e' }}
+                      style={{ backgroundColor: theme.accentColor }}
                     >
                       <MessageCircle className="w-4 h-4 fill-current" />
                       <span>Enviar Pedido a WhatsApp</span>
