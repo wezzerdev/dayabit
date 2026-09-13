@@ -49,6 +49,167 @@ const BANNER_PRESETS = [
   { name: 'Salón, Barbería & Spa', url: 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=1200&auto=format&fit=crop&q=80' }
 ];
 
+function TemplateMiniMockup({ templateId }: { templateId: StoreTemplateId }) {
+  if (templateId === 'modern_delivery') {
+    return (
+      <div className="w-full h-32 rounded-2xl bg-slate-900 overflow-hidden relative border border-slate-200 shadow-inner flex flex-col justify-between p-2.5 select-none">
+        <div className="absolute inset-0 bg-cover bg-center brightness-75" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=500&auto=format&fit=crop&q=80)' }} />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+        
+        <div className="relative z-10 flex items-center justify-between">
+          <span className="text-[8px] font-black uppercase tracking-wider bg-white/20 backdrop-blur-md text-white px-2 py-0.5 rounded-full border border-white/30">
+            Delivery & Menú
+          </span>
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+        </div>
+
+        <div className="relative z-10 space-y-1.5">
+          <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-xl p-1.5 flex items-center justify-between gap-2 shadow-xs">
+            <div className="flex items-center gap-1.5">
+              <div className="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-700 flex items-center justify-center text-xs">☕</div>
+              <div className="leading-none">
+                <span className="text-[10px] font-bold text-slate-900 block truncate w-24">Café & Gourmet</span>
+                <span className="text-[8px] font-mono font-bold text-emerald-600">$95 MXN</span>
+              </div>
+            </div>
+            <span className="w-5 h-5 rounded-lg bg-emerald-500 text-white flex items-center justify-center text-[10px] font-bold shadow-xs">+</span>
+          </div>
+          
+          <div className="h-4 bg-emerald-600/90 rounded-lg flex items-center justify-between px-2 text-[8px] font-bold text-white">
+            <span>🛒 1 Pedido</span>
+            <span>Enviar a WhatsApp →</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (templateId === 'boutique_editorial') {
+    return (
+      <div className="w-full h-32 rounded-2xl bg-zinc-950 overflow-hidden relative border border-zinc-800 shadow-inner flex flex-col justify-between p-2.5 select-none text-white">
+        <div className="flex items-center justify-between">
+          <span className="text-[8px] font-black uppercase tracking-[0.2em] opacity-80">
+            ZARA / APPLE STYLE
+          </span>
+          <span className="text-[8px] font-bold bg-white/20 px-1.5 py-0.2 rounded text-white">Lookbook</span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 my-auto">
+          <div className="bg-zinc-900 rounded-xl p-1.5 border border-zinc-800 flex items-center gap-1.5">
+            <div className="w-7 h-9 rounded-lg bg-zinc-800 overflow-hidden shrink-0">
+              <img src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=150&auto=format&fit=crop&q=80" alt="Hoodie" className="w-full h-full object-cover" />
+            </div>
+            <div className="leading-tight min-w-0">
+              <span className="text-[9px] font-bold block truncate">Hoodie Acid</span>
+              <span className="text-[8px] opacity-60 block font-mono">$690</span>
+              <span className="text-[7px] bg-zinc-800 px-1 rounded text-zinc-300">S M L</span>
+            </div>
+          </div>
+
+          <div className="bg-zinc-900 rounded-xl p-1.5 border border-zinc-800 flex items-center gap-1.5">
+            <div className="w-7 h-9 rounded-lg bg-zinc-800 overflow-hidden shrink-0">
+              <img src="https://images.unsplash.com/photo-1517445312882-bc9910d016b7?w=150&auto=format&fit=crop&q=80" alt="Cargo" className="w-full h-full object-cover" />
+            </div>
+            <div className="leading-tight min-w-0">
+              <span className="text-[9px] font-bold block truncate">Cargo Tech</span>
+              <span className="text-[8px] opacity-60 block font-mono">$850</span>
+              <span className="text-[7px] bg-zinc-800 px-1 rounded text-zinc-300">28 30</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between text-[8px] opacity-70 border-t border-zinc-800 pt-1">
+          <span>Colección Streetwear</span>
+          <span>Pedir por WhatsApp →</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (templateId === 'corporate_services') {
+    return (
+      <div className="w-full h-32 rounded-2xl bg-slate-900 overflow-hidden relative border border-slate-800 shadow-inner flex flex-col justify-between p-2.5 select-none text-white">
+        <div className="flex items-center justify-between">
+          <span className="text-[8px] font-black uppercase tracking-wider text-sky-400 bg-sky-950 px-2 py-0.5 rounded-full border border-sky-800">
+            Firma Corporativa B2B
+          </span>
+          <span className="text-[8px] font-mono text-emerald-400">SAT CFDI 4.0 ✓</span>
+        </div>
+
+        <div className="grid grid-cols-3 gap-1">
+          <div className="bg-slate-800/80 rounded-lg p-1 text-center border border-slate-700">
+            <span className="font-bold text-sky-400 text-[10px] block leading-none">+12 Años</span>
+            <span className="text-[7px] opacity-60">Trayectoria</span>
+          </div>
+          <div className="bg-slate-800/80 rounded-lg p-1 text-center border border-slate-700">
+            <span className="font-bold text-emerald-400 text-[10px] block leading-none">CFDI 4.0</span>
+            <span className="text-[7px] opacity-60">Deducible</span>
+          </div>
+          <div className="bg-slate-800/80 rounded-lg p-1 text-center border border-slate-700">
+            <span className="font-bold text-purple-400 text-[10px] block leading-none">100% Legal</span>
+            <span className="text-[7px] opacity-60">Contrato</span>
+          </div>
+        </div>
+
+        <div className="bg-slate-800/90 rounded-xl p-1.5 border border-slate-700 flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs">📊</span>
+            <span className="text-[9px] font-bold truncate">Auditoría Fiscal Integral</span>
+          </div>
+          <span className="text-[8px] font-bold bg-sky-500 px-2 py-0.5 rounded-lg text-white">Agendar</span>
+        </div>
+      </div>
+    );
+  }
+
+  // catalog_express
+  return (
+    <div className="w-full h-32 rounded-2xl overflow-hidden relative border border-amber-200/50 shadow-inner flex flex-col justify-between p-2.5 select-none bg-gradient-to-br from-amber-50 to-orange-50">
+      <div className="flex items-center justify-between">
+        <span className="text-[8px] font-black uppercase tracking-wider text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-200">
+          Alta Densidad / Retail
+        </span>
+        <span className="text-[8px] font-mono text-emerald-700 font-bold">Stock en Almacén ✓</span>
+      </div>
+
+      <div className="space-y-1.5">
+        <div className="bg-white rounded-xl p-1.5 border border-amber-200/60 shadow-2xs flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <div className="w-6 h-6 rounded-lg bg-orange-100 flex items-center justify-center text-xs">⚡</div>
+            <div className="leading-tight">
+              <span className="text-[9px] font-bold text-slate-900 block truncate w-24">Rotomartillo 20V</span>
+              <span className="text-[8px] text-emerald-600 font-semibold">DeWalt • Stock 15</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="text-[9px] font-mono font-bold">$2,199</span>
+            <span className="w-4 h-4 rounded bg-orange-600 text-white flex items-center justify-center text-[9px] font-bold">+</span>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl p-1.5 border border-amber-200/60 shadow-2xs flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <div className="w-6 h-6 rounded-lg bg-orange-100 flex items-center justify-center text-xs">🔧</div>
+            <div className="leading-tight">
+              <span className="text-[9px] font-bold text-slate-900 block truncate w-24">Llaves Urrea 14pz</span>
+              <span className="text-[8px] text-emerald-600 font-semibold">Urrea • Stock 42</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="text-[9px] font-mono font-bold">$680</span>
+            <span className="w-4 h-4 rounded bg-orange-600 text-white flex items-center justify-center text-[9px] font-bold">+</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between text-[8px] text-amber-900 font-bold border-t border-amber-200/50 pt-1">
+        <span>Cotización Mayorista</span>
+        <span>WhatsApp Directo →</span>
+      </div>
+    </div>
+  );
+}
+
 export default function TenantDashboard({ initialStore, onOpenStore, onBackToMain, onCreateNewStore }: TenantDashboardProps) {
   const [allStores, setAllStores] = useState<TenantStore[]>(() => TenantStorageService.getAllStores());
   const [activeStore, setActiveStore] = useState<TenantStore>(() => initialStore || TenantStorageService.getActiveTenant());
@@ -110,6 +271,7 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
   const [newProdPrice, setNewProdPrice] = useState<number>(100);
   const [newProdDesc, setNewProdDesc] = useState('');
   const [newProdIcon, setNewProdIcon] = useState('🍽️');
+  const [newProdImageUrl, setNewProdImageUrl] = useState('');
   // Food fields
   const [prodIngredients, setProdIngredients] = useState('');
   const [prodPrepTime, setProdPrepTime] = useState('');
@@ -338,6 +500,7 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
       category: newProdCategory.trim() || (productNiche === 'food' ? 'Alimentos' : productNiche === 'fashion' ? 'Ropa' : productNiche === 'services' ? 'Servicios' : 'General'),
       price: Number(newProdPrice) || 0,
       description: newProdDesc.trim(),
+      imageUrl: newProdImageUrl.trim() || undefined,
       iconText: newProdIcon.trim() || (productNiche === 'food' ? '🍽️' : productNiche === 'fashion' ? '👗' : productNiche === 'services' ? '💼' : '📦'),
       inStock: true,
       nicheAttributes
@@ -355,6 +518,7 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
       setNewProdName('');
       setNewProdPrice(100);
       setNewProdDesc('');
+      setNewProdImageUrl('');
       setProdIngredients('');
       setProdPrepTime('');
       setProdBadge('');
@@ -594,8 +758,12 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
                   >
                     <div>
                       <div className="flex items-start gap-3.5">
-                        <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center text-2xl shrink-0 shadow-2xs">
-                          {prod.iconText || '📦'}
+                        <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center text-2xl shrink-0 shadow-2xs overflow-hidden">
+                          {prod.imageUrl ? (
+                            <img src={prod.imageUrl} alt={prod.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <span>{prod.iconText || '📦'}</span>
+                          )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5 flex-wrap">
@@ -713,6 +881,9 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
                     }`}
                   >
                     <div className="space-y-4">
+                      {/* Visual Mini Mockup Frame */}
+                      <TemplateMiniMockup templateId={tmpl.id} />
+
                       {/* Badge & Category */}
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-slate-100 text-slate-700">
@@ -1576,6 +1747,39 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
               </div>
             </div>
 
+            {/* Quick Template Switcher Toolbar inside Simulator */}
+            <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <LayoutTemplate className="w-4 h-4 text-[#00b37e]" />
+                <span className="text-xs font-bold text-slate-800">
+                  Probar con otra Plantilla:
+                </span>
+              </div>
+
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {STORE_TEMPLATES_LIST.map(tmpl => {
+                  const isCurrent = activeTemplateId === tmpl.id;
+                  const icon = tmpl.id === 'modern_delivery' ? '🍔' : tmpl.id === 'boutique_editorial' ? '👗' : tmpl.id === 'corporate_services' ? '💼' : '⚡';
+                  return (
+                    <button
+                      key={tmpl.id}
+                      type="button"
+                      onClick={() => handleApplyTemplate(tmpl.id)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                        isCurrent
+                          ? 'bg-slate-900 text-white shadow-xs scale-105'
+                          : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
+                      }`}
+                    >
+                      <span>{icon}</span>
+                      <span>{tmpl.name.split('&')[0].trim()}</span>
+                      {isCurrent && <Check className="w-3 h-3 text-emerald-400" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Device Container */}
             <div className="flex justify-center items-center py-2 px-2 overflow-x-auto">
               {previewDevice === 'mobile' ? (
@@ -1599,8 +1803,11 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
                     </div>
                   </div>
 
-                  {/* Device screen inside frame with completely hidden scrollbars */}
-                  <div className="flex-1 rounded-[40px] overflow-y-auto relative no-scrollbar bg-white">
+                  {/* Device screen inside frame with completely hidden scrollbars and theme background */}
+                  <div 
+                    className="flex-1 rounded-[40px] overflow-y-auto relative no-scrollbar"
+                    style={{ backgroundColor: resolveStoreTheme(activeStore).pageBackground }}
+                  >
                     <StorefrontRenderer store={activeStore} isMobileSimulator={true} />
                   </div>
 
@@ -1968,6 +2175,65 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
                   </div>
                 </div>
               )}
+
+              {/* Fotografía HD del Producto */}
+              <div className="space-y-1.5">
+                <label className="font-bold text-slate-700 flex items-center justify-between">
+                  <span>Fotografía del Producto (URL HD opcional)</span>
+                  <span className="text-[10px] text-slate-400 font-normal">Unsplash o enlace web directo</span>
+                </label>
+                <div className="flex gap-2 items-center">
+                  <input
+                    type="url"
+                    placeholder="https://images.unsplash.com/photo-..."
+                    value={newProdImageUrl}
+                    onChange={(e) => setNewProdImageUrl(e.target.value)}
+                    className="flex-1 py-2 px-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#00b37e] text-xs font-mono"
+                  />
+                  {newProdImageUrl ? (
+                    <img 
+                      src={newProdImageUrl} 
+                      alt="Vista previa" 
+                      className="w-10 h-10 rounded-xl object-cover border border-slate-200 shrink-0" 
+                      onError={(e) => { (e.currentTarget as HTMLElement).style.display = 'none'; }}
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-xl bg-slate-100 border border-dashed border-slate-300 flex items-center justify-center text-slate-400 shrink-0">
+                      <ImageIcon className="w-4 h-4" />
+                    </div>
+                  )}
+                </div>
+                {/* Quick suggestions based on niche */}
+                <div className="flex flex-wrap gap-1.5 pt-0.5">
+                  <span className="text-[10px] text-slate-400 font-medium self-center mr-1">Sugerencias:</span>
+                  {productNiche === 'food' && (
+                    <>
+                      <button type="button" onClick={() => setNewProdImageUrl('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop&q=80')} className="text-[10px] bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md transition-colors cursor-pointer">Platillo Gourmet</button>
+                      <button type="button" onClick={() => setNewProdImageUrl('https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=80')} className="text-[10px] bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md transition-colors cursor-pointer">Café Latte</button>
+                      <button type="button" onClick={() => setNewProdImageUrl('https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&auto=format&fit=crop&q=80')} className="text-[10px] bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md transition-colors cursor-pointer">Panadería</button>
+                    </>
+                  )}
+                  {productNiche === 'fashion' && (
+                    <>
+                      <button type="button" onClick={() => setNewProdImageUrl('https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=600&auto=format&fit=crop&q=80')} className="text-[10px] bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md transition-colors cursor-pointer">Sudadera / Hoodie</button>
+                      <button type="button" onClick={() => setNewProdImageUrl('https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&auto=format&fit=crop&q=80')} className="text-[10px] bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md transition-colors cursor-pointer">Camisa Minimalista</button>
+                      <button type="button" onClick={() => setNewProdImageUrl('https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=600&auto=format&fit=crop&q=80')} className="text-[10px] bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md transition-colors cursor-pointer">Calzado Casual</button>
+                    </>
+                  )}
+                  {productNiche === 'services' && (
+                    <>
+                      <button type="button" onClick={() => setNewProdImageUrl('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&auto=format&fit=crop&q=80')} className="text-[10px] bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md transition-colors cursor-pointer">Consultoría</button>
+                      <button type="button" onClick={() => setNewProdImageUrl('https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&auto=format&fit=crop&q=80')} className="text-[10px] bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md transition-colors cursor-pointer">Legal / Notarial</button>
+                    </>
+                  )}
+                  {productNiche === 'general' && (
+                    <>
+                      <button type="button" onClick={() => setNewProdImageUrl('https://images.unsplash.com/photo-1504148455328-c376907d081c?w=600&auto=format&fit=crop&q=80')} className="text-[10px] bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md transition-colors cursor-pointer">Herramientas</button>
+                      <button type="button" onClick={() => setNewProdImageUrl('https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=600&auto=format&fit=crop&q=80')} className="text-[10px] bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md transition-colors cursor-pointer">Gadget / Tech</button>
+                    </>
+                  )}
+                </div>
+              </div>
 
               <div className="space-y-1">
                 <label className="font-bold text-slate-700">Emoji / Icono representativo</label>

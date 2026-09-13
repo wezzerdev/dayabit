@@ -119,7 +119,8 @@ const SEED_STORES: TenantStore[] = [
         name: 'Café Geisha Especial (250g)',
         category: 'Café en Grano',
         price: 240,
-        description: 'Notas florales de jazmín, melocotón y miel de azahar. Tueste medio.',
+        description: 'Notas florales de jazmín, melocotón y miel de azahar. Tueste medio artesanal.',
+        imageUrl: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=600&auto=format&fit=crop&q=80',
         iconText: '☕',
         inStock: true,
         nicheAttributes: {
@@ -135,6 +136,7 @@ const SEED_STORES: TenantStore[] = [
         category: 'Bebidas Frías',
         price: 95,
         description: 'Macerado en frío durante 18 horas para máxima suavidad y notas achocolatadas.',
+        imageUrl: 'https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=600&auto=format&fit=crop&q=80',
         iconText: '🧊',
         inStock: true,
         nicheAttributes: {
@@ -150,6 +152,7 @@ const SEED_STORES: TenantStore[] = [
         category: 'Repostería',
         price: 65,
         description: 'Hojaldrado tradicional con mantequilla de importación horneado cada mañana.',
+        imageUrl: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600&auto=format&fit=crop&q=80',
         iconText: '🥐',
         inStock: true,
         nicheAttributes: {
@@ -165,6 +168,7 @@ const SEED_STORES: TenantStore[] = [
         category: 'Repostería',
         price: 110,
         description: 'Base crujiente de almendra y coulis fresco de zarzamora y frambuesa.',
+        imageUrl: 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=600&auto=format&fit=crop&q=80',
         iconText: '🍰',
         inStock: true,
         nicheAttributes: {
@@ -180,6 +184,7 @@ const SEED_STORES: TenantStore[] = [
         category: 'Accesorios',
         price: 340,
         description: 'Doble pared al vacío que mantiene tu café caliente por 8 horas.',
+        imageUrl: 'https://images.unsplash.com/photo-1577937927133-66ef06acdf18?w=600&auto=format&fit=crop&q=80',
         iconText: '🔋',
         inStock: true,
         nicheAttributes: {
@@ -245,6 +250,7 @@ const SEED_STORES: TenantStore[] = [
         category: 'Sudaderas',
         price: 690,
         description: 'Algodón pesado 400 GSM con acabado deslavado vintage. Tallas S a XL.',
+        imageUrl: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=600&auto=format&fit=crop&q=80',
         iconText: '👕',
         inStock: true,
         nicheAttributes: {
@@ -261,6 +267,7 @@ const SEED_STORES: TenantStore[] = [
         category: 'Pantalones',
         price: 850,
         description: 'Corte relajado con 6 bolsillos utilitarios y correa ajustable en tobillo.',
+        imageUrl: 'https://images.unsplash.com/photo-1517445312882-bc9910d016b7?w=600&auto=format&fit=crop&q=80',
         iconText: '👖',
         inStock: true,
         nicheAttributes: {
@@ -277,6 +284,7 @@ const SEED_STORES: TenantStore[] = [
         category: 'Accesorios',
         price: 390,
         description: 'Ajustable con hebilla metálica y bordado tonal de alta definición.',
+        imageUrl: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=600&auto=format&fit=crop&q=80',
         iconText: '🧢',
         inStock: true,
         nicheAttributes: {
@@ -284,6 +292,22 @@ const SEED_STORES: TenantStore[] = [
           sizes: ['Unitalla ajustable'],
           colors: ['Negro', 'Blanco Crudo'],
           material: 'Sarga de algodón pesado con hebilla de latón'
+        }
+      },
+      {
+        id: 'b-204',
+        name: 'Chamarra Bomber Puffer Street',
+        category: 'Chamarras',
+        price: 1250,
+        description: 'Relleno térmico ultraligero con tejido repelente al agua y cuello elástico.',
+        imageUrl: 'https://images.unsplash.com/photo-1548883354-7622d03aca27?w=600&auto=format&fit=crop&q=80',
+        iconText: '🧥',
+        inStock: true,
+        nicheAttributes: {
+          niche: 'fashion',
+          sizes: ['M', 'L', 'XL'],
+          colors: ['Negro Mate', 'Plata Grafito'],
+          badge: 'Invierno 2026'
         }
       }
     ]
@@ -343,13 +367,14 @@ const SEED_STORES: TenantStore[] = [
         category: 'Servicios',
         price: 1500,
         description: 'Revisión minuciosa de tu situación tributaria, opiniones de cumplimiento y detección de saldos a favor.',
+        imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&auto=format&fit=crop&q=80',
         iconText: '📊',
         inStock: true,
         nicheAttributes: {
           niche: 'services',
           serviceDuration: '45 minutos',
           serviceModality: 'online',
-          includes: ['Revisión Opinión SAT 32-D', 'Detección saldos a favor', 'Plan de regularización'],
+          includes: ['Revisión Opinión SAT 32-D', 'Detección saldos a favor', 'Plan de regularización integral'],
           badge: 'Paso 1 Recomendado'
         }
       },
@@ -359,13 +384,14 @@ const SEED_STORES: TenantStore[] = [
         category: 'Servicios',
         price: 3200,
         description: 'Cálculo de impuestos mensuales, DIOT, declaraciones anuales y conciliaciones bancarias.',
+        imageUrl: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&auto=format&fit=crop&q=80',
         iconText: '💼',
         inStock: true,
         nicheAttributes: {
           niche: 'services',
           serviceDuration: 'Mensual continuo',
           serviceModality: 'online',
-          includes: ['Cálculo de impuestos mensuales', 'Envío de DIOT', 'Conciliación bancaria', 'Atención directa por WhatsApp']
+          includes: ['Cálculo de impuestos mensuales', 'Envío puntual de DIOT', 'Conciliación bancaria', 'Atención directa por WhatsApp']
         }
       },
       {
@@ -374,13 +400,125 @@ const SEED_STORES: TenantStore[] = [
         category: 'Servicios',
         price: 950,
         description: 'Inscripción y actualización al Régimen Simplificado de Confianza para pagar la menor tasa de ISR legal.',
+        imageUrl: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?w=600&auto=format&fit=crop&q=80',
         iconText: '📑',
         inStock: true,
         nicheAttributes: {
           niche: 'services',
-          serviceDuration: 'Sesión única de 60 min',
+          serviceDuration: 'Sesión de 60 min',
           serviceModality: 'online',
-          includes: ['Actualización constancia CSF', 'Activación buzón tributario', 'Estrategia para pagar tasa reducida 1% a 2.5%']
+          includes: ['Actualización constancia CSF', 'Activación buzón tributario', 'Estrategia tasa reducida 1% a 2.5%']
+        }
+      }
+    ]
+  },
+  {
+    id: 'store-ferreteria',
+    slug: 'ferreteria-industrial-norte',
+    businessName: 'Ferretería & Suministros Norte',
+    ownerName: 'Ing. Alejandro Vega',
+    ownerEmail: 'ventas@ferreterianorte.com',
+    planId: 'pro',
+    templateId: 'catalog_express',
+    whatsapp: '5625785033',
+    brandColor: '#ea580c',
+    themeConfig: { ...THEME_PRESETS.light, accentColor: '#ea580c' },
+    tagline: 'Herramientas de poder, tornillería y mayoreo industrial',
+    description: 'Distribuidor autorizado de maquinaria y herramientas con entrega express a obra o taller. Cotiza y surte pedidos por volumen directamente a WhatsApp.',
+    category: 'Ferretería y Mayoreo',
+    address: 'Calzada Industrial 105, Parque Industrial Toluca, Edo. Méx.',
+    hours: 'Lun a Sáb: 7:30 AM - 6:30 PM',
+    bannerUrl: 'https://images.unsplash.com/photo-1581783898377-1c85bf937427?w=1200&auto=format&fit=crop&q=80',
+    aboutUs: {
+      story: 'Más de 15 años abasteciendo a la industria constructora y manufacturera de México con las marcas líderes en herramienta, seguridad y fijación.',
+      experienceYears: 15,
+      highlightValues: ['Distribuidor DeWalt, Makita y Urrea', 'Precios de Mayoreo Directo', 'Entrega en Obra en 2 Horas']
+    },
+    faqs: [
+      {
+        id: 'faq-f1',
+        question: '¿Manejan precio de mayoreo para constructoras?',
+        answer: 'Sí, otorgamos descuentos por volumen a partir de 10 piezas o compras superiores a $5,000 MXN con factura fiscal SAT.'
+      },
+      {
+        id: 'faq-f2',
+        question: '¿Tienen entrega el mismo día?',
+        answer: 'Contamos con flotilla propia para entregas express en el Valle de México y envíos consolidados por fletera nacional.'
+      }
+    ],
+    socialLinks: {
+      facebook: 'https://facebook.com/ferreterianortemx',
+      mapsUrl: 'https://maps.google.com/?q=Toluca+Industrial'
+    },
+    paymentMethods: ['Transferencia SPEI', 'Tarjeta de Crédito / Débito', 'Efectivo contra entrega'],
+    storePolicies: {
+      shipping: 'Entregas express en obra en 2 a 4 horas en zona metropolitana. Envíos foráneos por fletera con guía.',
+      returns: 'Garantía directa de 1 a 3 años según fabricante. Cambio inmediato por defecto de fábrica.',
+      paymentTerms: 'Aceptamos transferencias SPEI directas, pago contra entrega y tarjetas de crédito con factura fiscal.'
+    },
+    subscriptionStatus: 'active',
+    subscriptionPeriodEnd: '2027-04-10',
+    createdAt: '2026-04-10T10:00:00.000Z',
+    products: [
+      {
+        id: 'f-401',
+        name: 'Rotomartillo Inalámbrico 20V Brushless MAX',
+        category: 'Herramientas Eléctricas',
+        price: 2199,
+        description: 'Motor sin carbones de alto rendimiento, incluye 2 baterías de litio 4.0Ah y cargador rápido.',
+        imageUrl: 'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=600&auto=format&fit=crop&q=80',
+        iconText: '⚡',
+        inStock: true,
+        nicheAttributes: {
+          niche: 'general',
+          brand: 'DeWalt Industrial',
+          warranty: '3 años de garantía limitada',
+          badge: 'Más Vendido'
+        }
+      },
+      {
+        id: 'f-402',
+        name: 'Juego de Llaves Españolas Milimétricas 14 Pzas',
+        category: 'Herramientas Manuales',
+        price: 680,
+        description: 'Forjadas en acero al cromo vanadio con acabado pulido espejo y estuche organizador.',
+        imageUrl: 'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=600&auto=format&fit=crop&q=80',
+        iconText: '🔧',
+        inStock: true,
+        nicheAttributes: {
+          niche: 'general',
+          brand: 'Urrea Pro',
+          warranty: 'Garantía de por vida'
+        }
+      },
+      {
+        id: 'f-403',
+        name: 'Sierra Circular Profesional 7-1/4" 1800W',
+        category: 'Herramientas Eléctricas',
+        price: 1890,
+        description: 'Capacidad de corte de 66mm con guía láser y disco de carburo de tungsteno 24 dientes.',
+        imageUrl: 'https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=600&auto=format&fit=crop&q=80',
+        iconText: '⚙️',
+        inStock: true,
+        nicheAttributes: {
+          niche: 'general',
+          brand: 'Makita Power',
+          warranty: '1 año de garantía'
+        }
+      },
+      {
+        id: 'f-404',
+        name: 'Compresor de Aire Portátil 24L 2.5 HP',
+        category: 'Maquinaria & Aire',
+        price: 3450,
+        description: 'Tanque reforzado con doble manómetro, arranque automático y regulador de presión.',
+        imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=600&auto=format&fit=crop&q=80',
+        iconText: '💨',
+        inStock: true,
+        nicheAttributes: {
+          niche: 'general',
+          brand: 'Truper Expert',
+          warranty: '1 año de garantía'
         }
       }
     ]
@@ -398,7 +536,7 @@ export class TenantStorageService {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length > 0) {
           // ensure existing stores have all fields initialized
-          return parsed.map(store => {
+          const loadedStores: TenantStore[] = parsed.map(store => {
             const seed = SEED_STORES.find(s => s.id === store.id);
             return {
               ...store,
@@ -433,11 +571,21 @@ export class TenantStorageService {
                 const seedProd = seed?.products.find(sp => sp.id === p.id);
                 return {
                   ...p,
+                  imageUrl: p.imageUrl || seedProd?.imageUrl,
                   nicheAttributes: p.nicheAttributes || seedProd?.nicheAttributes || { niche: 'general' }
                 };
               })
             };
           });
+
+          // Check if any seed store is missing in loadedStores (e.g. newly added store-ferreteria)
+          SEED_STORES.forEach(seed => {
+            if (!loadedStores.some(ls => ls.id === seed.id)) {
+              loadedStores.push(seed);
+            }
+          });
+
+          return loadedStores;
         }
       }
     } catch (e) {

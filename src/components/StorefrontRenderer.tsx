@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ShoppingCart, MessageCircle, MapPin, Clock, Plus, Minus, Trash2, Search, 
   ArrowLeft, X, ShieldCheck, Truck, CreditCard, 
-  ChevronDown, HelpCircle, Award, Zap, FileText, Check
+  ChevronDown, HelpCircle, Award, FileText, Check
 } from 'lucide-react';
 import type { TenantStore, StoreProduct } from '../types/tenant';
 import { InstagramIcon, FacebookIcon, TikTokIcon, GoogleMapsIcon } from './SocialIcons';
@@ -136,7 +136,7 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
 
   return (
     <div 
-      className="min-h-screen flex flex-col justify-between w-full overflow-x-hidden text-left relative transition-colors duration-200"
+      className={`${isMobileSimulator ? 'min-h-full' : 'min-h-screen'} flex flex-col justify-between w-full overflow-x-hidden text-left relative transition-colors duration-200`}
       style={{
         backgroundColor: theme.pageBackground,
         color: theme.textColor,
@@ -230,14 +230,14 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
           {/* Edge-to-Edge Hero Banner */}
           {store.bannerUrl && (
             <div className="relative w-full overflow-hidden">
-              <div className={`w-full ${isMobileSimulator ? 'h-44' : 'h-52 sm:h-72'} relative`}>
+              <div className={`w-full ${isMobileSimulator ? 'h-32' : 'h-52 sm:h-72'} relative`}>
                 <img
                   src={store.bannerUrl}
                   alt={store.businessName}
                   className="w-full h-full object-cover brightness-95"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
-                <div className={`absolute bottom-3 left-4 ${isMobileSimulator ? 'left-3' : 'sm:left-8'} flex items-center gap-2`}>
+                <div className={`absolute bottom-2.5 left-3 sm:left-8 flex items-center gap-2`}>
                   <span className="text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white border border-white/30 shadow-lg">
                     {store.category}
                   </span>
@@ -247,36 +247,38 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
           )}
 
           {/* Profile Card in Relief */}
-          <div className={`mx-auto w-full ${isMobileSimulator ? 'px-3 -mt-6' : 'max-w-6xl px-4 sm:px-6 -mt-8'} relative z-10`}>
+          <div className={`mx-auto w-full ${isMobileSimulator ? 'px-3 -mt-4' : 'max-w-6xl px-4 sm:px-6 -mt-8'} relative z-10`}>
             <div 
-              className="rounded-3xl p-5 sm:p-7 border shadow-xl backdrop-blur-md transition-all space-y-4"
+              className={`border shadow-xl backdrop-blur-md transition-all ${
+                isMobileSimulator ? 'rounded-2xl p-3.5 space-y-2.5' : 'rounded-3xl p-5 sm:p-7 space-y-4'
+              }`}
               style={{
                 backgroundColor: theme.cardBackground,
                 borderColor: theme.borderColor,
               }}
             >
-              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-3">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2.5">
                     <div 
-                      className="w-13 h-13 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-lg ring-4 ring-white/60 dark:ring-black/40"
+                      className={`${isMobileSimulator ? 'w-10 h-10 text-lg rounded-xl' : 'w-13 h-13 text-2xl rounded-2xl'} flex items-center justify-center text-white font-black shadow-lg ring-2 ring-white/60 dark:ring-black/40 shrink-0`}
                       style={{ backgroundColor: theme.accentColor }}
                     >
                       {store.businessName.charAt(0).toUpperCase()}
                     </div>
                     <div>
                       <h2 
-                        className="font-display font-black text-xl sm:text-2xl tracking-tight leading-tight"
+                        className={`font-display font-black tracking-tight leading-tight ${isMobileSimulator ? 'text-base' : 'text-xl sm:text-2xl'}`}
                         style={{ color: theme.textColor }}
                       >
                         {store.businessName}
                       </h2>
-                      <p className="text-xs sm:text-sm font-semibold mt-0.5" style={{ color: theme.accentColor }}>
+                      <p className="text-xs font-semibold" style={{ color: theme.accentColor }}>
                         {store.tagline}
                       </p>
                     </div>
                   </div>
-                  <p className="text-xs sm:text-sm leading-relaxed max-w-2xl pt-1" style={{ color: theme.textMutedColor }}>
+                  <p className={`leading-relaxed max-w-2xl ${isMobileSimulator ? 'text-[11px] line-clamp-2' : 'text-xs sm:text-sm'}`} style={{ color: theme.textMutedColor }}>
                     {store.description}
                   </p>
                 </div>
@@ -284,14 +286,14 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
                 <button
                   type="button"
                   onClick={() => setIsPoliciesOpen(true)}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all hover:scale-105 cursor-pointer shadow-xs shrink-0 self-start border"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all hover:scale-105 cursor-pointer shadow-2xs shrink-0 self-start border"
                   style={{
                     backgroundColor: `${theme.textColor}08`,
                     borderColor: theme.borderColor,
                     color: theme.textColor
                   }}
                 >
-                  <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
                   <span>Garantías & Envíos</span>
                 </button>
               </div>
@@ -398,55 +400,55 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
             </div>
 
             {/* 3 Trust Credibility Metric Badges */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-              <div className="p-4 rounded-2xl border text-left space-y-1 shadow-2xs" style={{ backgroundColor: `${theme.textColor}04`, borderColor: theme.borderColor }}>
-                <div className="flex items-center gap-2" style={{ color: theme.accentColor }}>
-                  <Award className="w-4 h-4" />
-                  <span className="font-display font-black text-xl">+{store.aboutUs?.experienceYears || 10} Años</span>
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-3 pt-2">
+              <div className="p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border text-center sm:text-left space-y-0.5 sm:space-y-1 shadow-2xs" style={{ backgroundColor: `${theme.textColor}04`, borderColor: theme.borderColor }}>
+                <div className="flex items-center justify-center sm:justify-start gap-1.5" style={{ color: theme.accentColor }}>
+                  <Award className="w-3.5 h-3.5 shrink-0" />
+                  <span className="font-display font-black text-xs sm:text-xl leading-none">+{store.aboutUs?.experienceYears || 10} Años</span>
                 </div>
-                <p className="text-[11px] opacity-70">Trayectoria y respaldo legal garantizado</p>
+                <p className="text-[9px] sm:text-[11px] opacity-70 leading-tight">Experiencia y respaldo legal</p>
               </div>
 
-              <div className="p-4 rounded-2xl border text-left space-y-1 shadow-2xs" style={{ backgroundColor: `${theme.textColor}04`, borderColor: theme.borderColor }}>
-                <div className="flex items-center gap-2 text-emerald-500">
-                  <FileText className="w-4 h-4" />
-                  <span className="font-display font-black text-xl">SAT CFDI 4.0</span>
+              <div className="p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border text-center sm:text-left space-y-0.5 sm:space-y-1 shadow-2xs" style={{ backgroundColor: `${theme.textColor}04`, borderColor: theme.borderColor }}>
+                <div className="flex items-center justify-center sm:justify-start gap-1.5 text-emerald-500">
+                  <FileText className="w-3.5 h-3.5 shrink-0" />
+                  <span className="font-display font-black text-xs sm:text-xl leading-none">SAT CFDI</span>
                 </div>
-                <p className="text-[11px] opacity-70">Comprobantes fiscales 100% deducibles</p>
+                <p className="text-[9px] sm:text-[11px] opacity-70 leading-tight">100% deducible de impuestos</p>
               </div>
 
-              <div className="p-4 rounded-2xl border text-left space-y-1 shadow-2xs" style={{ backgroundColor: `${theme.textColor}04`, borderColor: theme.borderColor }}>
-                <div className="flex items-center gap-2 text-blue-500">
-                  <ShieldCheck className="w-4 h-4" />
-                  <span className="font-display font-black text-xl">Confidencial</span>
+              <div className="p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border text-center sm:text-left space-y-0.5 sm:space-y-1 shadow-2xs" style={{ backgroundColor: `${theme.textColor}04`, borderColor: theme.borderColor }}>
+                <div className="flex items-center justify-center sm:justify-start gap-1.5 text-blue-500">
+                  <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+                  <span className="font-display font-black text-xs sm:text-xl leading-none">Confidencial</span>
                 </div>
-                <p className="text-[11px] opacity-70">Contrato formal de prestación de servicios</p>
+                <p className="text-[9px] sm:text-[11px] opacity-70 leading-tight">Contrato formal garantizado</p>
               </div>
             </div>
 
             {/* 3-Step Process Workflow Banner */}
-            <div className="pt-4 border-t space-y-3" style={{ borderColor: theme.borderColor }}>
-              <span className="text-[11px] font-bold uppercase tracking-wider opacity-60 block">Metodología de Trabajo:</span>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                <div className="flex items-start gap-2.5">
-                  <span className="w-6 h-6 rounded-full flex items-center justify-center font-bold text-white shrink-0 text-xs" style={{ backgroundColor: theme.accentColor }}>1</span>
+            <div className="pt-3 border-t space-y-2.5" style={{ borderColor: theme.borderColor }}>
+              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider opacity-60 block">Metodología de Trabajo:</span>
+              <div className="grid grid-cols-3 gap-2 text-[10px] sm:text-xs">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-1 sm:gap-2.5">
+                  <span className="w-5 h-5 rounded-full flex items-center justify-center font-bold text-white shrink-0 text-[10px]" style={{ backgroundColor: theme.accentColor }}>1</span>
                   <div>
-                    <h5 className="font-bold">Diagnóstico Inicial</h5>
-                    <p className="text-[11px] opacity-70">Evaluamos tu caso por WhatsApp o Zoom.</p>
+                    <h5 className="font-bold text-[10px] sm:text-xs">Diagnóstico</h5>
+                    <p className="text-[9px] sm:text-[11px] opacity-70 hidden sm:block">Evaluamos tu situación.</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-2.5">
-                  <span className="w-6 h-6 rounded-full flex items-center justify-center font-bold text-white shrink-0 text-xs" style={{ backgroundColor: theme.accentColor }}>2</span>
+                <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-1 sm:gap-2.5">
+                  <span className="w-5 h-5 rounded-full flex items-center justify-center font-bold text-white shrink-0 text-[10px]" style={{ backgroundColor: theme.accentColor }}>2</span>
                   <div>
-                    <h5 className="font-bold">Propuesta & Dictamen</h5>
-                    <p className="text-[11px] opacity-70">Estrategia formal y cotización transparente.</p>
+                    <h5 className="font-bold text-[10px] sm:text-xs">Propuesta</h5>
+                    <p className="text-[9px] sm:text-[11px] opacity-70 hidden sm:block">Estrategia y cotización.</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-2.5">
-                  <span className="w-6 h-6 rounded-full flex items-center justify-center font-bold text-white shrink-0 text-xs" style={{ backgroundColor: theme.accentColor }}>3</span>
+                <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-1 sm:gap-2.5">
+                  <span className="w-5 h-5 rounded-full flex items-center justify-center font-bold text-white shrink-0 text-[10px]" style={{ backgroundColor: theme.accentColor }}>3</span>
                   <div>
-                    <h5 className="font-bold">Ejecución & Soporte</h5>
-                    <p className="text-[11px] opacity-70">Atención continua y entregables certificados.</p>
+                    <h5 className="font-bold text-[10px] sm:text-xs">Ejecución</h5>
+                    <p className="text-[9px] sm:text-[11px] opacity-70 hidden sm:block">Entregables y soporte.</p>
                   </div>
                 </div>
               </div>
@@ -457,24 +459,32 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
 
       {/* ================= TEMPLATE 4: CATÁLOGO EXPRESS / RETAIL ================= */}
       {activeTemplate === 'catalog_express' && (
-        <div className={`mx-auto w-full ${isMobileSimulator ? 'px-3 py-3' : 'max-w-6xl px-4 sm:px-6 py-4'} space-y-4`}>
-          {/* Top Quick Search Hero Bar */}
+        <div className={`mx-auto w-full ${isMobileSimulator ? 'px-3 py-2.5' : 'max-w-6xl px-4 sm:px-6 py-4'}`}>
           <div 
-            className="rounded-2xl p-4 border shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+            className="rounded-2xl p-3 sm:p-4 border shadow-2xs flex items-center justify-between gap-3"
             style={{ backgroundColor: theme.cardBackground, borderColor: theme.borderColor }}
           >
-            <div>
-              <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4 text-amber-500" />
-                <h2 className="font-display font-bold text-base sm:text-lg">{store.businessName}</h2>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600">Catálogo Directo</span>
+            <div className="flex items-center gap-2.5">
+              <div 
+                className="w-8 h-8 rounded-xl flex items-center justify-center text-white font-black text-xs shrink-0 shadow-sm"
+                style={{ backgroundColor: theme.accentColor }}
+              >
+                ⚡
               </div>
-              <p className="text-xs opacity-70 mt-0.5">{store.tagline}</p>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h2 className="font-display font-bold text-xs sm:text-base leading-tight">{store.businessName}</h2>
+                  <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600">
+                    Surtido Inmediato
+                  </span>
+                </div>
+                <p className="text-[10px] sm:text-xs opacity-70 truncate max-w-xs">{store.tagline}</p>
+              </div>
             </div>
 
-            <div className="flex items-center gap-2 text-xs font-mono">
-              <span className="px-2.5 py-1 rounded-lg border bg-slate-500/5" style={{ borderColor: theme.borderColor }}>
-                {store.products.length} artículos en almacén
+            <div className="flex items-center gap-2 text-[10px] sm:text-xs font-mono shrink-0">
+              <span className="px-2.5 py-1 rounded-lg border bg-slate-500/5 font-semibold" style={{ borderColor: theme.borderColor }}>
+                {store.products.length} Artículos
               </span>
             </div>
           </div>
@@ -543,7 +553,7 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
         
         {/* 1. LOOKBOOK FASHION GRID (Template 2) */}
         {activeTemplate === 'boutique_editorial' && (
-          <div className={`grid gap-4 ${isMobileSimulator ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
+          <div className={`grid gap-2.5 sm:gap-4 ${isMobileSimulator ? 'grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
             {filteredProducts.map(product => {
               const niche = product.nicheAttributes;
               const inCart = cart.find(c => c.product.id === product.id);
@@ -551,47 +561,60 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
               return (
                 <div
                   key={product.id}
-                  className="rounded-3xl p-4 border shadow-sm hover:shadow-xl transition-all flex flex-col justify-between group overflow-hidden"
+                  className={`rounded-2xl sm:rounded-3xl border shadow-xs hover:shadow-xl transition-all flex flex-col justify-between group overflow-hidden ${
+                    isMobileSimulator ? 'p-2.5' : 'p-4'
+                  }`}
                   style={{ backgroundColor: theme.cardBackground, borderColor: theme.borderColor }}
                 >
-                  <div className="space-y-3">
-                    {/* 3:4 Vertical Fashion Card Aspect Ratio */}
+                  <div className="space-y-2 sm:space-y-3">
+                    {/* 3:4 Vertical Fashion Card Aspect Ratio with HD Photo */}
                     <div 
-                      className="w-full h-48 sm:h-56 rounded-2xl flex items-center justify-center text-5xl relative overflow-hidden shadow-inner group-hover:scale-[1.01] transition-transform"
+                      className={`w-full ${isMobileSimulator ? 'h-36 sm:h-52' : 'h-52 sm:h-64'} rounded-xl sm:rounded-2xl flex items-center justify-center text-4xl relative overflow-hidden shadow-inner group-hover:scale-[1.01] transition-transform`}
                       style={{ backgroundColor: `${theme.textColor}06`, border: `1px solid ${theme.borderColor}` }}
                     >
-                      <span className="transform transition-transform group-hover:scale-110 duration-300">
-                        {product.iconText || '👗'}
-                      </span>
+                      {product.imageUrl ? (
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <span className="transform transition-transform group-hover:scale-110 duration-300">
+                          {product.iconText || '👗'}
+                        </span>
+                      )}
                       {niche?.badge && (
-                        <span className="absolute top-3 left-3 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-black/80 text-white backdrop-blur-md shadow-md">
+                        <span className="absolute top-2 left-2 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-black/80 text-white backdrop-blur-md shadow-md">
                           {niche.badge}
                         </span>
                       )}
                     </div>
 
                     <div>
-                      <span className="text-[10px] uppercase tracking-widest font-bold opacity-60 block">{product.category}</span>
-                      <h4 className="font-display font-black text-base sm:text-lg mt-0.5" style={{ color: theme.textColor }}>
+                      <span className="text-[9px] uppercase tracking-widest font-bold opacity-60 block">{product.category}</span>
+                      <h4 className="font-display font-black text-xs sm:text-base leading-tight mt-0.5 line-clamp-1" style={{ color: theme.textColor }}>
                         {product.name}
                       </h4>
-                      <p className="text-xs line-clamp-2 mt-1 leading-relaxed" style={{ color: theme.textMutedColor }}>
-                        {product.description}
-                      </p>
+                      {!isMobileSimulator && (
+                        <p className="text-xs line-clamp-2 mt-1 leading-relaxed" style={{ color: theme.textMutedColor }}>
+                          {product.description}
+                        </p>
+                      )}
 
                       {/* Sizes selector chips */}
                       {niche?.sizes && niche.sizes.length > 0 && (
-                        <div className="mt-3 pt-2" style={{ borderTop: `1px solid ${theme.borderColor}` }}>
-                          <span className="text-[10px] font-bold opacity-60 block mb-1.5">Tallas disponibles:</span>
-                          <div className="flex flex-wrap gap-1.5">
-                            {niche.sizes.map(size => {
+                        <div className="mt-1.5 sm:mt-2.5 pt-1.5" style={{ borderTop: `1px solid ${theme.borderColor}` }}>
+                          <span className="text-[9px] font-bold opacity-60 block mb-1">Tallas:</span>
+                          <div className="flex flex-wrap gap-1">
+                            {niche.sizes.slice(0, 4).map(size => {
                               const isChosen = (selectedVariants[product.id] || niche.sizes?.[0]) === size;
                               return (
                                 <button
                                   key={size}
                                   type="button"
                                   onClick={() => handleSelectVariant(product.id, size)}
-                                  className="px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer shadow-2xs"
+                                  className="px-1.5 py-0.5 rounded text-[9px] font-bold transition-all cursor-pointer shadow-2xs"
                                   style={isChosen ? {
                                     backgroundColor: theme.accentColor,
                                     color: '#ffffff'
@@ -612,29 +635,29 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
                   </div>
 
                   {/* Price & CTA */}
-                  <div className="pt-4 mt-4 flex items-center justify-between" style={{ borderTop: `1px solid ${theme.borderColor}` }}>
-                    <span className="font-mono font-black text-lg" style={{ color: theme.textColor }}>
-                      ${product.price} <span className="text-xs font-sans opacity-70">MXN</span>
+                  <div className="pt-2.5 sm:pt-3.5 mt-2.5 sm:mt-3.5 flex items-center justify-between gap-1" style={{ borderTop: `1px solid ${theme.borderColor}` }}>
+                    <span className="font-mono font-black text-xs sm:text-base" style={{ color: theme.textColor }}>
+                      ${product.price} <span className="text-[9px] font-sans opacity-70">MXN</span>
                     </span>
                     
                     {store.planId === 'pro' ? (
                       <button
                         type="button"
                         onClick={() => addToCart(product)}
-                        className="px-4 py-2 rounded-full text-white text-xs font-bold shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                        className="px-2.5 sm:px-4 py-1.5 rounded-full text-white text-[10px] sm:text-xs font-bold shadow-sm hover:scale-105 active:scale-95 transition-all cursor-pointer shrink-0"
                         style={{ backgroundColor: theme.accentColor }}
                       >
-                        {inCart ? `Bolsa (${inCart.quantity})` : 'Añadir a la Bolsa'}
+                        {inCart ? `Bolsa (${inCart.quantity})` : 'Añadir'}
                       </button>
                     ) : (
                       <a
                         href={getProductQuoteLink(product)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-4 py-2 rounded-full text-white text-xs font-bold shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer decoration-none"
+                        className="px-2.5 sm:px-4 py-1.5 rounded-full text-white text-[10px] sm:text-xs font-bold shadow-sm hover:scale-105 active:scale-95 transition-all cursor-pointer decoration-none shrink-0"
                         style={{ backgroundColor: '#00b37e' }}
                       >
-                        Pedir Talla
+                        Pedir
                       </a>
                     )}
                   </div>
@@ -650,12 +673,19 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
             {filteredProducts.map(service => (
               <div 
                 key={service.id}
-                className="p-6 rounded-3xl border shadow-sm flex flex-col justify-between transition-transform hover:-translate-y-1 space-y-4"
+                className="p-5 sm:p-6 rounded-3xl border shadow-sm flex flex-col justify-between transition-transform hover:-translate-y-1 space-y-4"
                 style={{ backgroundColor: theme.cardBackground, borderColor: theme.borderColor }}
               >
                 <div className="space-y-3">
+                  {/* Real Corporate Cover Photo if Available */}
+                  {service.imageUrl && (
+                    <div className="w-full h-36 rounded-2xl overflow-hidden shadow-inner">
+                      <img src={service.imageUrl} alt={service.name} className="w-full h-full object-cover" loading="lazy" />
+                    </div>
+                  )}
+
                   <div className="flex items-center justify-between">
-                    <span className="text-3xl">{service.iconText || '💼'}</span>
+                    <span className="text-2xl">{service.iconText || '💼'}</span>
                     {service.nicheAttributes?.badge && (
                       <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
                         {service.nicheAttributes.badge}
@@ -663,7 +693,7 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
                     )}
                   </div>
 
-                  <h4 className="font-display font-black text-lg" style={{ color: theme.textColor }}>
+                  <h4 className="font-display font-black text-base sm:text-lg" style={{ color: theme.textColor }}>
                     {service.name}
                   </h4>
                   
@@ -721,16 +751,20 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
               return (
                 <div 
                   key={product.id}
-                  className="p-3.5 sm:p-4 rounded-2xl border shadow-2xs flex items-center justify-between gap-3 transition-all hover:border-slate-400"
+                  className="p-3 sm:p-4 rounded-2xl border shadow-2xs flex items-center justify-between gap-3 transition-all hover:border-slate-400"
                   style={{ backgroundColor: theme.cardBackground, borderColor: theme.borderColor }}
                 >
                   {/* Left: Thumbnail + Details */}
                   <div className="flex items-center gap-3 min-w-0">
                     <div 
-                      className="w-16 h-16 rounded-xl flex items-center justify-center text-3xl shrink-0 shadow-inner"
+                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center shrink-0 shadow-inner overflow-hidden relative"
                       style={{ backgroundColor: `${theme.textColor}08`, border: `1px solid ${theme.borderColor}` }}
                     >
-                      {product.iconText || '📦'}
+                      {product.imageUrl ? (
+                        <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" loading="lazy" />
+                      ) : (
+                        <span className="text-2xl">{product.iconText || '📦'}</span>
+                      )}
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap">
@@ -743,7 +777,7 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
                           </span>
                         )}
                       </div>
-                      <h4 className="font-bold text-sm truncate mt-0.5" style={{ color: theme.textColor }}>
+                      <h4 className="font-bold text-xs sm:text-sm truncate mt-0.5" style={{ color: theme.textColor }}>
                         {product.name}
                       </h4>
                       <p className="text-[11px] line-clamp-1 opacity-70" style={{ color: theme.textMutedColor }}>
@@ -753,9 +787,9 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
                   </div>
 
                   {/* Right: Price + Fast Buy */}
-                  <div className="flex items-center gap-3 shrink-0 text-right">
+                  <div className="flex items-center gap-2.5 sm:gap-3 shrink-0 text-right">
                     <div>
-                      <span className="font-mono font-black text-sm block" style={{ color: theme.textColor }}>
+                      <span className="font-mono font-black text-xs sm:text-sm block" style={{ color: theme.textColor }}>
                         ${product.price}
                       </span>
                       <span className="text-[9px] opacity-60 block">MXN c/u</span>
@@ -791,7 +825,7 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
 
         {/* 4. MODERN DELIVERY APP GRID (Template 1 Default) */}
         {activeTemplate === 'modern_delivery' && (
-          <div className={`grid gap-4 ${isMobileSimulator ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
+          <div className={`grid gap-3 sm:gap-4 ${isMobileSimulator ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
             {filteredProducts.map(product => {
               const niche = product.nicheAttributes;
               const inCart = cart.find(c => c.product.id === product.id);
@@ -799,20 +833,29 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
               return (
                 <div
                   key={product.id}
-                  className="rounded-3xl p-4 sm:p-5 border shadow-sm hover:shadow-lg transition-all flex flex-col justify-between group relative overflow-hidden"
+                  className="rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border shadow-sm hover:shadow-lg transition-all flex flex-col justify-between group relative overflow-hidden"
                   style={{ backgroundColor: theme.cardBackground, borderColor: theme.borderColor }}
                 >
-                  <div className="space-y-3">
+                  <div className="space-y-2.5 sm:space-y-3">
                     <div 
-                      className="w-full h-36 sm:h-40 rounded-2xl flex items-center justify-center text-4xl relative overflow-hidden shadow-inner group-hover:scale-[1.01] transition-transform"
+                      className={`w-full ${isMobileSimulator ? 'h-36' : 'h-40 sm:h-48'} rounded-xl sm:rounded-2xl flex items-center justify-center text-4xl relative overflow-hidden shadow-inner group-hover:scale-[1.01] transition-transform`}
                       style={{ backgroundColor: `${theme.textColor}06`, border: `1px solid ${theme.borderColor}` }}
                     >
-                      <span className="transform transition-transform group-hover:scale-110 duration-300">
-                        {product.iconText || '📦'}
-                      </span>
+                      {product.imageUrl ? (
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <span className="transform transition-transform group-hover:scale-110 duration-300">
+                          {product.iconText || '📦'}
+                        </span>
+                      )}
                       {product.category && (
                         <span 
-                          className="absolute top-2.5 left-2.5 text-[9px] font-bold px-2.5 py-0.5 rounded-full backdrop-blur-md shadow-xs"
+                          className="absolute top-2 left-2 text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-md shadow-xs"
                           style={{
                             backgroundColor: isDark ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.85)',
                             border: `1px solid ${theme.borderColor}`,
@@ -824,7 +867,7 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
                       )}
                       {niche?.badge && (
                         <span 
-                          className="absolute top-2.5 right-2.5 text-[9px] font-black text-white px-2.5 py-0.5 rounded-full shadow-md backdrop-blur-md"
+                          className="absolute top-2 right-2 text-[9px] font-black text-white px-2 py-0.5 rounded-full shadow-md backdrop-blur-md"
                           style={{ backgroundColor: theme.accentColor }}
                         >
                           {niche.badge}
@@ -836,28 +879,28 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
                       <h4 className="font-display font-bold text-sm sm:text-base leading-snug line-clamp-1" style={{ color: theme.textColor }}>
                         {product.name}
                       </h4>
-                      <p className="text-xs line-clamp-2 mt-1 leading-relaxed" style={{ color: theme.textMutedColor }}>
+                      <p className="text-xs line-clamp-2 mt-0.5 leading-relaxed" style={{ color: theme.textMutedColor }}>
                         {product.description || 'Disponible para pedido inmediato con atención por WhatsApp.'}
                       </p>
 
                       {niche?.ingredients && (
-                        <p className="text-[11px] italic mt-2 p-2 rounded-xl" style={{ backgroundColor: `${theme.textColor}05`, border: `1px solid ${theme.borderColor}`, color: theme.textMutedColor }}>
+                        <p className="text-[10px] sm:text-[11px] italic mt-1.5 p-1.5 sm:p-2 rounded-xl" style={{ backgroundColor: `${theme.textColor}05`, border: `1px solid ${theme.borderColor}`, color: theme.textMutedColor }}>
                           <strong>Ingredientes:</strong> {niche.ingredients}
                         </p>
                       )}
                       {niche?.preparationTime && (
-                        <span className="text-[10px] font-semibold mt-1.5 inline-flex items-center gap-1 opacity-70" style={{ color: theme.textColor }}>
+                        <span className="text-[10px] font-semibold mt-1 inline-flex items-center gap-1 opacity-70" style={{ color: theme.textColor }}>
                           <Clock className="w-3 h-3" /> {niche.preparationTime}
                         </span>
                       )}
                     </div>
                   </div>
 
-                  <div className="pt-3.5 mt-3.5 flex items-center justify-between" style={{ borderTop: `1px solid ${theme.borderColor}` }}>
+                  <div className="pt-3 mt-3 flex items-center justify-between" style={{ borderTop: `1px solid ${theme.borderColor}` }}>
                     <div>
-                      <span className="text-[10px] opacity-60 block font-medium">Precio oficial</span>
-                      <span className="font-mono font-black text-base" style={{ color: theme.textColor }}>
-                        ${product.price} <span className="text-[10px] font-sans font-normal opacity-70">MXN</span>
+                      <span className="text-[9px] opacity-60 block font-medium">Precio</span>
+                      <span className="font-mono font-black text-sm sm:text-base" style={{ color: theme.textColor }}>
+                        ${product.price} <span className="text-[9px] font-sans font-normal opacity-70">MXN</span>
                       </span>
                     </div>
 
@@ -865,7 +908,7 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
                       <button
                         type="button"
                         onClick={() => addToCart(product)}
-                        className="px-4 py-2 rounded-full text-white text-xs font-bold flex items-center gap-1.5 shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                        className="px-3.5 py-1.5 rounded-full text-white text-xs font-bold flex items-center gap-1 shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer"
                         style={{ backgroundColor: theme.accentColor }}
                       >
                         <Plus className="w-3.5 h-3.5" />
@@ -876,7 +919,7 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
                         href={getProductQuoteLink(product)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-4 py-2 rounded-full text-white text-xs font-bold flex items-center gap-1.5 shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer decoration-none"
+                        className="px-3.5 py-1.5 rounded-full text-white text-xs font-bold flex items-center gap-1 shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer decoration-none"
                         style={{ backgroundColor: '#00b37e' }}
                       >
                         <MessageCircle className="w-3.5 h-3.5 fill-current" />
@@ -993,7 +1036,7 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
 
       {/* ================= STICKY MOBILE ORDER BAR (FOR PRO OR WHEN ITEMS IN CART) ================= */}
       {store.planId === 'pro' && cart.length > 0 && (
-        <div className="fixed bottom-3 inset-x-3 sm:inset-x-auto sm:right-6 z-40 max-w-md mx-auto">
+        <div className={`${isMobileSimulator ? 'absolute bottom-2 inset-x-2' : 'fixed bottom-3 inset-x-3 sm:inset-x-auto sm:right-6'} z-40 max-w-md mx-auto`}>
           <motion.button
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1018,7 +1061,7 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
       {/* ================= CART MODAL (TIER 3 PRO) ================= */}
       <AnimatePresence>
         {isCartOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm">
+          <div className={`${isMobileSimulator ? 'absolute inset-0' : 'fixed inset-0'} z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm`}>
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -1156,7 +1199,7 @@ export default function StorefrontRenderer({ store, onBackToMain, isMobileSimula
       {/* ================= STORE POLICIES MODAL ================= */}
       <AnimatePresence>
         {isPoliciesOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm">
+          <div className={`${isMobileSimulator ? 'absolute inset-0' : 'fixed inset-0'} z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm`}>
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
