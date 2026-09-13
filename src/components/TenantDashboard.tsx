@@ -327,14 +327,54 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
     }
   };
 
-  const handleApplyTemplate = (templateId: StoreTemplateId) => {
+  const handleSwitchBusinessNiche = (niche: ProductNiche) => {
+    const seedMapping: Record<ProductNiche, string> = {
+      food: 'store-geisha',
+      fashion: 'store-boutique',
+      services: 'store-consultoria',
+      general: 'store-ferreteria'
+    };
+
+    const isSeedStore = ['store-geisha', 'store-boutique', 'store-consultoria', 'store-ferreteria'].includes(activeStore.id);
+
+    if (isSeedStore) {
+      handleSelectStore(seedMapping[niche]);
+    } else {
+      handleApplyFullNiche(niche);
+    }
+  };
+
+  const handleApplyTemplate = (templateId: StoreTemplateId, autoAdaptNiche: boolean = true) => {
     setActiveTemplateId(templateId);
-    const updated = TenantStorageService.updateStore(activeStore.id, { templateId });
-    if (updated) {
-      setActiveStore(updated);
-      setAllStores(TenantStorageService.getAllStores());
-      setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 2500);
+    const niche: ProductNiche = 
+      templateId === 'modern_delivery' ? 'food' :
+      templateId === 'boutique_editorial' ? 'fashion' :
+      templateId === 'corporate_services' ? 'services' : 'general';
+
+    const seedMapping: Record<ProductNiche, string> = {
+      food: 'store-geisha',
+      fashion: 'store-boutique',
+      services: 'store-consultoria',
+      general: 'store-ferreteria'
+    };
+
+    const isSeedStore = ['store-geisha', 'store-boutique', 'store-consultoria', 'store-ferreteria'].includes(activeStore.id);
+
+    if (isSeedStore) {
+      handleSelectStore(seedMapping[niche]);
+      return;
+    }
+
+    if (autoAdaptNiche) {
+      handleApplyFullNiche(niche);
+    } else {
+      const updated = TenantStorageService.updateStore(activeStore.id, { templateId });
+      if (updated) {
+        setActiveStore(updated);
+        setAllStores(TenantStorageService.getAllStores());
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 2000);
+      }
     }
   };
 
@@ -872,13 +912,78 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
               {/* LEFT COLUMN: Controls */}
               <div className="lg:col-span-7 space-y-6">
 
+                {/* Section 0: Primary Business Niche Switcher Card */}
+                <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 text-white p-5 sm:p-6 rounded-3xl shadow-lg space-y-3.5 border border-slate-700/60">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                        <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+                          Paso 1: Giro Comercial del Negocio
+                        </span>
+                      </div>
+                      <h4 className="font-display font-black text-lg text-white mt-0.5">
+                        ¿Qué tipo de negocio tienes o quieres diseñar?
+                      </h4>
+                    </div>
+                    <span className="text-[11px] text-slate-300 bg-white/10 px-3 py-1 rounded-full w-fit">
+                      Giro: <strong className="text-emerald-400">{activeStore.category || 'General'}</strong>
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-slate-300">
+                    Al cambiar de giro, el simulador adapta automáticamente <strong>el nombre del negocio, su plantilla ideal, banner de cabecera, colores y sus artículos reales con fotografías</strong>:
+                  </p>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+                    {([
+                      { id: 'food' as ProductNiche, label: 'Alimentos & Cafetería', sub: 'Café, repostería y delivery', icon: '☕', storeId: 'store-geisha' },
+                      { id: 'fashion' as ProductNiche, label: 'Moda & Boutique', sub: 'Ropa, streetwear y tallas', icon: '👗', storeId: 'store-boutique' },
+                      { id: 'services' as ProductNiche, label: 'Servicios & B2B', sub: 'Asesoría fiscal, legal y citas', icon: '💼', storeId: 'store-consultoria' },
+                      { id: 'general' as ProductNiche, label: 'Ferretería & Retail', sub: 'Herramientas y mayoreo', icon: '⚡', storeId: 'store-ferreteria' }
+                    ]).map(n => {
+                      const isSelected = 
+                        activeStore.id === n.storeId || 
+                        (activeStore.products.some(p => p.nicheAttributes?.niche === n.id) && activeTemplateId === (n.id === 'food' ? 'modern_delivery' : n.id === 'fashion' ? 'boutique_editorial' : n.id === 'services' ? 'corporate_services' : 'catalog_express'));
+
+                      return (
+                        <button
+                          key={n.id}
+                          type="button"
+                          onClick={() => handleSwitchBusinessNiche(n.id)}
+                          className={`p-3.5 rounded-2xl text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 border ${
+                            isSelected
+                              ? 'bg-[#00b37e] text-white border-emerald-400 shadow-lg scale-105 ring-2 ring-[#00b37e]/40'
+                              : 'bg-white/10 hover:bg-white/15 text-slate-200 border-white/10 hover:border-white/20'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-2xl">{n.icon}</span>
+                            {isSelected && (
+                              <span className="text-[9px] font-black uppercase tracking-wider bg-white/25 text-white px-2 py-0.5 rounded-md flex items-center gap-1">
+                                <Check className="w-2.5 h-2.5" /> Activo
+                              </span>
+                            )}
+                          </div>
+                          <div>
+                            <span className="font-bold text-xs block leading-tight text-white">{n.label}</span>
+                            <span className={`text-[10px] block mt-0.5 leading-snug ${isSelected ? 'text-white/90 font-medium' : 'text-slate-400'}`}>
+                              {n.sub}
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 {/* Section 1: Template Selection */}
                 <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
                     <div>
                       <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
                         <LayoutTemplate className="w-4 h-4 text-[#00b37e]" />
-                        <span>Paso 1: Selecciona la Plantilla</span>
+                        <span>Paso 2: Selecciona la Plantilla</span>
                       </div>
                       <h4 className="font-display font-black text-lg text-slate-900 mt-0.5">
                         Plantilla Arquitectónica de la Tienda
@@ -938,35 +1043,46 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
                             </ul>
                           </div>
 
-                          <div className="pt-1 flex flex-col gap-2">
+                          <div className="pt-1 flex flex-col gap-1.5">
                             <button
                               type="button"
-                              onClick={() => handleApplyTemplate(tmpl.id)}
+                              onClick={() => handleApplyTemplate(tmpl.id, true)}
                               className={`w-full py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                                 isCurrent
                                   ? 'bg-[#00b37e] text-white shadow-xs'
-                                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                                  : 'bg-slate-900 hover:bg-slate-800 text-white'
                               }`}
                             >
                               {isCurrent ? (
                                 <>
                                   <Check className="w-3.5 h-3.5" />
-                                  <span>Plantilla Seleccionada</span>
+                                  <span>Plantilla & Artículos Activos</span>
                                 </>
                               ) : (
-                                <span>Aplicar esta Plantilla</span>
+                                <span>⚡ Aplicar Plantilla + Artículos</span>
                               )}
                             </button>
+
+                            {!isCurrent && (
+                              <button
+                                type="button"
+                                onClick={() => handleApplyTemplate(tmpl.id, false)}
+                                className="w-full py-1 text-[10px] text-slate-500 hover:text-slate-800 underline transition-colors cursor-pointer text-center"
+                                title="Aplica el diseño visual sin reemplazar tus artículos actuales"
+                              >
+                                Solo cambiar diseño (mantener artículos actuales)
+                              </button>
+                            )}
 
                             {isCurrent && (
                               <button
                                 type="button"
                                 onClick={() => handleApplyFullNiche(niche)}
                                 className="w-full py-1.5 px-2.5 rounded-xl text-[11px] font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-                                title="Carga artículos reales de este rubro y adapta la identidad de la tienda"
+                                title="Recarga los artículos de muestra reales de este rubro"
                               >
                                 <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                                <span>Adaptar Artículos a este Estilo</span>
+                                <span>Recargar Artículos de Muestra</span>
                               </button>
                             )}
                           </div>
@@ -1257,16 +1373,57 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
 
               {/* RIGHT COLUMN: Interactive Live Simulator (Sticky) */}
               <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-3">
-                <div className="flex items-center justify-between px-1">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#00b37e] animate-pulse" />
-                    <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                      Simulador en Vivo: {activeStore.businessName}
+                <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#00b37e] animate-pulse shrink-0" />
+                      <span className="text-xs font-black text-slate-800 uppercase tracking-wider truncate" title={activeStore.businessName}>
+                        {activeStore.businessName}
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-mono text-slate-400 bg-slate-100 px-2 py-0.5 rounded shrink-0">
+                      {previewDevice === 'mobile' ? 'iPhone 16 Pro' : 'Desktop 1200px'}
                     </span>
                   </div>
-                  <span className="text-[11px] text-slate-400 font-mono">
-                    {previewDevice === 'mobile' ? 'iPhone 16 Pro' : 'Desktop 1200px'}
-                  </span>
+
+                  {/* Instant Niche Morph Bar above phone */}
+                  <div className="flex items-center justify-between gap-1 pt-1 border-t border-slate-100">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight shrink-0">
+                      Ver en simulador:
+                    </span>
+                    <div className="flex items-center gap-1">
+                      {([
+                        { id: 'food' as ProductNiche, icon: '☕', label: 'Café' },
+                        { id: 'fashion' as ProductNiche, icon: '👗', label: 'Moda' },
+                        { id: 'services' as ProductNiche, icon: '💼', label: 'Servicios' },
+                        { id: 'general' as ProductNiche, icon: '⚡', label: 'Ferretería' }
+                      ]).map(pill => {
+                        const isThisStore = 
+                          (pill.id === 'food' && activeStore.id === 'store-geisha') ||
+                          (pill.id === 'fashion' && activeStore.id === 'store-boutique') ||
+                          (pill.id === 'services' && activeStore.id === 'store-consultoria') ||
+                          (pill.id === 'general' && activeStore.id === 'store-ferreteria') ||
+                          (activeStore.products.some(p => p.nicheAttributes?.niche === pill.id));
+
+                        return (
+                          <button
+                            key={pill.id}
+                            type="button"
+                            onClick={() => handleSwitchBusinessNiche(pill.id)}
+                            className={`px-2 py-1 rounded-lg text-[10px] font-bold cursor-pointer transition-all flex items-center gap-1 ${
+                              isThisStore
+                                ? 'bg-[#00b37e] text-white shadow-2xs scale-105'
+                                : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                            }`}
+                            title={`Cambiar a ${pill.label}`}
+                          >
+                            <span>{pill.icon}</span>
+                            <span>{pill.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
 
                 {previewDevice === 'mobile' ? (
