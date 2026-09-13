@@ -11,6 +11,20 @@ export interface StoreProduct {
   inStock: boolean;
 }
 
+export interface SocialLinks {
+  instagram?: string; // e.g. 'instagram.com/geishacafemx' or '@geishacafemx'
+  facebook?: string;  // e.g. 'facebook.com/geishacafemx'
+  tiktok?: string;    // e.g. 'tiktok.com/@geishacafe'
+  website?: string;
+  mapsUrl?: string;
+}
+
+export interface StorePolicies {
+  shipping?: string;    // e.g. 'Entregas locales en menos de 45 min o envíos a todo México.'
+  returns?: string;     // e.g. 'Garantía de satisfacción de 7 días.'
+  paymentTerms?: string;// e.g. 'Aceptamos transferencias SPEI, efectivo contra entrega y tarjetas.'
+}
+
 export interface TenantStore {
   id: string;
   slug: string; // e.g. 'taqueria-pepe' -> URL: dayabit.com/p/taqueria-pepe
@@ -25,6 +39,11 @@ export interface TenantStore {
   category: string;
   address?: string;
   hours?: string;
+  logoUrl?: string;
+  bannerUrl?: string;
+  socialLinks?: SocialLinks;
+  paymentMethods?: string[];
+  storePolicies?: StorePolicies;
   products: StoreProduct[];
   subscriptionStatus: 'active' | 'trial' | 'past_due';
   subscriptionPeriodEnd?: string;

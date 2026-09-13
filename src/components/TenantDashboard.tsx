@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Store, ShoppingBag, Sliders, CreditCard, ExternalLink, Copy, Check, Plus, Trash2, ArrowLeft, RefreshCw, MessageCircle } from 'lucide-react';
+import { Store, ShoppingBag, Sliders, CreditCard, ExternalLink, Copy, Check, Plus, Trash2, ArrowLeft, RefreshCw, MessageCircle, Share2, ShieldCheck, Truck, Globe } from 'lucide-react';
 import type { TenantStore, StoreProduct } from '../types/tenant';
 import { TenantStorageService, PLANS } from '../services/tenantStore';
+import { InstagramIcon, FacebookIcon, TikTokIcon, GoogleMapsIcon } from './SocialIcons';
+import { formatSocialUrl } from '../utils/formatSocial';
 
 interface TenantDashboardProps {
   initialStore?: TenantStore;
@@ -19,10 +21,19 @@ const COLOR_SWATCHES = [
   { name: 'Slate Ejecutivo', hex: '#0f172a' }
 ];
 
+const AVAILABLE_PAYMENT_METHODS = [
+  'Transferencia SPEI',
+  'Efectivo contra entrega',
+  'Tarjeta (Terminal física)',
+  'Tarjeta Débito / Crédito en línea',
+  'Mercado Pago',
+  'Depósito en OXXO'
+];
+
 export default function TenantDashboard({ initialStore, onOpenStore, onBackToMain, onCreateNewStore }: TenantDashboardProps) {
   const [allStores, setAllStores] = useState<TenantStore[]>(() => TenantStorageService.getAllStores());
   const [activeStore, setActiveStore] = useState<TenantStore>(() => initialStore || TenantStorageService.getActiveTenant());
-  const [activeTab, setActiveTab] = useState<'brand' | 'catalog' | 'subscription'>('catalog');
+  const [activeTab, setActiveTab] = useState<'brand' | 'catalog' | 'policies' | 'subscription'>('catalog');
   const [copiedLink, setCopiedLink] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
@@ -34,6 +45,21 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
   const [brandColor, setBrandColor] = useState(activeStore.brandColor);
   const [address, setAddress] = useState(activeStore.address || '');
   const [hours, setHours] = useState(activeStore.hours || '');
+
+  // Social Links states
+  const [instagram, setInstagram] = useState(activeStore.socialLinks?.instagram || '');
+  const [facebook, setFacebook] = useState(activeStore.socialLinks?.facebook || '');
+  const [tiktok, setTiktok] = useState(activeStore.socialLinks?.tiktok || '');
+  const [website, setWebsite] = useState(activeStore.socialLinks?.website || '');
+  const [mapsUrl, setMapsUrl] = useState(activeStore.socialLinks?.mapsUrl || '');
+
+  // Payment Methods & Policies states
+  const [paymentMethods, setPaymentMethods] = useState<string[]>(
+    activeStore.paymentMethods || ['Transferencia SPEI', 'Efectivo contra entrega']
+  );
+  const [policyShipping, setPolicyShipping] = useState(activeStore.storePolicies?.shipping || '');
+  const [policyReturns, setPolicyReturns] = useState(activeStore.storePolicies?.returns || '');
+  const [policyPaymentTerms, setPolicyPaymentTerms] = useState(activeStore.storePolicies?.paymentTerms || '');
 
   // Modal for new product
   const [isNewProductModalOpen, setIsNewProductModalOpen] = useState(false);
@@ -56,6 +82,15 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
       setBrandColor(s.brandColor);
       setAddress(s.address || '');
       setHours(s.hours || '');
+      setInstagram(s.socialLinks?.instagram || '');
+      setFacebook(s.socialLinks?.facebook || '');
+      setTiktok(s.socialLinks?.tiktok || '');
+      setWebsite(s.socialLinks?.website || '');
+      setMapsUrl(s.socialLinks?.mapsUrl || '');
+      setPaymentMethods(s.paymentMethods || ['Transferencia SPEI', 'Efectivo contra entrega']);
+      setPolicyShipping(s.storePolicies?.shipping || '');
+      setPolicyReturns(s.storePolicies?.returns || '');
+      setPolicyPaymentTerms(s.storePolicies?.paymentTerms || '');
     }
   };
 
@@ -76,6 +111,42 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
       brandColor,
       address,
       hours
+    });
+
+    if (updated) {
+      setActiveStore(updated);
+      setAllStores(TenantStorageService.getAllStores());
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 2500);
+    }
+  };
+
+  const handleTogglePaymentMethod = (method: string) => {
+    setPaymentMethods(prev => {
+      if (prev.includes(method)) {
+        return prev.filter(m => m !== method);
+      } else {
+        return [...prev, method];
+      }
+    });
+  };
+
+  const handleSavePolicies = (e: React.FormEvent) => {
+    e.preventDefault();
+    const updated = TenantStorageService.updateStore(activeStore.id, {
+      socialLinks: {
+        instagram: formatSocialUrl('instagram', instagram),
+        facebook: formatSocialUrl('facebook', facebook),
+        tiktok: formatSocialUrl('tiktok', tiktok),
+        website: formatSocialUrl('web', website),
+        mapsUrl: formatSocialUrl('maps', mapsUrl),
+      },
+      paymentMethods,
+      storePolicies: {
+        shipping: policyShipping.trim(),
+        returns: policyReturns.trim(),
+        paymentTerms: policyPaymentTerms.trim(),
+      }
     });
 
     if (updated) {
@@ -205,10 +276,10 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
       <main className="max-w-7xl mx-auto px-6 py-8 w-full flex-grow space-y-6">
         
         {/* Navigation Tabs */}
-        <div className="flex border-b border-slate-200 gap-6">
+        <div className="flex border-b border-slate-200 gap-6 overflow-x-auto">
           <button
             onClick={() => setActiveTab('catalog')}
-            className={`pb-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
+            className={`pb-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer shrink-0 ${
               activeTab === 'catalog'
                 ? 'border-[#00b37e] text-[#00b37e]'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
@@ -220,7 +291,7 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
 
           <button
             onClick={() => setActiveTab('brand')}
-            className={`pb-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
+            className={`pb-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer shrink-0 ${
               activeTab === 'brand'
                 ? 'border-[#00b37e] text-[#00b37e]'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
@@ -231,8 +302,20 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
           </button>
 
           <button
+            onClick={() => setActiveTab('policies')}
+            className={`pb-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer shrink-0 ${
+              activeTab === 'policies'
+                ? 'border-[#00b37e] text-[#00b37e]'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <Share2 className="w-4 h-4" />
+            Redes & Políticas del Negocio
+          </button>
+
+          <button
             onClick={() => setActiveTab('subscription')}
-            className={`pb-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
+            className={`pb-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer shrink-0 ${
               activeTab === 'subscription'
                 ? 'border-[#00b37e] text-[#00b37e]'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
@@ -437,6 +520,239 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
                 {saveSuccess && (
                   <span className="text-xs font-bold text-[#00b37e] flex items-center gap-1 animate-in fade-in">
                     <Check className="w-4 h-4" /> ¡Guardado con éxito!
+                  </span>
+                )}
+              </div>
+
+            </form>
+          </div>
+        )}
+
+        {/* ================= TAB: SOCIAL & BUSINESS POLICIES ================= */}
+        {activeTab === 'policies' && (
+          <div className="max-w-3xl bg-white p-6 sm:p-9 rounded-3xl border border-slate-200 shadow-xs space-y-8">
+            
+            <div>
+              <div className="flex items-center gap-2 text-[#00b37e] font-bold text-xs uppercase tracking-wider">
+                <ShieldCheck className="w-4 h-4" />
+                <span>Autonomía & Confianza Comercial</span>
+              </div>
+              <h3 className="font-display font-black text-2xl text-slate-900 mt-1">
+                Redes Sociales, Formas de Pago y Políticas
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                Personaliza la identidad de tu empresa para que tus clientes sepan que compran bajo tus propias políticas, garantías y canales oficiales.
+              </p>
+            </div>
+
+            <form onSubmit={handleSavePolicies} className="space-y-8">
+              
+              {/* SECTION 1: SOCIAL LINKS */}
+              <div className="space-y-4 pt-2 border-t border-slate-100">
+                <div className="flex items-center gap-2">
+                  <Share2 className="w-4 h-4 text-[#00b37e]" />
+                  <h4 className="font-display font-bold text-slate-900 text-sm">
+                    Redes Sociales Oficiales
+                  </h4>
+                </div>
+                <p className="text-xs text-slate-400">
+                  Aparecerán con íconos interactivos en la cabecera y pie de tu tienda web.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  
+                  {/* Instagram */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                      <span className="text-rose-500"><InstagramIcon className="w-3.5 h-3.5" /></span>
+                      Instagram
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej. @geishacafemx o instagram.com/geishacafemx"
+                      value={instagram}
+                      onChange={(e) => setInstagram(e.target.value)}
+                      className="w-full py-2.5 px-3 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-[#00b37e]"
+                    />
+                  </div>
+
+                  {/* Facebook */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                      <span className="text-blue-600"><FacebookIcon className="w-3.5 h-3.5" /></span>
+                      Facebook
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej. facebook.com/geishacafemx"
+                      value={facebook}
+                      onChange={(e) => setFacebook(e.target.value)}
+                      className="w-full py-2.5 px-3 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-[#00b37e]"
+                    />
+                  </div>
+
+                  {/* TikTok */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                      <span className="text-slate-900"><TikTokIcon className="w-3.5 h-3.5" /></span>
+                      TikTok
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej. @geishacafemx"
+                      value={tiktok}
+                      onChange={(e) => setTiktok(e.target.value)}
+                      className="w-full py-2.5 px-3 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-[#00b37e]"
+                    />
+                  </div>
+
+                  {/* Google Maps */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                      <span className="text-emerald-600"><GoogleMapsIcon className="w-3.5 h-3.5" /></span>
+                      Google Maps (Ubicación)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej. Enlace o dirección en Maps"
+                      value={mapsUrl}
+                      onChange={(e) => setMapsUrl(e.target.value)}
+                      className="w-full py-2.5 px-3 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-[#00b37e]"
+                    />
+                  </div>
+
+                  {/* Website adicional */}
+                  <div className="space-y-1 sm:col-span-2">
+                    <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                      <Globe className="w-3.5 h-3.5 text-slate-400" />
+                      Sitio Web Adicional / Dominio Externo (opcional)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej. www.tudominio.com"
+                      value={website}
+                      onChange={(e) => setWebsite(e.target.value)}
+                      className="w-full py-2.5 px-3 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-[#00b37e]"
+                    />
+                  </div>
+
+                </div>
+              </div>
+
+              {/* SECTION 2: PAYMENT METHODS */}
+              <div className="space-y-4 pt-4 border-t border-slate-100">
+                <div className="flex items-center gap-2">
+                  <CreditCard className="w-4 h-4 text-[#00b37e]" />
+                  <h4 className="font-display font-bold text-slate-900 text-sm">
+                    Métodos de Pago que Acepta tu Negocio
+                  </h4>
+                </div>
+                <p className="text-xs text-slate-400">
+                  Selecciona los métodos que tus clientes pueden utilizar al ordenar:
+                </p>
+
+                <div className="flex flex-wrap gap-2.5">
+                  {AVAILABLE_PAYMENT_METHODS.map(method => {
+                    const isSelected = paymentMethods.includes(method);
+                    return (
+                      <button
+                        key={method}
+                        type="button"
+                        onClick={() => handleTogglePaymentMethod(method)}
+                        className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer border ${
+                          isSelected
+                            ? 'bg-emerald-50 border-emerald-500 text-emerald-800 shadow-2xs'
+                            : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300'
+                        }`}
+                      >
+                        {isSelected && <Check className="w-3.5 h-3.5 text-emerald-600" />}
+                        <span>{method}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* SECTION 3: STORE POLICIES */}
+              <div className="space-y-4 pt-4 border-t border-slate-100">
+                <div className="flex items-center gap-2">
+                  <Truck className="w-4 h-4 text-[#00b37e]" />
+                  <h4 className="font-display font-bold text-slate-900 text-sm">
+                    Tus Políticas y Compromisos Comerciales
+                  </h4>
+                </div>
+                <p className="text-xs text-slate-400">
+                  Establece tus propias reglas de entrega, cobertura y garantía para dar certidumbre a tus compradores.
+                </p>
+
+                <div className="space-y-4">
+                  {/* Shipping Policy */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
+                      <span>Política de Envíos y Tiempos de Entrega</span>
+                      <span className="text-[10px] text-slate-400 font-normal">Visible en la tienda</span>
+                    </label>
+                    <textarea
+                      rows={2}
+                      placeholder="Ej. Entregas locales en 45 minutos. Envíos nacionales por paquetería en 2-4 días hábiles."
+                      value={policyShipping}
+                      onChange={(e) => setPolicyShipping(e.target.value)}
+                      className="w-full py-2.5 px-3 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-[#00b37e]"
+                    />
+                  </div>
+
+                  {/* Returns & Guarantee Policy */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
+                      <span>Política de Garantía y Devoluciones</span>
+                      <span className="text-[10px] text-slate-400 font-normal">Visible en la tienda</span>
+                    </label>
+                    <textarea
+                      rows={2}
+                      placeholder="Ej. Garantía de satisfacción 100%: si tu orden llega dañada, la reemplazamos sin costo dentro de 7 días."
+                      value={policyReturns}
+                      onChange={(e) => setPolicyReturns(e.target.value)}
+                      className="w-full py-2.5 px-3 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-[#00b37e]"
+                    />
+                  </div>
+
+                  {/* Payment Terms Policy */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
+                      <span>Condiciones y Términos de Pago</span>
+                      <span className="text-[10px] text-slate-400 font-normal">Visible en la tienda</span>
+                    </label>
+                    <textarea
+                      rows={2}
+                      placeholder="Ej. Se paga contra entrega en efectivo o mediante transferencia SPEI directa al confirmar tu orden por WhatsApp."
+                      value={policyPaymentTerms}
+                      onChange={(e) => setPolicyPaymentTerms(e.target.value)}
+                      className="w-full py-2.5 px-3 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-[#00b37e]"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Informative Callout */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3 text-xs text-slate-600">
+                <ShieldCheck className="w-5 h-5 text-[#00b37e] shrink-0 mt-0.5" />
+                <p>
+                  <strong className="text-slate-800">Negocio 100% Independiente:</strong> Tu tienda opera bajo tu propia marca y administración. Dayabit proporciona el software de catálogo y pedidos por WhatsApp, sin cobrarte comisiones por venta ni intermediar en tus cobros.
+                </p>
+              </div>
+
+              {/* Submit Button */}
+              <div className="pt-2 flex items-center gap-3">
+                <button
+                  type="submit"
+                  className="px-7 py-3 rounded-full bg-[#00b37e] hover:bg-[#009e6f] text-white font-bold text-sm shadow-md transition-all cursor-pointer flex items-center gap-2"
+                >
+                  <RefreshCw className="w-4 h-4" /> Guardar Redes y Políticas
+                </button>
+
+                {saveSuccess && (
+                  <span className="text-xs font-bold text-[#00b37e] flex items-center gap-1 animate-in fade-in">
+                    <Check className="w-4 h-4" /> ¡Configuración guardada exitosamente!
                   </span>
                 )}
               </div>

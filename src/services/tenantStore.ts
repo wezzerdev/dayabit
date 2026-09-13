@@ -72,6 +72,18 @@ const SEED_STORES: TenantStore[] = [
     category: 'Alimentos y Bebidas',
     address: 'Av. Las Palmas 204, Cuautitlán Izcalli, Edo. Méx.',
     hours: 'Lun a Sáb: 8:00 AM - 9:00 PM',
+    socialLinks: {
+      instagram: 'https://instagram.com/geishacafemx',
+      facebook: 'https://facebook.com/geishacafemx',
+      tiktok: 'https://tiktok.com/@geishacafemx',
+      mapsUrl: 'https://maps.google.com/?q=Cuautitlan+Izcalli'
+    },
+    paymentMethods: ['Transferencia SPEI', 'Efectivo contra entrega', 'Tarjeta (Terminal / En línea)'],
+    storePolicies: {
+      shipping: 'Entregas locales en menos de 45 minutos en zona Cuautitlán Izcalli. Envíos de café en grano a todo México por paquetería en 2-4 días hábiles.',
+      returns: 'Garantía de frescura 100%: si tu pedido no llega en perfectas condiciones o a la temperatura adecuada, te lo reponemos sin costo de inmediato.',
+      paymentTerms: 'Aceptamos transferencias directas SPEI, efectivo al recibir tu pedido o pago con tarjeta mediante terminal física.'
+    },
     subscriptionStatus: 'active',
     subscriptionPeriodEnd: '2027-03-15',
     createdAt: '2026-03-15T10:00:00.000Z',
@@ -137,6 +149,17 @@ const SEED_STORES: TenantStore[] = [
     category: 'Moda y Ropa',
     address: 'Centro Comercial Plaza Central, Local 45, Edo. Méx.',
     hours: 'Lun a Dom: 11:00 AM - 8:00 PM',
+    socialLinks: {
+      instagram: 'https://instagram.com/urbantrendmex',
+      facebook: 'https://facebook.com/urbantrendmex',
+      tiktok: 'https://tiktok.com/@urbantrendmex'
+    },
+    paymentMethods: ['Transferencia SPEI', 'Tarjeta Débito / Crédito', 'Mercado Pago'],
+    storePolicies: {
+      shipping: 'Envíos express a todo México por DHL y FedEx. Tiempo estimado: 24 a 48 horas hábiles con número de guía.',
+      returns: 'Cambios de talla y devoluciones válidos hasta 15 días naturales después de recibir tu prenda con etiquetas intactas.',
+      paymentTerms: 'Aceptamos transferencias bancarias SPEI, tarjetas Visa/Mastercard y depósitos en tiendas de conveniencia.'
+    },
     subscriptionStatus: 'active',
     subscriptionPeriodEnd: '2027-02-20',
     createdAt: '2026-02-20T10:00:00.000Z',
@@ -184,6 +207,17 @@ const SEED_STORES: TenantStore[] = [
     category: 'Servicios Profesionales',
     address: 'Torre Corporativa del Valle, Piso 8, Of. 802, CDMX.',
     hours: 'Lun a Vie: 9:00 AM - 6:00 PM',
+    socialLinks: {
+      facebook: 'https://facebook.com/vazquezcontadores',
+      website: 'https://vazquezcontadores.mx',
+      mapsUrl: 'https://maps.google.com/?q=Torre+del+Valle+CDMX'
+    },
+    paymentMethods: ['Transferencia SPEI Corporativa', 'Tarjeta de Crédito / Débito'],
+    storePolicies: {
+      shipping: 'Atención 100% remota y presencial en oficinas previa cita. Entregas de dictámenes y opiniones vía portal seguro cifrado.',
+      returns: 'Contrato formal de prestación de servicios profesionales y garantía de cumplimiento ante la autoridad fiscal.',
+      paymentTerms: 'Honorarios mensuales o por proyecto con factura SAT CFDI 4.0 inmediata deducible al 100%.'
+    },
     subscriptionStatus: 'active',
     subscriptionPeriodEnd: '2027-01-10',
     createdAt: '2026-01-10T10:00:00.000Z',
@@ -229,7 +263,20 @@ export class TenantStorageService {
       if (raw) {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
+          // ensure existing stores have socialLinks, paymentMethods, storePolicies initialized
+          return parsed.map(store => {
+            const seed = SEED_STORES.find(s => s.id === store.id);
+            return {
+              ...store,
+              socialLinks: store.socialLinks || seed?.socialLinks || {},
+              paymentMethods: store.paymentMethods || seed?.paymentMethods || ['Transferencia SPEI', 'Efectivo'],
+              storePolicies: store.storePolicies || seed?.storePolicies || {
+                shipping: 'Entregas locales y envíos acordados directamente por WhatsApp.',
+                returns: 'Garantía de satisfacción y atención directa con el comercio.',
+                paymentTerms: 'Aceptamos transferencias SPEI y efectivo contra entrega.'
+              }
+            };
+          });
         }
       }
     } catch (e) {

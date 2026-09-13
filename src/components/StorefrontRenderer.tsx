@@ -1,7 +1,9 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, MessageCircle, MapPin, Clock, Plus, Minus, Trash2, Search, ArrowLeft, ExternalLink, X } from 'lucide-react';
+import { ShoppingCart, MessageCircle, MapPin, Clock, Plus, Minus, Trash2, Search, ArrowLeft, ExternalLink, X, ShieldCheck, Truck, CreditCard, Globe } from 'lucide-react';
 import type { TenantStore, StoreProduct } from '../types/tenant';
+import { InstagramIcon, FacebookIcon, TikTokIcon, GoogleMapsIcon } from './SocialIcons';
+import { formatSocialUrl } from '../utils/formatSocial';
 
 interface StorefrontRendererProps {
   store: TenantStore;
@@ -18,6 +20,7 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isPoliciesOpen, setIsPoliciesOpen] = useState(false);
   const [customerName, setCustomerName] = useState('');
   const [deliveryNotes, setDeliveryNotes] = useState('');
 
@@ -144,6 +147,41 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Social media icons in header if configured */}
+            {store.socialLinks?.instagram && (
+              <a
+                href={formatSocialUrl('instagram', store.socialLinks.instagram)}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Instagram oficial"
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 flex items-center justify-center transition-colors"
+              >
+                <InstagramIcon className="w-3.5 h-3.5" />
+              </a>
+            )}
+            {store.socialLinks?.facebook && (
+              <a
+                href={formatSocialUrl('facebook', store.socialLinks.facebook)}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Facebook oficial"
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 flex items-center justify-center transition-colors"
+              >
+                <FacebookIcon className="w-3.5 h-3.5" />
+              </a>
+            )}
+            {store.socialLinks?.tiktok && (
+              <a
+                href={formatSocialUrl('tiktok', store.socialLinks.tiktok)}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="TikTok oficial"
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 flex items-center justify-center transition-colors"
+              >
+                <TikTokIcon className="w-3.5 h-3.5" />
+              </a>
+            )}
+
             {/* Direct WhatsApp chat button */}
             <a
               href={`https://wa.me/52${store.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Hola ${store.businessName}, vi su página web y me gustaría información.`)}`}
@@ -174,7 +212,7 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
       <main className="flex-grow max-w-6xl mx-auto px-5 py-8 w-full space-y-10">
         
         {/* ================= HERO SECTION ================= */}
-        <section className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-xs relative overflow-hidden text-left">
+        <section className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-xs relative overflow-hidden text-left space-y-5">
           <div 
             className="absolute top-0 right-0 w-80 h-80 rounded-full blur-3xl opacity-15 pointer-events-none"
             style={{ backgroundColor: store.brandColor }}
@@ -194,6 +232,7 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
               {store.description}
             </p>
 
+            {/* Hours and Address */}
             <div className="pt-2 flex flex-wrap gap-4 text-xs text-slate-500">
               {store.hours && (
                 <div className="flex items-center gap-1.5">
@@ -208,6 +247,87 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
                 </div>
               )}
             </div>
+
+            {/* Social Network Links & Store Policies Button */}
+            <div className="pt-3 flex flex-wrap items-center gap-2">
+              {store.socialLinks?.instagram && (
+                <a
+                  href={formatSocialUrl('instagram', store.socialLinks.instagram)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-700 text-xs font-bold transition-colors"
+                >
+                  <InstagramIcon className="w-3.5 h-3.5 text-rose-500" />
+                  <span>Instagram</span>
+                </a>
+              )}
+              {store.socialLinks?.facebook && (
+                <a
+                  href={formatSocialUrl('facebook', store.socialLinks.facebook)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-700 text-xs font-bold transition-colors"
+                >
+                  <FacebookIcon className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Facebook</span>
+                </a>
+              )}
+              {store.socialLinks?.tiktok && (
+                <a
+                  href={formatSocialUrl('tiktok', store.socialLinks.tiktok)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-colors"
+                >
+                  <TikTokIcon className="w-3.5 h-3.5" />
+                  <span>TikTok</span>
+                </a>
+              )}
+              {store.socialLinks?.mapsUrl && (
+                <a
+                  href={formatSocialUrl('maps', store.socialLinks.mapsUrl)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 text-xs font-bold transition-colors"
+                >
+                  <GoogleMapsIcon className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Ver en Maps</span>
+                </a>
+              )}
+              {store.socialLinks?.website && (
+                <a
+                  href={formatSocialUrl('web', store.socialLinks.website)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
+                >
+                  <Globe className="w-3.5 h-3.5 text-slate-500" />
+                  <span>Sitio Web</span>
+                </a>
+              )}
+
+              {/* Policies trigger button */}
+              <button
+                type="button"
+                onClick={() => setIsPoliciesOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors cursor-pointer"
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Políticas & Garantías</span>
+              </button>
+            </div>
+
+            {/* Payment Methods Badges */}
+            {store.paymentMethods && store.paymentMethods.length > 0 && (
+              <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500">
+                <span className="font-bold text-slate-700">Formas de pago:</span>
+                {store.paymentMethods.map(pm => (
+                  <span key={pm} className="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-slate-700 font-medium">
+                    ✓ {pm}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
@@ -528,10 +648,203 @@ export default function StorefrontRenderer({ store, onBackToMain }: StorefrontRe
         </>
       )}
 
+      {/* ================= STORE POLICIES & GUARANTEE MODAL ================= */}
+      <AnimatePresence>
+        {isPoliciesOpen && (
+          <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl space-y-6 text-left"
+            >
+              <div className="flex items-start justify-between pb-4 border-b border-slate-100">
+                <div>
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#00b37e] uppercase tracking-wider">
+                    <ShieldCheck className="w-4 h-4" />
+                    <span>Políticas del Negocio</span>
+                  </div>
+                  <h3 className="font-display font-black text-xl text-slate-900 mt-1">
+                    {store.businessName}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsPoliciesOpen(false)}
+                  className="p-1.5 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Shipping Policy */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
+                  <Truck className="w-4 h-4 text-[#00b37e]" />
+                  <span>Envíos y Tiempos de Entrega</span>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                  {store.storePolicies?.shipping || 'Las entregas locales y envíos se coordinan directamente a través de nuestro WhatsApp oficial para brindarte atención inmediata y personalizada.'}
+                </p>
+              </div>
+
+              {/* Guarantee & Returns */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
+                  <ShieldCheck className="w-4 h-4 text-[#00b37e]" />
+                  <span>Garantía de Satisfacción y Devoluciones</span>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                  {store.storePolicies?.returns || 'Tu satisfacción es nuestra máxima prioridad. Si existe cualquier inconveniente con tu producto o servicio, comunícate con nosotros por WhatsApp para solucionarlo de inmediato.'}
+                </p>
+              </div>
+
+              {/* Payment Methods */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
+                  <CreditCard className="w-4 h-4 text-[#00b37e]" />
+                  <span>Formas de Pago Aceptadas</span>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                  {store.storePolicies?.paymentTerms || 'Aceptamos transferencias electrónicas SPEI y pagos en efectivo al momento de recibir tu orden.'}
+                </p>
+                {store.paymentMethods && store.paymentMethods.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {store.paymentMethods.map(pm => (
+                      <span key={pm} className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200">
+                        ✓ {pm}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Official Social Links in Modal */}
+              {store.socialLinks && Object.values(store.socialLinks).some(Boolean) && (
+                <div className="space-y-2 pt-2 border-t border-slate-100">
+                  <span className="text-xs font-bold text-slate-700">Canales y Redes Oficiales:</span>
+                  <div className="flex flex-wrap gap-2">
+                    {store.socialLinks.instagram && (
+                      <a
+                        href={formatSocialUrl('instagram', store.socialLinks.instagram)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold hover:bg-rose-50 hover:text-rose-600"
+                      >
+                        <InstagramIcon className="w-3 h-3 text-rose-500" />
+                        <span>Instagram</span>
+                      </a>
+                    )}
+                    {store.socialLinks.facebook && (
+                      <a
+                        href={formatSocialUrl('facebook', store.socialLinks.facebook)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        <FacebookIcon className="w-3 h-3 text-blue-600" />
+                        <span>Facebook</span>
+                      </a>
+                    )}
+                    {store.socialLinks.tiktok && (
+                      <a
+                        href={formatSocialUrl('tiktok', store.socialLinks.tiktok)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold hover:bg-slate-200"
+                      >
+                        <TikTokIcon className="w-3 h-3" />
+                        <span>TikTok</span>
+                      </a>
+                    )}
+                    {store.socialLinks.mapsUrl && (
+                      <a
+                        href={formatSocialUrl('maps', store.socialLinks.mapsUrl)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold hover:bg-emerald-50 hover:text-emerald-700"
+                      >
+                        <GoogleMapsIcon className="w-3 h-3 text-emerald-600" />
+                        <span>Ubicación</span>
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Legal Notice */}
+              <div className="text-[11px] text-slate-400 pt-3 border-t border-slate-100 text-center">
+                Comercio verificado. Esta tienda opera bajo su propia razón social y administración. Dayabit provee la infraestructura técnica.
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsPoliciesOpen(false)}
+                className="w-full py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold cursor-pointer transition-colors"
+              >
+                Entendido, volver al catálogo
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* ================= VIRAL FOOTER BADGE ================= */}
-      <footer className="py-6 border-t border-slate-200 bg-white text-center text-xs text-slate-400">
-        <p className="flex items-center justify-center gap-1.5">
-          <span>Tienda digital impulsada por</span>
+      <footer className="py-8 border-t border-slate-200 bg-white text-center text-xs text-slate-500 space-y-4">
+        
+        {/* Footer Social Links & Policies link */}
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          {store.socialLinks?.instagram && (
+            <a
+              href={formatSocialUrl('instagram', store.socialLinks.instagram)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-500 hover:text-rose-600 transition-colors flex items-center gap-1 font-bold"
+            >
+              <InstagramIcon className="w-3.5 h-3.5" /> Instagram
+            </a>
+          )}
+          {store.socialLinks?.facebook && (
+            <a
+              href={formatSocialUrl('facebook', store.socialLinks.facebook)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-500 hover:text-blue-600 transition-colors flex items-center gap-1 font-bold"
+            >
+              <FacebookIcon className="w-3.5 h-3.5" /> Facebook
+            </a>
+          )}
+          {store.socialLinks?.tiktok && (
+            <a
+              href={formatSocialUrl('tiktok', store.socialLinks.tiktok)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-500 hover:text-slate-900 transition-colors flex items-center gap-1 font-bold"
+            >
+              <TikTokIcon className="w-3.5 h-3.5" /> TikTok
+            </a>
+          )}
+          {store.socialLinks?.mapsUrl && (
+            <a
+              href={formatSocialUrl('maps', store.socialLinks.mapsUrl)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-500 hover:text-emerald-700 transition-colors flex items-center gap-1 font-bold"
+            >
+              <GoogleMapsIcon className="w-3.5 h-3.5" /> Cómo Llegar
+            </a>
+          )}
+          <button
+            type="button"
+            onClick={() => setIsPoliciesOpen(true)}
+            className="text-slate-500 hover:text-slate-900 font-bold underline transition-colors cursor-pointer"
+          >
+            Políticas y Garantías del Comercio
+          </button>
+        </div>
+
+        <p className="flex items-center justify-center gap-1.5 text-slate-400">
+          <span>Tienda oficial de <strong>{store.businessName}</strong> • Impulsada por</span>
           <a
             href="/"
             onClick={(e) => {
