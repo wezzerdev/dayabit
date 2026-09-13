@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { 
-  Store, ShoppingBag, Sliders, CreditCard, ExternalLink, Copy, Check, Plus, Trash2, 
+  Store, ShoppingBag, CreditCard, ExternalLink, Copy, Check, Plus, Trash2, 
   ArrowLeft, RefreshCw, Share2, ShieldCheck, Truck, Globe, 
   Smartphone, Monitor, HelpCircle, Award, BookOpen, Utensils, Shirt, Briefcase, Package, 
-  Image as ImageIcon, Palette, LayoutTemplate, Sparkles, CheckCircle2
+  Image as ImageIcon, Palette, LayoutTemplate, Sparkles
 } from 'lucide-react';
 import type { 
   TenantStore, StoreProduct, ProductNiche, FAQItem, NicheProductAttributes, 
@@ -213,7 +213,7 @@ function TemplateMiniMockup({ templateId }: { templateId: StoreTemplateId }) {
 export default function TenantDashboard({ initialStore, onOpenStore, onBackToMain, onCreateNewStore }: TenantDashboardProps) {
   const [allStores, setAllStores] = useState<TenantStore[]>(() => TenantStorageService.getAllStores());
   const [activeStore, setActiveStore] = useState<TenantStore>(() => initialStore || TenantStorageService.getActiveTenant());
-  const [activeTab, setActiveTab] = useState<'catalog' | 'templates' | 'brand' | 'policies' | 'sections' | 'preview' | 'subscription'>('catalog');
+  const [activeTab, setActiveTab] = useState<'design' | 'catalog' | 'brand' | 'policies' | 'sections' | 'subscription'>('design');
   const [activeTemplateId, setActiveTemplateId] = useState<StoreTemplateId>(() => resolveStoreTemplate(activeStore));
   const [previewDevice, setPreviewDevice] = useState<'mobile' | 'desktop'>('mobile');
   const [copiedLink, setCopiedLink] = useState(false);
@@ -379,6 +379,70 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
       setTextColor(p.textColor);
       setAccentColor(p.accentColor);
       setBrandColor(p.accentColor);
+
+      const isDark = p.textColor === '#ffffff' || p.textColor === '#f8fafc' || p.pageBackground.startsWith('#0') || p.pageBackground.startsWith('#1');
+      const themeConfig: StoreThemeConfig = {
+        palette: presetKey,
+        pageBackground: p.pageBackground,
+        cardBackground: p.cardBackground,
+        headerBackground: p.cardBackground.startsWith('#') ? `${p.cardBackground}f2` : p.cardBackground,
+        textColor: p.textColor,
+        textMutedColor: isDark ? '#94a3b8' : '#64748b',
+        borderColor: isDark ? '#1e293b' : '#e2e8f0',
+        accentColor: p.accentColor,
+      };
+
+      const updated = TenantStorageService.updateStore(activeStore.id, {
+        themeConfig,
+        brandColor: p.accentColor
+      });
+      if (updated) {
+        setActiveStore(updated);
+        setAllStores(TenantStorageService.getAllStores());
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 2000);
+      }
+    }
+  };
+
+  const handleUpdateCustomTheme = (updates: Partial<{ pageBackground: string; cardBackground: string; textColor: string; accentColor: string; bannerUrl: string }>) => {
+    const newPageBg = updates.pageBackground ?? pageBackground;
+    const newCardBg = updates.cardBackground ?? cardBackground;
+    const newTextColor = updates.textColor ?? textColor;
+    const newAccent = updates.accentColor ?? accentColor;
+    const newBanner = updates.bannerUrl ?? bannerUrl;
+
+    if (updates.pageBackground) setPageBackground(updates.pageBackground);
+    if (updates.cardBackground) setCardBackground(updates.cardBackground);
+    if (updates.textColor) setTextColor(updates.textColor);
+    if (updates.accentColor) {
+      setAccentColor(updates.accentColor);
+      setBrandColor(updates.accentColor);
+    }
+    if (updates.bannerUrl !== undefined) setBannerUrl(updates.bannerUrl);
+
+    setThemeMode('custom');
+
+    const isDark = newTextColor === '#ffffff' || newTextColor === '#f8fafc' || newPageBg.startsWith('#0') || newPageBg.startsWith('#1');
+    const themeConfig: StoreThemeConfig = {
+      palette: 'custom',
+      pageBackground: newPageBg,
+      cardBackground: newCardBg,
+      headerBackground: newCardBg.startsWith('#') ? `${newCardBg}f2` : newCardBg,
+      textColor: newTextColor,
+      textMutedColor: isDark ? '#94a3b8' : '#64748b',
+      borderColor: isDark ? '#1e293b' : '#e2e8f0',
+      accentColor: newAccent,
+    };
+
+    const updated = TenantStorageService.updateStore(activeStore.id, {
+      themeConfig,
+      brandColor: newAccent,
+      bannerUrl: newBanner
+    });
+    if (updated) {
+      setActiveStore(updated);
+      setAllStores(TenantStorageService.getAllStores());
     }
   };
 
@@ -638,15 +702,15 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
             </button>
 
             <button
-              onClick={() => setActiveTab('preview')}
+              onClick={() => setActiveTab('design')}
               className={`px-3.5 py-1.5 rounded-full font-bold text-xs transition-colors cursor-pointer flex items-center gap-1.5 ${
-                activeTab === 'preview' 
+                activeTab === 'design' 
                   ? 'bg-slate-900 text-white shadow-xs' 
                   : 'bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100'
               }`}
             >
               <Smartphone className="w-3.5 h-3.5 text-[#00b37e]" />
-              <span>Simulador en Vivo</span>
+              <span>Diseño & Vista Previa</span>
             </button>
 
             <button
@@ -668,6 +732,21 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
         {/* Navigation Tabs */}
         <div className="flex border-b border-slate-200 gap-6 overflow-x-auto pb-1">
           <button
+            onClick={() => setActiveTab('design')}
+            className={`pb-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer shrink-0 ${
+              activeTab === 'design'
+                ? 'border-[#00b37e] text-[#00b37e]'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <LayoutTemplate className="w-4 h-4" />
+            Diseño & Vista Previa
+            <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              En Vivo
+            </span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('catalog')}
             className={`pb-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer shrink-0 ${
               activeTab === 'catalog'
@@ -676,22 +755,7 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
             }`}
           >
             <ShoppingBag className="w-4 h-4" />
-            Catálogo & Nichos ({activeStore.products.length})
-          </button>
-
-          <button
-            onClick={() => setActiveTab('templates')}
-            className={`pb-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer shrink-0 ${
-              activeTab === 'templates'
-                ? 'border-[#00b37e] text-[#00b37e]'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            <LayoutTemplate className="w-4 h-4" />
-            Plantillas de Diseño
-            <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-              4 Estilos
-            </span>
+            Catálogo & Artículos ({activeStore.products.length})
           </button>
 
           <button
@@ -702,8 +766,8 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
                 : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
           >
-            <Sliders className="w-4 h-4" />
-            Identidad & Portada
+            <Store className="w-4 h-4" />
+            Datos del Negocio & Redes
           </button>
 
           <button
@@ -714,8 +778,8 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
                 : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
           >
-            <Share2 className="w-4 h-4" />
-            Redes & Políticas del Negocio
+            <ShieldCheck className="w-4 h-4" />
+            Garantías & Formas de Pago
           </button>
 
           <button
@@ -731,18 +795,6 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
           </button>
 
           <button
-            onClick={() => setActiveTab('preview')}
-            className={`pb-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer shrink-0 ${
-              activeTab === 'preview'
-                ? 'border-[#00b37e] text-[#00b37e]'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            <Smartphone className="w-4 h-4" />
-            Vista Previa en Vivo
-          </button>
-
-          <button
             onClick={() => setActiveTab('subscription')}
             className={`pb-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer shrink-0 ${
               activeTab === 'subscription'
@@ -754,6 +806,541 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
             Suscripción & Plan
           </button>
         </div>
+
+        {/* ================= TAB 0: UNIFIED DESIGN STUDIO & LIVE SIMULATOR ================= */}
+        {activeTab === 'design' && (
+          <div className="space-y-6">
+            {/* Header Control Card */}
+            <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 text-xs font-bold text-[#00b37e]">
+                  <span className="w-2 h-2 rounded-full bg-[#00b37e] animate-pulse" />
+                  <span>Estudio Visual & Vista Previa en Vivo</span>
+                </div>
+                <h3 className="font-display font-black text-xl text-slate-900 mt-1">
+                  Diseña y Personaliza la Tienda de {activeStore.businessName}
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Cambia de plantilla, colores o banners y visualiza los cambios al instante en el simulador interactivo.
+                </p>
+              </div>
+
+              {/* Device switcher and fullscreen open */}
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200">
+                  <button
+                    type="button"
+                    onClick={() => setPreviewDevice('mobile')}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                      previewDevice === 'mobile'
+                        ? 'bg-white text-slate-900 shadow-2xs'
+                        : 'text-slate-500 hover:text-slate-800'
+                    }`}
+                  >
+                    <Smartphone className="w-3.5 h-3.5" />
+                    <span>Móvil (iPhone)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewDevice('desktop')}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                      previewDevice === 'desktop'
+                        ? 'bg-white text-slate-900 shadow-2xs'
+                        : 'text-slate-500 hover:text-slate-800'
+                    }`}
+                  >
+                    <Monitor className="w-3.5 h-3.5" />
+                    <span>Escritorio</span>
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => onOpenStore(activeStore.slug)}
+                  className="px-3.5 py-2 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-xs transition-colors"
+                  title="Abrir tienda en una pestaña nueva"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Pantalla Completa</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Split Screen Layout: Left Controls (7 cols), Right Simulator (5 cols) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              
+              {/* LEFT COLUMN: Controls */}
+              <div className="lg:col-span-7 space-y-6">
+
+                {/* Section 1: Template Selection */}
+                <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+                    <div>
+                      <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                        <LayoutTemplate className="w-4 h-4 text-[#00b37e]" />
+                        <span>Paso 1: Selecciona la Plantilla</span>
+                      </div>
+                      <h4 className="font-display font-black text-lg text-slate-900 mt-0.5">
+                        Plantilla Arquitectónica de la Tienda
+                      </h4>
+                    </div>
+                    <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 px-3 py-1 rounded-full w-fit">
+                      4 Plantillas Disponibles
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {STORE_TEMPLATES_LIST.map(tmpl => {
+                      const isCurrent = activeTemplateId === tmpl.id;
+                      const niche: ProductNiche = 
+                        tmpl.id === 'modern_delivery' ? 'food' :
+                        tmpl.id === 'boutique_editorial' ? 'fashion' :
+                        tmpl.id === 'corporate_services' ? 'services' : 'general';
+
+                      return (
+                        <div
+                          key={tmpl.id}
+                          className={`p-3.5 rounded-2xl border-2 transition-all flex flex-col justify-between gap-3 ${
+                            isCurrent
+                              ? 'border-[#00b37e] bg-emerald-50/20 shadow-md ring-2 ring-[#00b37e]/20'
+                              : 'border-slate-200 hover:border-slate-300 bg-white shadow-2xs hover:shadow-sm'
+                          }`}
+                        >
+                          <div className="space-y-2.5">
+                            <TemplateMiniMockup templateId={tmpl.id} />
+
+                            <div>
+                              <div className="flex items-center justify-between gap-1">
+                                <h5 className="font-bold text-sm text-slate-900 leading-tight">
+                                  {tmpl.name}
+                                </h5>
+                                {isCurrent && (
+                                  <span className="text-[9px] font-black uppercase tracking-wider bg-[#00b37e] text-white px-2 py-0.5 rounded-md shrink-0 flex items-center gap-1">
+                                    <Check className="w-2.5 h-2.5" /> Activa
+                                  </span>
+                                )}
+                              </div>
+                              <span className="text-[10px] font-bold text-[#00b37e] uppercase tracking-wide block mt-0.5">
+                                {tmpl.badge}
+                              </span>
+                              <p className="text-xs text-slate-500 mt-1 line-clamp-2">
+                                {tmpl.description}
+                              </p>
+                            </div>
+
+                            <ul className="space-y-1 text-[11px] text-slate-600 border-t border-slate-100 pt-2">
+                              {tmpl.features.slice(0, 2).map((feat, i) => (
+                                <li key={i} className="flex items-center gap-1.5">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-[#00b37e]" />
+                                  <span className="truncate">{feat}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+
+                          <div className="pt-1 flex flex-col gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleApplyTemplate(tmpl.id)}
+                              className={`w-full py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                                isCurrent
+                                  ? 'bg-[#00b37e] text-white shadow-xs'
+                                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                              }`}
+                            >
+                              {isCurrent ? (
+                                <>
+                                  <Check className="w-3.5 h-3.5" />
+                                  <span>Plantilla Seleccionada</span>
+                                </>
+                              ) : (
+                                <span>Aplicar esta Plantilla</span>
+                              )}
+                            </button>
+
+                            {isCurrent && (
+                              <button
+                                type="button"
+                                onClick={() => handleApplyFullNiche(niche)}
+                                className="w-full py-1.5 px-2.5 rounded-xl text-[11px] font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                                title="Carga artículos reales de este rubro y adapta la identidad de la tienda"
+                              >
+                                <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                                <span>Adaptar Artículos a este Estilo</span>
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Section 2: Color Palettes & Custom Colors */}
+                <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+                    <div>
+                      <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                        <Palette className="w-4 h-4 text-[#00b37e]" />
+                        <span>Paso 2: Paleta de Colores y Modo</span>
+                      </div>
+                      <h4 className="font-display font-black text-lg text-slate-900 mt-0.5">
+                        Estilo Visual y Fondos de la Tienda
+                      </h4>
+                    </div>
+                    <span className="text-[11px] text-slate-400">
+                      Actualización inmediata al hacer clic
+                    </span>
+                  </div>
+
+                  {/* Preset Swatches */}
+                  <div>
+                    <span className="text-xs font-bold text-slate-700 block mb-2">
+                      Estilos Preconfigurados:
+                    </span>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {THEME_PRESET_CARDS.map(preset => {
+                        const isSelected = themeMode === preset.id;
+                        return (
+                          <button
+                            key={preset.id}
+                            type="button"
+                            onClick={() => handleSelectThemePreset(preset.id)}
+                            className={`p-3 rounded-2xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 ${
+                              isSelected
+                                ? 'border-[#00b37e] bg-emerald-50/20 ring-2 ring-[#00b37e]/20 shadow-xs'
+                                : 'border-slate-200 hover:border-slate-300 bg-white'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-bold text-slate-900 block truncate">
+                                {preset.name}
+                              </span>
+                              {isSelected && <Check className="w-3.5 h-3.5 text-[#00b37e] shrink-0" />}
+                            </div>
+
+                            <div className="flex items-center gap-1.5">
+                              <div
+                                className="w-5 h-5 rounded-md border border-slate-300 shadow-2xs shrink-0"
+                                style={{ backgroundColor: preset.previewBg }}
+                                title="Fondo de página"
+                              />
+                              <div
+                                className="w-5 h-5 rounded-md border border-slate-300 shadow-2xs shrink-0"
+                                style={{ backgroundColor: preset.previewAccent }}
+                                title="Color de acento"
+                              />
+                              <span className="text-[10px] text-slate-400 truncate">
+                                {preset.desc}
+                              </span>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Fine Tuning Custom Colors */}
+                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-3">
+                    <span className="text-xs font-bold text-slate-800 block">
+                      Ajuste Fino de Colores Personalizados:
+                    </span>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                          Fondo Página
+                        </label>
+                        <div className="flex items-center gap-1.5 bg-white p-1.5 rounded-xl border border-slate-200">
+                          <input
+                            type="color"
+                            value={pageBackground.startsWith('#') ? pageBackground : '#ffffff'}
+                            onChange={e => handleUpdateCustomTheme({ pageBackground: e.target.value })}
+                            className="w-7 h-7 rounded-lg border-0 cursor-pointer p-0 shrink-0"
+                          />
+                          <input
+                            type="text"
+                            value={pageBackground}
+                            onChange={e => handleUpdateCustomTheme({ pageBackground: e.target.value })}
+                            className="w-full text-[11px] font-mono text-slate-700 bg-transparent outline-none uppercase"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                          Fondo Tarjetas
+                        </label>
+                        <div className="flex items-center gap-1.5 bg-white p-1.5 rounded-xl border border-slate-200">
+                          <input
+                            type="color"
+                            value={cardBackground.startsWith('#') ? cardBackground : '#ffffff'}
+                            onChange={e => handleUpdateCustomTheme({ cardBackground: e.target.value })}
+                            className="w-7 h-7 rounded-lg border-0 cursor-pointer p-0 shrink-0"
+                          />
+                          <input
+                            type="text"
+                            value={cardBackground}
+                            onChange={e => handleUpdateCustomTheme({ cardBackground: e.target.value })}
+                            className="w-full text-[11px] font-mono text-slate-700 bg-transparent outline-none uppercase"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                          Acento / Botón
+                        </label>
+                        <div className="flex items-center gap-1.5 bg-white p-1.5 rounded-xl border border-slate-200">
+                          <input
+                            type="color"
+                            value={accentColor.startsWith('#') ? accentColor : '#00b37e'}
+                            onChange={e => handleUpdateCustomTheme({ accentColor: e.target.value })}
+                            className="w-7 h-7 rounded-lg border-0 cursor-pointer p-0 shrink-0"
+                          />
+                          <input
+                            type="text"
+                            value={accentColor}
+                            onChange={e => handleUpdateCustomTheme({ accentColor: e.target.value })}
+                            className="w-full text-[11px] font-mono text-slate-700 bg-transparent outline-none uppercase"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                          Texto / Letra
+                        </label>
+                        <div className="flex items-center gap-1.5 bg-white p-1.5 rounded-xl border border-slate-200">
+                          <input
+                            type="color"
+                            value={textColor.startsWith('#') ? textColor : '#0f172a'}
+                            onChange={e => handleUpdateCustomTheme({ textColor: e.target.value })}
+                            className="w-7 h-7 rounded-lg border-0 cursor-pointer p-0 shrink-0"
+                          />
+                          <input
+                            type="text"
+                            value={textColor}
+                            onChange={e => handleUpdateCustomTheme({ textColor: e.target.value })}
+                            className="w-full text-[11px] font-mono text-slate-700 bg-transparent outline-none uppercase"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 3: Banner & Cover Image */}
+                <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+                    <div>
+                      <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                        <ImageIcon className="w-4 h-4 text-[#00b37e]" />
+                        <span>Paso 3: Banner o Portada</span>
+                      </div>
+                      <h4 className="font-display font-black text-lg text-slate-900 mt-0.5">
+                        Imagen de Cabecera del Negocio
+                      </h4>
+                    </div>
+                  </div>
+
+                  {/* Preset Banner Thumbnails */}
+                  <div className="space-y-2">
+                    <span className="text-xs font-bold text-slate-700 block">
+                      Selecciona una imagen de portada sugerida:
+                    </span>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                      {BANNER_PRESETS.map((preset, idx) => {
+                        const isChosen = bannerUrl === preset.url;
+                        return (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => handleUpdateCustomTheme({ bannerUrl: preset.url })}
+                            className={`relative h-20 rounded-xl overflow-hidden border-2 transition-all cursor-pointer group text-left ${
+                              isChosen
+                                ? 'border-[#00b37e] ring-2 ring-[#00b37e]/30 scale-[1.02]'
+                                : 'border-slate-200 hover:border-slate-400'
+                            }`}
+                          >
+                            <img
+                              src={preset.url}
+                              alt={preset.name}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent p-2 flex flex-col justify-between">
+                              <div className="flex justify-end">
+                                {isChosen && (
+                                  <span className="bg-[#00b37e] text-white p-0.5 rounded-full">
+                                    <Check className="w-2.5 h-2.5" />
+                                  </span>
+                                )}
+                              </div>
+                              <span className="text-[10px] font-bold text-white line-clamp-1">
+                                {preset.name}
+                              </span>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Custom Banner Input */}
+                  <div className="pt-2">
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      O pega el enlace URL de tu propia imagen:
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="url"
+                        value={bannerUrl}
+                        onChange={e => handleUpdateCustomTheme({ bannerUrl: e.target.value })}
+                        placeholder="https://images.unsplash.com/... o enlace de tu imagen"
+                        className="flex-1 px-3.5 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-[#00b37e] focus:outline-none"
+                      />
+                      {bannerUrl && (
+                        <button
+                          type="button"
+                          onClick={() => handleUpdateCustomTheme({ bannerUrl: '' })}
+                          className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold cursor-pointer"
+                          title="Quitar portada"
+                        >
+                          Quitar
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 4: Demo Switcher */}
+                <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-[#00b37e]" />
+                    <span className="text-xs font-black text-slate-800 uppercase tracking-wider">
+                      Cargar Tienda Demo de Ejemplo por Rubro:
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500">
+                    Cambia la tienda activa a un ejemplo completo con sus artículos y fotos reales para ver cómo queda:
+                  </p>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+                    {([
+                      { id: 'store-geisha', label: 'Alimentos & Café', icon: '🍔' },
+                      { id: 'store-boutique', label: 'Moda & Ropa', icon: '👗' },
+                      { id: 'store-consultoria', label: 'Servicios B2B', icon: '💼' },
+                      { id: 'store-ferreteria', label: 'Ferretería / Retail', icon: '⚡' }
+                    ] as const).map(item => {
+                      const isSelected = activeStore.id === item.id;
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => handleSelectStore(item.id)}
+                          className={`p-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer flex flex-col items-center gap-1 text-center border ${
+                            isSelected
+                              ? 'border-[#00b37e] bg-[#00b37e] text-white shadow-xs scale-105'
+                              : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'
+                          }`}
+                        >
+                          <span className="text-xl">{item.icon}</span>
+                          <span className="text-[11px] leading-tight">{item.label}</span>
+                          {isSelected && <span className="text-[9px] font-black uppercase mt-0.5">Tienda Activa</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+              </div>
+
+              {/* RIGHT COLUMN: Interactive Live Simulator (Sticky) */}
+              <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-3">
+                <div className="flex items-center justify-between px-1">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#00b37e] animate-pulse" />
+                    <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                      Simulador en Vivo: {activeStore.businessName}
+                    </span>
+                  </div>
+                  <span className="text-[11px] text-slate-400 font-mono">
+                    {previewDevice === 'mobile' ? 'iPhone 16 Pro' : 'Desktop 1200px'}
+                  </span>
+                </div>
+
+                {previewDevice === 'mobile' ? (
+                  /* Luxury iPhone 16 Pro Titanium Mockup Frame */
+                  <div className="w-full max-w-[365px] sm:max-w-[390px] h-[720px] bg-slate-950 rounded-[50px] p-2.5 sm:p-3 border-[7px] border-slate-800 shadow-2xl relative flex flex-col mx-auto overflow-hidden ring-1 ring-white/10">
+                    
+                    {/* Top iOS Status Bar */}
+                    <div className="w-full h-8 px-5 flex items-center justify-between text-white text-[11px] font-semibold shrink-0 z-30 select-none bg-black/40 backdrop-blur-sm">
+                      <span className="tracking-tight">9:41</span>
+                      {/* Dynamic Island */}
+                      <div className="w-24 h-5 bg-black rounded-full flex items-center justify-between px-2.5 shadow-inner">
+                        <div className="w-2.5 h-2.5 rounded-full bg-slate-900 ring-1 ring-slate-800" />
+                        <div className="w-2 h-2 rounded-full bg-emerald-500/80 animate-pulse" />
+                      </div>
+                      {/* WiFi & Battery */}
+                      <div className="flex items-center gap-1.5 text-[10px]">
+                        <span>5G</span>
+                        <div className="w-5 h-2.5 rounded-sm border border-white/80 p-0.5 flex items-center">
+                          <div className="h-full w-full bg-white rounded-xs" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Device screen inside frame */}
+                    <div 
+                      className="flex-1 rounded-[38px] overflow-y-auto relative no-scrollbar"
+                      style={{ backgroundColor: resolveStoreTheme(activeStore).pageBackground }}
+                    >
+                      <StorefrontRenderer store={activeStore} isMobileSimulator={true} />
+                    </div>
+
+                    {/* Bottom iOS Home Indicator Bar */}
+                    <div className="w-full py-1.5 flex items-center justify-center shrink-0 z-30 bg-black/40 backdrop-blur-sm">
+                      <div className="w-28 h-1 bg-white/50 rounded-full" />
+                    </div>
+                  </div>
+                ) : (
+                  /* Desktop Mockup Frame */
+                  <div className="w-full h-[680px] bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col">
+                    {/* Browser Bar */}
+                    <div className="h-9 bg-slate-100 border-b border-slate-200 px-3 flex items-center gap-2 shrink-0">
+                      <div className="flex gap-1">
+                        <div className="w-2.5 h-2.5 rounded-full bg-rose-400" />
+                        <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+                      </div>
+                      <div className="flex-1 max-w-xs mx-auto bg-white px-2 py-0.5 rounded text-[11px] text-slate-600 font-mono text-center border border-slate-200 truncate">
+                        dayabit.com/p/{activeStore.slug}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => onOpenStore(activeStore.slug)}
+                        className="text-[11px] text-[#00b37e] font-bold flex items-center gap-1 hover:underline cursor-pointer"
+                      >
+                        <ExternalLink className="w-3 h-3" /> Abrir
+                      </button>
+                    </div>
+                    <div className="flex-1 overflow-y-auto">
+                      <StorefrontRenderer store={activeStore} isMobileSimulator={false} />
+                    </div>
+                  </div>
+                )}
+
+                <div className="p-3 rounded-2xl bg-emerald-50/70 border border-emerald-200/60 text-emerald-900 text-xs flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>
+                    <strong>Simulador 100% Interactivo:</strong> Puedes agregar artículos, calcular el carrito y simular pedidos a WhatsApp.
+                  </span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        )}
 
         {/* ================= TAB 1: CATALOG & NICHE PRODUCTS ================= */}
         {activeTab === 'catalog' && (
@@ -927,136 +1514,7 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
           </div>
         )}
 
-        {/* ================= TAB: TEMPLATES SELECTION ================= */}
-        {activeTab === 'templates' && (
-          <div className="space-y-6 max-w-6xl">
-            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <div className="flex items-center gap-2 text-xs font-bold text-[#00b37e]">
-                  <Sparkles className="w-4 h-4" />
-                  <span>Personalización Estructural Multi-Giro</span>
-                </div>
-                <h3 className="font-display font-black text-2xl text-slate-900 mt-1">
-                  Plantillas de Diseño para {activeStore.businessName}
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
-                  Selecciona la plantilla que mejor exprese la esencia de tu negocio. Al cambiarla, tu catálogo, precios y contactos se adaptan instantáneamente a la nueva arquitectura visual.
-                </p>
-              </div>
 
-              <button
-                type="button"
-                onClick={() => setActiveTab('preview')}
-                className="px-4 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-2 cursor-pointer shadow-sm shrink-0"
-              >
-                <Smartphone className="w-4 h-4 text-emerald-400" />
-                <span>Probar en el Simulador</span>
-              </button>
-            </div>
-
-            {/* Templates Grid (4 Cards) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {STORE_TEMPLATES_LIST.map(tmpl => {
-                const isCurrent = activeTemplateId === tmpl.id;
-                return (
-                  <div
-                    key={tmpl.id}
-                    className={`bg-white rounded-3xl p-6 sm:p-7 border transition-all flex flex-col justify-between relative overflow-hidden ${
-                      isCurrent
-                        ? 'border-[#00b37e] ring-2 ring-[#00b37e]/30 shadow-md'
-                        : 'border-slate-200 hover:border-slate-300 shadow-xs'
-                    }`}
-                  >
-                    <div className="space-y-4">
-                      {/* Visual Mini Mockup Frame */}
-                      <TemplateMiniMockup templateId={tmpl.id} />
-
-                      {/* Badge & Category */}
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-slate-100 text-slate-700">
-                          {tmpl.category}
-                        </span>
-                        {isCurrent ? (
-                          <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
-                            <Check className="w-3.5 h-3.5" /> Activa
-                          </span>
-                        ) : tmpl.badge ? (
-                          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-900 text-white">
-                            {tmpl.badge}
-                          </span>
-                        ) : null}
-                      </div>
-
-                      <div>
-                        <h4 className="font-display font-black text-xl text-slate-900">
-                          {tmpl.name}
-                        </h4>
-                        <p className="text-xs font-semibold text-[#00b37e] mt-0.5">
-                          {tmpl.tagline}
-                        </p>
-                        <p className="text-xs text-slate-500 mt-2 leading-relaxed">
-                          {tmpl.description}
-                        </p>
-                      </div>
-
-                      {/* Feature Checklist */}
-                      <div className="space-y-2 pt-2 border-t border-slate-100">
-                        <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block">
-                          Características del Diseño:
-                        </span>
-                        <ul className="space-y-1.5">
-                          {tmpl.features.map((feat, idx) => (
-                            <li key={idx} className="text-xs text-slate-600 flex items-start gap-2">
-                              <Check className="w-3.5 h-3.5 text-[#00b37e] shrink-0 mt-0.5" />
-                              <span>{feat}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-
-                      {/* Recommended For Box */}
-                      <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 text-xs">
-                        <span className="font-bold text-slate-700">Recomendado para: </span>
-                        <span className="text-slate-600">{tmpl.recommendedFor}</span>
-                      </div>
-                    </div>
-
-                    {/* Card Actions */}
-                    <div className="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between gap-3">
-                      {isCurrent ? (
-                        <div className="flex items-center gap-2 text-xs font-bold text-emerald-700">
-                          <CheckCircle2 className="w-4 h-4" />
-                          <span>Plantilla Activa de tu Tienda</span>
-                        </div>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => handleApplyTemplate(tmpl.id)}
-                          className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-all hover:scale-105 cursor-pointer flex items-center gap-1.5"
-                        >
-                          <Check className="w-3.5 h-3.5 text-emerald-400" />
-                          <span>Aplicar esta Plantilla</span>
-                        </button>
-                      )}
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (!isCurrent) handleApplyTemplate(tmpl.id);
-                          setActiveTab('preview');
-                        }}
-                        className="text-xs font-bold text-[#00b37e] hover:underline cursor-pointer flex items-center gap-1"
-                      >
-                        <Smartphone className="w-3.5 h-3.5" />
-                        <span>Ver en Simulador →</span>
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
 
         {/* ================= TAB 2: BRAND, WHATSAPP & COVER BANNER ================= */}
         {activeTab === 'brand' && (
@@ -1804,227 +2262,6 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
               </div>
 
             </form>
-          </div>
-        )}
-
-        {/* ================= TAB 5: LIVE SIMULATOR / PREVIEW ================= */}
-        {activeTab === 'preview' && (
-          <div className="space-y-6">
-            
-            <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <div className="flex items-center gap-2 text-xs font-bold text-[#00b37e]">
-                  <span className="w-2 h-2 rounded-full bg-[#00b37e] animate-pulse" />
-                  <span>Simulador Interactivo en Tiempo Real</span>
-                </div>
-                <h3 className="font-display font-black text-xl text-slate-900 mt-1">
-                  Así ven tus clientes la Landing Page de {activeStore.businessName}
-                </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  100% responsivo y optimizado para cualquier smartphone (iPhone/Android) y computadoras.
-                </p>
-              </div>
-
-              {/* Controls: Device & External Link */}
-              <div className="flex flex-wrap items-center gap-2">
-                <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200">
-                  <button
-                    type="button"
-                    onClick={() => setPreviewDevice('mobile')}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                      previewDevice === 'mobile'
-                        ? 'bg-white text-slate-900 shadow-2xs'
-                        : 'text-slate-500 hover:text-slate-800'
-                    }`}
-                  >
-                    <Smartphone className="w-3.5 h-3.5" />
-                    <span>Móvil (iPhone / Android)</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPreviewDevice('desktop')}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                      previewDevice === 'desktop'
-                        ? 'bg-white text-slate-900 shadow-2xs'
-                        : 'text-slate-500 hover:text-slate-800'
-                    }`}
-                  >
-                    <Monitor className="w-3.5 h-3.5" />
-                    <span>Escritorio (Desktop)</span>
-                  </button>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => onOpenStore(activeStore.slug)}
-                  className="px-3.5 py-2 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-xs"
-                  title="Abrir en pantalla completa"
-                >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                  <span>Ver en Pantalla Completa</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Quick Demo Switcher by Niche & Templates */}
-            <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-2xs space-y-3">
-              {/* Row 1: Switch by Business Niche (Store + Real Products) */}
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-slate-100">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#00b37e] animate-pulse" />
-                  <div>
-                    <span className="text-xs font-black text-slate-800 uppercase tracking-wider block">
-                      Ver Tienda de Demostración por Rubro:
-                    </span>
-                    <span className="text-[10px] text-slate-400">
-                      Cambia la tienda activa y muestra los artículos reales de cada giro comercial
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  {([
-                    { id: 'store-geisha', label: 'Alimentos & Cafetería', icon: '🍔' },
-                    { id: 'store-boutique', label: 'Moda & Boutique', icon: '👗' },
-                    { id: 'store-consultoria', label: 'Corporativo & B2B', icon: '💼' },
-                    { id: 'store-ferreteria', label: 'Ferretería & Retail', icon: '⚡' }
-                  ] as const).map(item => {
-                    const isSelected = activeStore.id === item.id;
-                    return (
-                      <button
-                        key={item.id}
-                        type="button"
-                        onClick={() => handleSelectStore(item.id)}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                          isSelected
-                            ? 'bg-[#00b37e] text-white shadow-xs scale-105 ring-2 ring-[#00b37e]/30'
-                            : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                        }`}
-                      >
-                        <span>{item.icon}</span>
-                        <span>{item.label}</span>
-                        {isSelected && <Check className="w-3.5 h-3.5 text-white" />}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Row 2: Switch Visual Template & Option to load Sample Products */}
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-0.5">
-                <div className="flex items-center gap-2">
-                  <LayoutTemplate className="w-4 h-4 text-slate-400" />
-                  <span className="text-xs text-slate-600">
-                    Plantilla activa de <strong className="text-slate-900 font-bold">{activeStore.businessName}</strong>:
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  {STORE_TEMPLATES_LIST.map(tmpl => {
-                    const isCurrent = activeTemplateId === tmpl.id;
-                    const icon = tmpl.id === 'modern_delivery' ? '🍔' : tmpl.id === 'boutique_editorial' ? '👗' : tmpl.id === 'corporate_services' ? '💼' : '⚡';
-                    return (
-                      <button
-                        key={tmpl.id}
-                        type="button"
-                        onClick={() => handleApplyTemplate(tmpl.id)}
-                        className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
-                          isCurrent
-                            ? 'bg-slate-900 text-white shadow-xs scale-105'
-                            : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
-                        }`}
-                      >
-                        <span>{icon}</span>
-                        <span>{tmpl.name.split('&')[0].trim()}</span>
-                        {isCurrent && <Check className="w-3 h-3 text-emerald-400" />}
-                      </button>
-                    );
-                  })}
-
-                  {/* Button to sync articles to this template's niche */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const niche: ProductNiche = 
-                        activeTemplateId === 'modern_delivery' ? 'food' :
-                        activeTemplateId === 'boutique_editorial' ? 'fashion' :
-                        activeTemplateId === 'corporate_services' ? 'services' : 'general';
-                      handleApplyFullNiche(niche);
-                    }}
-                    className="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
-                    title="Adaptar los artículos de esta tienda al rubro de la plantilla seleccionada"
-                  >
-                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                    <span>Adaptar Artículos a este Rubro</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Device Container */}
-            <div className="flex justify-center items-center py-2 px-2 overflow-x-auto">
-              {previewDevice === 'mobile' ? (
-                /* Luxury iPhone 16 Pro Titanium Mockup Frame */
-                <div className="w-full max-w-[375px] sm:max-w-[400px] h-[700px] sm:h-[750px] bg-slate-950 rounded-[52px] p-2.5 sm:p-3 border-[8px] border-slate-800 shadow-2xl relative flex flex-col mx-auto overflow-hidden ring-1 ring-white/10">
-                  
-                  {/* Top iOS Status Bar */}
-                  <div className="w-full h-8 px-5 flex items-center justify-between text-white text-[11px] font-semibold shrink-0 z-30 select-none bg-black/40 backdrop-blur-sm">
-                    <span className="tracking-tight">9:41</span>
-                    {/* Dynamic Island */}
-                    <div className="w-24 h-5 bg-black rounded-full flex items-center justify-between px-2.5 shadow-inner">
-                      <div className="w-2.5 h-2.5 rounded-full bg-slate-900 ring-1 ring-slate-800" />
-                      <div className="w-2 h-2 rounded-full bg-emerald-500/80 animate-pulse" />
-                    </div>
-                    {/* WiFi, Signal & Battery */}
-                    <div className="flex items-center gap-1.5 text-[10px]">
-                      <span>5G</span>
-                      <div className="w-5 h-2.5 rounded-sm border border-white/80 p-0.5 flex items-center">
-                        <div className="h-full w-full bg-white rounded-xs" />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Device screen inside frame with completely hidden scrollbars and theme background */}
-                  <div 
-                    className="flex-1 rounded-[40px] overflow-y-auto relative no-scrollbar"
-                    style={{ backgroundColor: resolveStoreTheme(activeStore).pageBackground }}
-                  >
-                    <StorefrontRenderer store={activeStore} isMobileSimulator={true} />
-                  </div>
-
-                  {/* Bottom iOS Home Indicator Bar */}
-                  <div className="w-full py-1.5 flex items-center justify-center shrink-0 z-30 bg-black/40 backdrop-blur-sm">
-                    <div className="w-28 h-1 bg-white/50 rounded-full" />
-                  </div>
-                </div>
-              ) : (
-                /* Desktop Mockup Frame */
-                <div className="w-full max-w-5xl h-[720px] bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col">
-                  {/* Browser Bar */}
-                  <div className="h-10 bg-slate-100 border-b border-slate-200 px-4 flex items-center gap-3 shrink-0">
-                    <div className="flex gap-1.5">
-                      <div className="w-3 h-3 rounded-full bg-rose-400" />
-                      <div className="w-3 h-3 rounded-full bg-amber-400" />
-                      <div className="w-3 h-3 rounded-full bg-emerald-400" />
-                    </div>
-                    <div className="flex-1 max-w-sm mx-auto bg-white px-3 py-1 rounded-lg text-xs text-slate-600 font-mono text-center border border-slate-200 truncate">
-                      https://dayabit.com/p/{activeStore.slug}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => onOpenStore(activeStore.slug)}
-                      className="text-xs text-[#00b37e] font-bold flex items-center gap-1 hover:underline cursor-pointer"
-                    >
-                      <ExternalLink className="w-3 h-3" /> Abrir
-                    </button>
-                  </div>
-                  <div className="flex-1 overflow-y-auto">
-                    <StorefrontRenderer store={activeStore} isMobileSimulator={false} />
-                  </div>
-                </div>
-              )}
-            </div>
-
           </div>
         )}
 
