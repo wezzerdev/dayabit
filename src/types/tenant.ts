@@ -72,6 +72,20 @@ export interface StoreThemeConfig {
   accentColor: string;
 }
 
+export type StoreTemplateId = 'modern_delivery' | 'boutique_editorial' | 'corporate_services' | 'catalog_express';
+
+export interface StoreTemplateDefinition {
+  id: StoreTemplateId;
+  name: string;
+  category: string;
+  tagline: string;
+  description: string;
+  recommendedFor: string;
+  badge?: string;
+  previewThumbnail?: string;
+  features: string[];
+}
+
 export interface TenantStore {
   id: string;
   slug: string; // e.g. 'taqueria-pepe' -> URL: dayabit.com/p/taqueria-pepe
@@ -79,6 +93,7 @@ export interface TenantStore {
   ownerName: string;
   ownerEmail: string;
   planId: PlanTier;
+  templateId?: StoreTemplateId;
   whatsapp: string; // 10 digits, e.g. '5625785033'
   brandColor: string; // e.g. '#00b37e', '#2563eb', '#dc2626'
   themeConfig?: StoreThemeConfig;

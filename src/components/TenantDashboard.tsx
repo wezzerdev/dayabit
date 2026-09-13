@@ -3,16 +3,17 @@ import {
   Store, ShoppingBag, Sliders, CreditCard, ExternalLink, Copy, Check, Plus, Trash2, 
   ArrowLeft, RefreshCw, Share2, ShieldCheck, Truck, Globe, 
   Smartphone, Monitor, HelpCircle, Award, BookOpen, Utensils, Shirt, Briefcase, Package, 
-  Image as ImageIcon, Palette
+  Image as ImageIcon, Palette, LayoutTemplate, Sparkles, CheckCircle2
 } from 'lucide-react';
 import type { 
   TenantStore, StoreProduct, ProductNiche, FAQItem, NicheProductAttributes, 
-  StoreThemeConfig, ThemePaletteMode 
+  StoreThemeConfig, ThemePaletteMode, StoreTemplateId 
 } from '../types/tenant';
 import { TenantStorageService, PLANS } from '../services/tenantStore';
 import { InstagramIcon, FacebookIcon, TikTokIcon, GoogleMapsIcon } from './SocialIcons';
 import { formatSocialUrl } from '../utils/formatSocial';
 import { THEME_PRESETS, THEME_PRESET_CARDS, resolveStoreTheme } from '../utils/themePresets';
+import { STORE_TEMPLATES_LIST, resolveStoreTemplate } from '../utils/templateDefinitions';
 import StorefrontRenderer from './StorefrontRenderer';
 
 interface TenantDashboardProps {
@@ -51,7 +52,8 @@ const BANNER_PRESETS = [
 export default function TenantDashboard({ initialStore, onOpenStore, onBackToMain, onCreateNewStore }: TenantDashboardProps) {
   const [allStores, setAllStores] = useState<TenantStore[]>(() => TenantStorageService.getAllStores());
   const [activeStore, setActiveStore] = useState<TenantStore>(() => initialStore || TenantStorageService.getActiveTenant());
-  const [activeTab, setActiveTab] = useState<'catalog' | 'brand' | 'policies' | 'sections' | 'preview' | 'subscription'>('catalog');
+  const [activeTab, setActiveTab] = useState<'catalog' | 'templates' | 'brand' | 'policies' | 'sections' | 'preview' | 'subscription'>('catalog');
+  const [activeTemplateId, setActiveTemplateId] = useState<StoreTemplateId>(() => resolveStoreTemplate(activeStore));
   const [previewDevice, setPreviewDevice] = useState<'mobile' | 'desktop'>('mobile');
   const [copiedLink, setCopiedLink] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -151,12 +153,24 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
       setExperienceYears(s.aboutUs?.experienceYears || 3);
       setHighlightValues(s.aboutUs?.highlightValues?.join(', ') || 'Calidad Garantizada, Atención Inmediata, Precios Claros');
       setFaqs(s.faqs || []);
+      setActiveTemplateId(resolveStoreTemplate(s));
       const t = resolveStoreTheme(s);
       setThemeMode(t.palette);
       setPageBackground(t.pageBackground);
       setCardBackground(t.cardBackground);
       setTextColor(t.textColor);
       setAccentColor(t.accentColor);
+    }
+  };
+
+  const handleApplyTemplate = (templateId: StoreTemplateId) => {
+    setActiveTemplateId(templateId);
+    const updated = TenantStorageService.updateStore(activeStore.id, { templateId });
+    if (updated) {
+      setActiveStore(updated);
+      setAllStores(TenantStorageService.getAllStores());
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 2500);
     }
   };
 
@@ -463,7 +477,22 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
             }`}
           >
             <ShoppingBag className="w-4 h-4" />
-            Catálogo & Alta por Nicho ({activeStore.products.length})
+            Catálogo & Nichos ({activeStore.products.length})
+          </button>
+
+          <button
+            onClick={() => setActiveTab('templates')}
+            className={`pb-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer shrink-0 ${
+              activeTab === 'templates'
+                ? 'border-[#00b37e] text-[#00b37e]'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <LayoutTemplate className="w-4 h-4" />
+            Plantillas de Diseño
+            <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              4 Estilos
+            </span>
           </button>
 
           <button
@@ -640,6 +669,134 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
               </div>
             )}
 
+          </div>
+        )}
+
+        {/* ================= TAB: TEMPLATES SELECTION ================= */}
+        {activeTab === 'templates' && (
+          <div className="space-y-6 max-w-6xl">
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 text-xs font-bold text-[#00b37e]">
+                  <Sparkles className="w-4 h-4" />
+                  <span>Personalización Estructural Multi-Giro</span>
+                </div>
+                <h3 className="font-display font-black text-2xl text-slate-900 mt-1">
+                  Plantillas de Diseño para {activeStore.businessName}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
+                  Selecciona la plantilla que mejor exprese la esencia de tu negocio. Al cambiarla, tu catálogo, precios y contactos se adaptan instantáneamente a la nueva arquitectura visual.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('preview')}
+                className="px-4 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-2 cursor-pointer shadow-sm shrink-0"
+              >
+                <Smartphone className="w-4 h-4 text-emerald-400" />
+                <span>Probar en el Simulador</span>
+              </button>
+            </div>
+
+            {/* Templates Grid (4 Cards) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {STORE_TEMPLATES_LIST.map(tmpl => {
+                const isCurrent = activeTemplateId === tmpl.id;
+                return (
+                  <div
+                    key={tmpl.id}
+                    className={`bg-white rounded-3xl p-6 sm:p-7 border transition-all flex flex-col justify-between relative overflow-hidden ${
+                      isCurrent
+                        ? 'border-[#00b37e] ring-2 ring-[#00b37e]/30 shadow-md'
+                        : 'border-slate-200 hover:border-slate-300 shadow-xs'
+                    }`}
+                  >
+                    <div className="space-y-4">
+                      {/* Badge & Category */}
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-slate-100 text-slate-700">
+                          {tmpl.category}
+                        </span>
+                        {isCurrent ? (
+                          <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
+                            <Check className="w-3.5 h-3.5" /> Activa
+                          </span>
+                        ) : tmpl.badge ? (
+                          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-900 text-white">
+                            {tmpl.badge}
+                          </span>
+                        ) : null}
+                      </div>
+
+                      <div>
+                        <h4 className="font-display font-black text-xl text-slate-900">
+                          {tmpl.name}
+                        </h4>
+                        <p className="text-xs font-semibold text-[#00b37e] mt-0.5">
+                          {tmpl.tagline}
+                        </p>
+                        <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                          {tmpl.description}
+                        </p>
+                      </div>
+
+                      {/* Feature Checklist */}
+                      <div className="space-y-2 pt-2 border-t border-slate-100">
+                        <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block">
+                          Características del Diseño:
+                        </span>
+                        <ul className="space-y-1.5">
+                          {tmpl.features.map((feat, idx) => (
+                            <li key={idx} className="text-xs text-slate-600 flex items-start gap-2">
+                              <Check className="w-3.5 h-3.5 text-[#00b37e] shrink-0 mt-0.5" />
+                              <span>{feat}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {/* Recommended For Box */}
+                      <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 text-xs">
+                        <span className="font-bold text-slate-700">Recomendado para: </span>
+                        <span className="text-slate-600">{tmpl.recommendedFor}</span>
+                      </div>
+                    </div>
+
+                    {/* Card Actions */}
+                    <div className="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between gap-3">
+                      {isCurrent ? (
+                        <div className="flex items-center gap-2 text-xs font-bold text-emerald-700">
+                          <CheckCircle2 className="w-4 h-4" />
+                          <span>Plantilla Activa de tu Tienda</span>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => handleApplyTemplate(tmpl.id)}
+                          className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-all hover:scale-105 cursor-pointer flex items-center gap-1.5"
+                        >
+                          <Check className="w-3.5 h-3.5 text-emerald-400" />
+                          <span>Aplicar esta Plantilla</span>
+                        </button>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!isCurrent) handleApplyTemplate(tmpl.id);
+                          setActiveTab('preview');
+                        }}
+                        className="text-xs font-bold text-[#00b37e] hover:underline cursor-pointer flex items-center gap-1"
+                      >
+                        <Smartphone className="w-3.5 h-3.5" />
+                        <span>Ver en Simulador →</span>
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 

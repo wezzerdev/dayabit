@@ -66,6 +66,7 @@ const SEED_STORES: TenantStore[] = [
     ownerName: 'Sofía Hernández',
     ownerEmail: 'sofia@geishagourmet.com',
     planId: 'pro',
+    templateId: 'modern_delivery',
     whatsapp: '5625785033',
     brandColor: '#b45309',
     themeConfig: THEME_PRESETS.cream,
@@ -196,6 +197,7 @@ const SEED_STORES: TenantStore[] = [
     ownerName: 'Carlos Morales',
     ownerEmail: 'carlos@urbantrend.com',
     planId: 'vitrina',
+    templateId: 'boutique_editorial',
     whatsapp: '5625785033',
     brandColor: '#7c3aed',
     themeConfig: THEME_PRESETS.dark,
@@ -293,6 +295,7 @@ const SEED_STORES: TenantStore[] = [
     ownerName: 'Lic. Roberto Vázquez',
     ownerEmail: 'contacto@vazquezcontadores.mx',
     planId: 'esencial',
+    templateId: 'corporate_services',
     whatsapp: '5625785033',
     brandColor: '#0284c7',
     themeConfig: { ...THEME_PRESETS.light, accentColor: '#0284c7' },
@@ -399,6 +402,7 @@ export class TenantStorageService {
             const seed = SEED_STORES.find(s => s.id === store.id);
             return {
               ...store,
+              templateId: store.templateId || seed?.templateId || (store.planId === 'esencial' ? 'corporate_services' : 'modern_delivery'),
               themeConfig: store.themeConfig || seed?.themeConfig || { ...THEME_PRESETS.light, accentColor: store.brandColor || '#00b37e' },
               bannerUrl: store.bannerUrl || seed?.bannerUrl || '',
               aboutUs: store.aboutUs || seed?.aboutUs || {
