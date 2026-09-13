@@ -1422,15 +1422,34 @@ export default function TenantDashboard({ initialStore, onOpenStore, onBackToMai
             {/* Device Container */}
             <div className="flex justify-center items-center py-2 px-2 overflow-x-auto">
               {previewDevice === 'mobile' ? (
-                /* Mobile Mockup Frame - Perfectly Adapted to any screen and OS */
-                <div className="w-full max-w-[360px] sm:max-w-[385px] h-[640px] sm:h-[720px] bg-slate-950 rounded-[48px] p-2.5 sm:p-3 border-[6px] sm:border-[8px] border-slate-800 shadow-2xl relative flex flex-col mx-auto overflow-hidden">
-                  {/* Dynamic Island / Speaker notch */}
-                  <div className="w-24 h-4 bg-slate-900 rounded-full mx-auto mb-2 shrink-0 z-30 flex items-center justify-center">
-                    <div className="w-2 h-2 rounded-full bg-slate-950 mr-2" />
+                /* Luxury iPhone 16 Pro Titanium Mockup Frame */
+                <div className="w-full max-w-[365px] sm:max-w-[390px] h-[670px] sm:h-[740px] bg-slate-950 rounded-[52px] p-2.5 sm:p-3 border-[8px] border-slate-800 shadow-2xl relative flex flex-col mx-auto overflow-hidden ring-1 ring-white/10">
+                  
+                  {/* Top iOS Status Bar */}
+                  <div className="w-full h-8 px-5 flex items-center justify-between text-white text-[11px] font-semibold shrink-0 z-30 select-none bg-black/40 backdrop-blur-sm">
+                    <span className="tracking-tight">9:41</span>
+                    {/* Dynamic Island */}
+                    <div className="w-24 h-5 bg-black rounded-full flex items-center justify-between px-2.5 shadow-inner">
+                      <div className="w-2.5 h-2.5 rounded-full bg-slate-900 ring-1 ring-slate-800" />
+                      <div className="w-2 h-2 rounded-full bg-emerald-500/80 animate-pulse" />
+                    </div>
+                    {/* WiFi, Signal & Battery */}
+                    <div className="flex items-center gap-1.5 text-[10px]">
+                      <span>5G</span>
+                      <div className="w-5 h-2.5 rounded-sm border border-white/80 p-0.5 flex items-center">
+                        <div className="h-full w-full bg-white rounded-xs" />
+                      </div>
+                    </div>
                   </div>
-                  {/* Device screen inside frame */}
-                  <div className="flex-1 rounded-[36px] overflow-y-auto relative scrollbar-thin">
+
+                  {/* Device screen inside frame with completely hidden scrollbars */}
+                  <div className="flex-1 rounded-[40px] overflow-y-auto relative no-scrollbar bg-white">
                     <StorefrontRenderer store={activeStore} isMobileSimulator={true} />
+                  </div>
+
+                  {/* Bottom iOS Home Indicator Bar */}
+                  <div className="w-full py-1.5 flex items-center justify-center shrink-0 z-30 bg-black/40 backdrop-blur-sm">
+                    <div className="w-28 h-1 bg-white/50 rounded-full" />
                   </div>
                 </div>
               ) : (
